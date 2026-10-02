@@ -1,5 +1,6 @@
 package com.nukateam.ntgl.client.render.hud;
 
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
 import net.minecraft.client.renderer.RenderPipelines;
 import org.joml.Matrix3x2fStack;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -104,7 +105,7 @@ public class WeaponHud{
 
             renderAmmoTypeIcon(graphics, poseStack, primaryMode, WeaponMode.PRIMARY, x - COUNTER_POS_X - ICON_SIZE - 2, y - COUNTER_POS_Y - 11);
             if(handCache.ammoTypeKey) {
-                renderKey(graphics, poseStack, NtglKeyBinds.KEY_AMMO_SELECT.getKey(), x - 6, y + 6);
+                renderKey(graphics, poseStack, KeyMappingHelper.getBoundKeyOf(NtglKeyBinds.KEY_AMMO_SELECT), x - 6, y + 6);
             }
             renderCurrentAmmo (graphics, poseStack, primaryMode, x - COUNTER_POS_X, y - COUNTER_POS_Y - fontHeight);
 
@@ -139,7 +140,7 @@ public class WeaponHud{
                     Figures.drawFrame(graphics, (int) ((xOffset - 2) / scale), (int) ((y - 2) / scale), 34, 16, RgbHelper.toRgba(colors.hud));
                     renderCurrentAmmo(graphics, poseStack, mode, xOffset / scale, y / scale);
 
-                    renderKey(graphics, poseStack, WeaponModeBindings.getKey(key).getKey(), (int)((xOffset - 14 - ClientDebug.X) / scale), (int) ((y - 2) / scale), false);
+                    renderKey(graphics, poseStack, KeyMappingHelper.getBoundKeyOf(WeaponModeBindings.getKey(key)), (int)((xOffset - 14 - ClientDebug.X) / scale), (int) ((y - 2) / scale), false);
 
                     xOffset += 34;
                 }
@@ -211,7 +212,7 @@ public class WeaponHud{
             var action = entry.getValue().action;
             if(entry.getValue().maxAmmoCount == 0) {
                 renderIcon(graphics, poseStack, action.getIcon(), x, iconPosY, WEAPON_MODE_SCALE);
-                renderKey(graphics, poseStack, WeaponModeBindings.getKey(mode).getKey(), x + 16, iconPosY + 3, false);
+                renderKey(graphics, poseStack, KeyMappingHelper.getBoundKeyOf(WeaponModeBindings.getKey(mode)), x + 16, iconPosY + 3, false);
                 iconPosY -= 12;
             }
         }
@@ -229,7 +230,7 @@ public class WeaponHud{
 
         renderIcon(graphics, icon, x, y);
         if(handCache.fireModeKey) {
-            renderKey(graphics, poseStack, NtglKeyBinds.KEY_FIRE_SELECT.getKey(), x - 6, y + 6);
+            renderKey(graphics, poseStack, KeyMappingHelper.getBoundKeyOf(NtglKeyBinds.KEY_FIRE_SELECT), x - 6, y + 6);
         }
     }
 
@@ -239,7 +240,7 @@ public class WeaponHud{
 
         renderIcon(graphics, icon, x, y);
         if(handCache.fireModeKey) {
-            renderKey(graphics, poseStack, NtglKeyBinds.KEY_FIRE_SELECT.getKey(), x - 6, y + 6);
+            renderKey(graphics, poseStack, KeyMappingHelper.getBoundKeyOf(NtglKeyBinds.KEY_FIRE_SELECT), x - 6, y + 6);
         }
     }
 

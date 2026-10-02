@@ -102,7 +102,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
             if (this.currentTab == null) return;
             int index = this.currentTab.getCurrentIndex();
             var holder = this.currentTab.getRecipes().get(index);
-            PacketHandler.getPlayChannel().sendToServer(new C2SMessageCraft(holder.id(), this.workbench.getBlockPos()));
+            PacketHandler.getPlayChannel().sendToServer(new C2SMessageCraft(holder.id().identifier(), this.workbench.getBlockPos()));
         }).pos(this.leftPos + 195, this.topPos + 16).size(74, 20).build());
         this.btnCraft.active = false;
         this.checkBoxMaterials = this.addRenderableWidget(new CheckBox(this.leftPos + 172, this.topPos + 51, Component.translatable("gui.ntgl.workbench.show_remaining")));
