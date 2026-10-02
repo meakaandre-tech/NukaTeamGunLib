@@ -229,8 +229,14 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
             travel();
         }
 
-        if (this.tickCount >= this.life) {
-            if (this.isAlive()) {
+        // The life is only known to the server (it is not part of the spawn packet); on the client it would be 0
+        // and the projectile would vanish on its first tick, before the renderers (which skip the first ticks)
+        // ever draw it. The client falls back to the life of the synced projectile config; the server still
+        // removes the entity when the real life is over.
+        var maxLife = isServerSide || this.life > 0 ? this.life : getProjectile().getLife();
+
+        if (this.tickCount >= maxLife) {
+            if (this.isAlive() && isServerSide) {
                 this.onExpired();
             }
             this.remove(RemovalReason.KILLED);
