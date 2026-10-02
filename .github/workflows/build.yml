@@ -40,6 +40,36 @@ jobs:
           }
           GRADLE
           ./gradlew build --no-daemon --continue -Dorg.gradle.console=plain -I /tmp/maxerrs.gradle 2>&1 | tee build.log
+      - name: Smoke test (dedicated server start + client game test with screenshots)
+        if: success() && hashFiles('.github/smoke-test') != ''
+        continue-on-error: true
+        timeout-minutes: 30
+        shell: bash
+        run: |
+          mkdir -p /tmp/ci/smoke/screenshots
+          sudo apt-get update -qq > /dev/null 2>&1 || true
+          sudo apt-get install -y -qq xvfb libgl1-mesa-dri > /dev/null 2>&1 || true
+          # --- dedicated server: must reach "Done" without loading client classes
+          mkdir -p run && echo "eula=true" > run/eula.txt
+          (./gradlew runServer --no-daemon -Dorg.gradle.console=plain --args="nogui" > /tmp/ci/smoke/server-gradle.log 2>&1 &)
+          for i in $(seq 1 200); do
+            grep -q 'Done (' /tmp/ci/smoke/server-gradle.log && break
+            grep -qE 'BUILD FAILED|BUILD SUCCESSFUL|Crash report' /tmp/ci/smoke/server-gradle.log && break
+            sleep 3
+          done
+          sleep 15
+          pkill -f devlaunchinjector || true
+          sleep 5
+          pkill -f 'runServer' || true
+          cp run/logs/latest.log /tmp/ci/smoke/server-latest.log 2>/dev/null || true
+          cp -r run/crash-reports /tmp/ci/smoke/server-crash-reports 2>/dev/null || true
+          # --- client: fabric client game test under a virtual display
+          timeout 1200 xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientGameTest --no-daemon -Dorg.gradle.console=plain > /tmp/ci/smoke/client-gradle.log 2>&1 || true
+          d=build/run/clientGameTest
+          cp $d/logs/latest.log /tmp/ci/smoke/client-latest.log 2>/dev/null || true
+          cp -r $d/crash-reports /tmp/ci/smoke/client-crash-reports 2>/dev/null || true
+          cp $d/screenshots/*.png /tmp/ci/smoke/screenshots/ 2>/dev/null || true
+          (ls -lR $d 2>&1 | head -300) > /tmp/ci/smoke/client-run-dir.txt || true
       - name: Dump game signatures
         if: always()
         shell: bash

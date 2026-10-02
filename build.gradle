@@ -26,6 +26,20 @@ dependencies {
     compileOnly fileTree(dir: "libs", include: ["*.jar", "nested/*.jar"])
 
     compileOnly "com.google.code.findbugs:jsr305:3.0.2"
+
+    // lets the development runs (and the CI smoke test) load GeckoLib; not bundled into the jar
+    runtimeOnly fileTree(dir: "libs", include: ["*.jar"])
+}
+
+// Client game test used by the CI smoke test (src/gametest, not part of the released jar)
+fabricApi {
+    configureTests {
+        createSourceSet = true
+        modId = "ntgl_smoketest"
+        enableGameTests = false
+        enableClientGameTests = true
+        eula = true
+    }
 }
 
 processResources {

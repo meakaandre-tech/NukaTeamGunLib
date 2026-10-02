@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "ntgl_smoketest",
+  "version": "1.0.0",
+  "name": "NTGL smoke test",
+  "description": "Client game test used by CI to check that NTGL starts and renders. Not part of the released jar.",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-client-gametest": [
+      "com.nukateam.ntgl.smoketest.NtglSmokeTest"
+    ]
+  },
+  "depends": {
+    "ntgl": "*"
+  }
+}
