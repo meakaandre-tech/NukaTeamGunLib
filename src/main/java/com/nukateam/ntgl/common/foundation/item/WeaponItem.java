@@ -1,5 +1,7 @@
 package com.nukateam.ntgl.common.foundation.item;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import com.geckolib.animatable.GeoItem;
 import com.geckolib.animatable.client.GeoRenderProvider;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
@@ -188,6 +190,7 @@ public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable {
         tooltip.add(Component.translatable("info.ntgl.attachment_help", name)
                 .withStyle(ChatFormatting.YELLOW));
     }
+    @Environment(EnvType.CLIENT)
     protected WeaponData getWeaponData(ItemStack stack) {
         return new WeaponData(stack, Minecraft.getInstance().player);
     }

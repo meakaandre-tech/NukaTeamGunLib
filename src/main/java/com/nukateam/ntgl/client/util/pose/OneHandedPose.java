@@ -1,5 +1,7 @@
 package com.nukateam.ntgl.client.util.pose;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.client.util.IHeldAnimation;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -22,6 +24,7 @@ import net.minecraft.world.item.Items;
  * Author: MrCrayfish
  */
 public class OneHandedPose implements IHeldAnimation {
+    @Environment(EnvType.CLIENT)
     @Override
     public void applyHumanoidModelRotation(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart head, InteractionHand hand, float aimProgress) {
 //        var right = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT ? hand == InteractionHand.MAIN_HAND : hand == InteractionHand.OFF_HAND;
@@ -46,12 +49,14 @@ public class OneHandedPose implements IHeldAnimation {
 //    @Override
 
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack) {
         var side = hand == InteractionHand.OFF_HAND ? 1 : -1;
         poseStack.translate(0.45 * side, -0.5, -1.2);
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<?> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
         poseStack.mulPose(Axis.YP.rotationDegrees(180F));

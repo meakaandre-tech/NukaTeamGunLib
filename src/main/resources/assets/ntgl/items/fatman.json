@@ -1,0 +1,9 @@
+{
+  "model": {
+    "type": "minecraft:special",
+    "base": "ntgl:item/fatman",
+    "model": {
+      "type": "geckolib:geckolib"
+    }
+  }
+}

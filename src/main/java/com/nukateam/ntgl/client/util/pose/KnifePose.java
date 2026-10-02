@@ -1,5 +1,7 @@
 package com.nukateam.ntgl.client.util.pose;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.nukateam.ntgl.Ntgl;
@@ -23,6 +25,7 @@ import net.minecraft.world.item.Items;
  * Author: MrCrayfish
  */
 public class KnifePose implements IHeldAnimation {
+    @Environment(EnvType.CLIENT)
     @Override
     public void applyHumanoidModelRotation(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart head, InteractionHand hand, float aimProgress) {
 //        var right = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT ? hand == InteractionHand.MAIN_HAND : hand == InteractionHand.OFF_HAND;
@@ -47,6 +50,7 @@ public class KnifePose implements IHeldAnimation {
 //    @Override
 
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack) {
         var side = hand == InteractionHand.OFF_HAND ? 1 : -1;
@@ -54,6 +58,7 @@ public class KnifePose implements IHeldAnimation {
         poseStack.translate((0.45 + 20 / 10d / 16d) * side, -0.5 + ClientDebug.Y / 10d / 16d, -1.2 + -10 / 10d / 16d);
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<?> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
         poseStack.mulPose(Axis.YP.rotationDegrees(180F));

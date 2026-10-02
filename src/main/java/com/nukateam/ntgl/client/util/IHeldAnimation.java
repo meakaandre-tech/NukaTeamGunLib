@@ -1,5 +1,7 @@
 package com.nukateam.ntgl.client.util;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -21,6 +23,7 @@ public interface IHeldAnimation {
      * @param hand        the hand which is currently being used
      * @param aimProgress the current animation progress of looking down the weapons sight
      */
+    @Environment(EnvType.CLIENT)
     default void applyHumanoidModelRotation(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart head,
                                             InteractionHand hand, float aimProgress) {
     }
@@ -48,6 +51,7 @@ public interface IHeldAnimation {
      * @param poseStack   the current matrix stack
      * @param buffer      a render type buffer get
      */
+    @Environment(EnvType.CLIENT)
     default void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack) {
     }
 
@@ -57,6 +61,7 @@ public interface IHeldAnimation {
      * @param stack
      * @param partialTicks
      */
+    @Environment(EnvType.CLIENT)
     default boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<?> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
         return false;
     }
@@ -84,6 +89,7 @@ public interface IHeldAnimation {
      * @param source the model renderer to grab the rotations from
      * @param dest   the model renderer to apply the rotations to
      */
+    @Environment(EnvType.CLIENT)
     static void copyModelAngles(ModelPart source, ModelPart dest) {
         dest.xRot = source.xRot;
         dest.yRot = source.yRot;

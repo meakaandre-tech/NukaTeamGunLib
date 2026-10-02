@@ -1,5 +1,7 @@
 package com.nukateam.ntgl.common.util.helpers;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -8,6 +10,7 @@ public class PlayerHelper {
     public static HumanoidArm convertHand(InteractionHand hand){
         return hand == InteractionHand.MAIN_HAND ? HumanoidArm.RIGHT : HumanoidArm.LEFT;
     }
+    @Environment(EnvType.CLIENT)
     public static boolean isRight(InteractionHand hand){
         var mainHand = Minecraft.getInstance().options.mainHand().get();
         return mainHand == HumanoidArm.RIGHT ?

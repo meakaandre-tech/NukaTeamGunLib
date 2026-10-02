@@ -6,22 +6,21 @@ import com.mojang.math.Axis;
  * Author: MrCrayfish
  */
 public enum SwayType {
-    DIRECTIONAL(Axis.XN, Axis.YN),
-    DRAG(Axis.XP, Axis.YP);
+    DIRECTIONAL(true),
+    DRAG(false);
 
-    Axis pitchRotation;
-    Axis yawRotation;
+    // the axes are resolved lazily: this enum is also loaded by the config on dedicated servers
+    private final boolean negative;
 
-    SwayType(Axis pitchRotation, Axis yawRotation) {
-        this.pitchRotation = pitchRotation;
-        this.yawRotation = yawRotation;
+    SwayType(boolean negative) {
+        this.negative = negative;
     }
 
     public Axis getPitchRotation() {
-        return this.pitchRotation;
+        return this.negative ? Axis.XN : Axis.XP;
     }
 
     public Axis getYawRotation() {
-        return this.yawRotation;
+        return this.negative ? Axis.YN : Axis.YP;
     }
 }

@@ -1,5 +1,7 @@
 package com.nukateam.ntgl.client.util.pose;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import com.mojang.math.Axis;
 import com.nukateam.ntgl.client.util.IHeldAnimation;
 import com.nukateam.ntgl.client.util.handler.AimingHandler;
@@ -52,6 +54,7 @@ public abstract class WeaponPose implements IHeldAnimation {
         return true;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void applyHumanoidModelRotation(LivingEntity entity, ModelPart rightArm, ModelPart leftArm,
                                            ModelPart head, InteractionHand hand, float aimProgress) {
@@ -67,6 +70,7 @@ public abstract class WeaponPose implements IHeldAnimation {
         this.applyAimPose(targetPose, mainArm, secondaryArm, angleAbs, zoom, right ? 1 : -1, entity.isCrouching());
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress) {
         boolean right = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT ?
@@ -82,6 +86,7 @@ public abstract class WeaponPose implements IHeldAnimation {
         entity.yBodyRot = entity.getYRot() + rightOffset;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack) {
 
@@ -123,6 +128,7 @@ public abstract class WeaponPose implements IHeldAnimation {
      * @param entity the player the pose is being applied to
      * @return the current pitch of the player
      */
+    @Environment(EnvType.CLIENT)
     protected float getEntityPitch(LivingEntity entity) {
         if (Minecraft.getInstance().getCameraEntity() == entity && Minecraft.getInstance().gui.screen() != null) {
             return 0F;
@@ -130,6 +136,7 @@ public abstract class WeaponPose implements IHeldAnimation {
         return Mth.lerp(Minecraft.getInstance().getDeltaTracker().getRealtimeDeltaTicks(), entity.xRotO, entity.getXRot()) / 90F;
     }
 
+    @Environment(EnvType.CLIENT)
     private void applyAimPose(AimPose targetPose, ModelPart rightArm, ModelPart leftArm,
                               float partial, float zoom, float offhand, boolean sneaking) {
         this.applyLimbPoseToModelRenderer(
@@ -146,6 +153,7 @@ public abstract class WeaponPose implements IHeldAnimation {
                 leftArm, partial, zoom, offhand, sneaking);
     }
 
+    @Environment(EnvType.CLIENT)
     private void applyLimbPoseToModelRenderer(LimbPose targetIdlePose, LimbPose targetAimingPose,
                                               LimbPose idlePose, LimbPose aimingPose, ModelPart modelPart,
                                               float partial, float zoom, float leftHanded, boolean sneaking) {

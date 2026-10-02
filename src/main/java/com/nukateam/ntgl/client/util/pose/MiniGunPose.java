@@ -1,5 +1,7 @@
 package com.nukateam.ntgl.client.util.pose;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import com.mojang.math.Axis;
 import com.nukateam.ntgl.Config;
 import com.nukateam.ntgl.common.data.holders.GripType;
@@ -70,6 +72,7 @@ public class MiniGunPose extends WeaponPose {
         return false;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void applyHumanoidModelRotation(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart head, InteractionHand hand, float aimProgress) {
         if(hand == InteractionHand.OFF_HAND) return;
@@ -89,6 +92,7 @@ public class MiniGunPose extends WeaponPose {
     }
 
 
+    @Environment(EnvType.CLIENT)
     public static boolean rightHandIsMain(InteractionHand hand){
         return Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT ?
                 hand == InteractionHand.MAIN_HAND : hand == InteractionHand.OFF_HAND;
@@ -105,6 +109,7 @@ public class MiniGunPose extends WeaponPose {
         }
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack) {
 //        if (Config.CLIENT.display.oldAnimations.get()) {
@@ -129,6 +134,7 @@ public class MiniGunPose extends WeaponPose {
 
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<?> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
         return GripType.applyBackTransforms(entity, poseStack);

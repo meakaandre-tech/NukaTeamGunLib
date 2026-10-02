@@ -1,5 +1,7 @@
 package com.nukateam.ntgl.common.data.holders;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import com.mojang.math.Axis;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.client.util.IHeldAnimation;
@@ -86,6 +88,7 @@ public class GripType extends ResourceHolder {
      * @param poseStack the matrixstack get
      * @return if the weapon can render
      */
+    @Environment(EnvType.CLIENT)
     public static boolean applyBackTransforms(LivingEntity entity, PoseStack poseStack) {
         if (entity.getItemBySlot(EquipmentSlot.CHEST).getItem() == Items.ELYTRA)
             return false;

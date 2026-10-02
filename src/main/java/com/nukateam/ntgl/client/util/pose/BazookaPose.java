@@ -1,5 +1,7 @@
 package com.nukateam.ntgl.client.util.pose;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import com.nukateam.ntgl.Config;
 import com.nukateam.ntgl.common.data.holders.GripType;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -59,6 +61,7 @@ public class BazookaPose extends WeaponPose {
         return false;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void applyHumanoidModelRotation(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart head, InteractionHand hand, float aimProgress) {
         if(hand == InteractionHand.OFF_HAND) return;
@@ -78,6 +81,7 @@ public class BazookaPose extends WeaponPose {
     }
 
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress) {
         if (Config.CLIENT.display.oldAnimations.get()) {
@@ -89,6 +93,7 @@ public class BazookaPose extends WeaponPose {
         }
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack) {
         if (!Config.CLIENT.display.oldAnimations.get()) {
@@ -99,6 +104,7 @@ public class BazookaPose extends WeaponPose {
         poseStack.translate(-10 * 0.0625, -11 * 0.0625, -20 * 0.0625);
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<?> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
         return GripType.applyBackTransforms(entity, poseStack);

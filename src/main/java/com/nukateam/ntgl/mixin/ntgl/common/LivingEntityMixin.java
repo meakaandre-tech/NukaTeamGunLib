@@ -1,5 +1,6 @@
 package com.nukateam.ntgl.mixin.ntgl.common;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import com.nukateam.ntgl.Config;
 import com.nukateam.ntgl.common.foundation.entity.ProjectileEntity;
 import net.minecraft.world.damagesource.DamageSource;
@@ -7,27 +8,21 @@ import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Author: MrCrayfish
  */
 @Mixin(LivingEntity.class)
 public class LivingEntityMixin {
-    private DamageSource source;
-
-    @Inject(method = "hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))
-    private void capture(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        this.source = source;
-    }
-
-    @ModifyArg(method = "hurt(Lnet/minecraft/world/damagesource/DamageSource;F)Z",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"), index = 0)
-    private double modifyApplyKnockbackArgs(double original) {
-        if (this.source.getDirectEntity() instanceof ProjectileEntity) {
+    /**
+     * Knockback of projectile hits is configurable. 26.x: the default knockback moved from hurt()
+     * to dealDefaultKnockback(), which receives the damage source.
+     */
+    @ModifyArg(method = "dealDefaultKnockback(Lnet/minecraft/world/damagesource/DamageSource;FZ)V",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDDLnet/minecraft/world/damagesource/DamageSource;F)V"), index = 0)
+    private double modifyApplyKnockbackArgs(double original, @Local(argsOnly = true) DamageSource source) {
+        if (source.getDirectEntity() instanceof ProjectileEntity) {
             if (!Config.COMMON.gameplay.enableKnockback.get()) {
                 return 0;
             }
@@ -37,6 +32,7 @@ public class LivingEntityMixin {
                 return strength;
             }
         }
+
         return original;
     }
 }

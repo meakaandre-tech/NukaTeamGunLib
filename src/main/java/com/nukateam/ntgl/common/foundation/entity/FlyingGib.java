@@ -1,6 +1,8 @@
 package com.nukateam.ntgl.common.foundation.entity;
 
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import com.nukateam.ntgl.ClientProxy;
 import com.nukateam.ntgl.common.foundation.entity.projectile.GoreData;
 import com.nukateam.ntgl.common.foundation.init.ModEntityTypes;
@@ -203,6 +205,7 @@ public class FlyingGib extends Entity {
         return data;
     }
 
+    @Environment(EnvType.CLIENT)
     @Nullable
     public LivingEntity getLocalEntity(){
         return localEntity.get().isPresent() ? localEntity.get().get() : null;

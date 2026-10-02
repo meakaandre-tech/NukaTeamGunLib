@@ -1,5 +1,7 @@
 package com.nukateam.ntgl.client.util.pose;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.nukateam.ntgl.Ntgl;
@@ -33,12 +35,14 @@ public class VanillaPose implements IHeldAnimation {
         return 0.5;
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack) {
         var side = hand == InteractionHand.OFF_HAND ? 1 : -1;
         poseStack.translate(0.45 * side, -0.5, -1.2);
     }
 
+    @Environment(EnvType.CLIENT)
     @Override
     public boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<?> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
         poseStack.mulPose(Axis.YP.rotationDegrees(180F));

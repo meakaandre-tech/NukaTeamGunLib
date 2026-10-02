@@ -44,7 +44,7 @@ public final class EventBus {
     public void register(Object target) {
         boolean isClass = target instanceof Class<?>;
         Class<?> type = isClass ? (Class<?>) target : target.getClass();
-        for (var method : type.getDeclaredMethods()) {
+        for (var method : type.getMethods()) {
             var annotation = method.getAnnotation(SubscribeEvent.class);
             if (annotation == null) continue;
             boolean isStatic = Modifier.isStatic(method.getModifiers());
