@@ -30,21 +30,21 @@ public class MuzzleMatrixHelper {
     }
 
     private static Vec3 viewToWorld(Matrix4f matrix) {
-        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Camera camera = Minecraft.getInstance().gameRenderer.mainCamera();
         if (camera == null || !camera.isInitialized()) return null;
 
         Vector3f viewPos = new Vector3f(0, 0, 0);
         matrix.transformPosition(viewPos);
 
-        org.joml.Vector3f left = camera.getLeftVector();
-        org.joml.Vector3f up = camera.getUpVector();
-        org.joml.Vector3f look = camera.getLookVector();
+        org.joml.Vector3fc left = camera.leftVector();
+        org.joml.Vector3fc up = camera.upVector();
+        org.joml.Vector3fc look = camera.forwardVector();
 
         double wx = -left.x() * viewPos.x() + up.x() * viewPos.y() - look.x() * viewPos.z();
         double wy = -left.y() * viewPos.x() + up.y() * viewPos.y() - look.y() * viewPos.z();
         double wz = -left.z() * viewPos.x() + up.z() * viewPos.y() - look.z() * viewPos.z();
 
-        return camera.getPosition().add(wx, wy, wz);
+        return camera.position().add(wx, wy, wz);
     }
 
     public static Vec3 getMuzzleWorldPos(float partialTicks) {

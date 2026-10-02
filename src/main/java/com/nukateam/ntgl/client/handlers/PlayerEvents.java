@@ -32,7 +32,7 @@ public class PlayerEvents {
 //        var poseStack = event.getPoseStack();
 //        poseStack.pushPose();
 //        {
-//            poseStack.mulPose(mc.gameRenderer.getMainCamera().rotation());
+//            poseStack.mulPose(mc.gameRenderer.mainCamera().rotation());
 //            poseStack.translate(X / 10d / 16d, Y / 10d / 16d, Z / 10d / 16d);
 //
 //            poseStack.translate(-65 / 10d / 16d, 0, 0);

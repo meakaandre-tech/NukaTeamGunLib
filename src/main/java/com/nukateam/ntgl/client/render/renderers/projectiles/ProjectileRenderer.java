@@ -1,32 +1,29 @@
 package com.nukateam.ntgl.client.render.renderers.projectiles;
 
+import com.nukateam.ntgl.client.render.renderers.LegacyEntityRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.nukateam.ntgl.client.helpers.MuzzleMatrixHelper;
 import com.nukateam.ntgl.client.util.helpers.render.ModelRenderUtil;
 import com.nukateam.ntgl.common.foundation.entity.ProjectileEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.phys.Vec3;
-public class ProjectileRenderer extends EntityRenderer<ProjectileEntity> {
+public class ProjectileRenderer extends LegacyEntityRenderer<ProjectileEntity> {
     public ProjectileRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
-    @Override
-    public Identifier getTextureLocation(ProjectileEntity entity) {
-        return null;
-    }
 
     @Override
     public void render(ProjectileEntity entity, float entityYaw, float partialTicks, PoseStack poseStack,
-                       MultiBufferSource renderTypeBuffer, int light) {
+                       SubmitNodeCollector renderTypeBuffer, CameraRenderState cameraState, int light) {
 
         if (!entity.isVisible() || entity.tickCount <= 1)
             return;
@@ -60,12 +57,12 @@ public class ProjectileRenderer extends EntityRenderer<ProjectileEntity> {
         if (!ModelRenderUtil.getModel(entity.getItem()).isGui3d()) {
             poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
             poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-            Minecraft.getInstance().getItemRenderer().renderStatic(item, ItemDisplayContext.GROUND, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, entity.level(), 0);
+            renderItem(item, ItemDisplayContext.GROUND, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, entity);
         } else {
             poseStack.mulPose(Axis.YP.rotationDegrees(180F));
             poseStack.mulPose(Axis.YP.rotationDegrees(entityYaw));
             poseStack.mulPose(Axis.XP.rotationDegrees(entity.getXRot()));
-            Minecraft.getInstance().getItemRenderer().renderStatic(item, ItemDisplayContext.NONE, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, entity.level(), 0);
+            renderItem(item, ItemDisplayContext.NONE, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, entity);
         }
 
         poseStack.popPose();

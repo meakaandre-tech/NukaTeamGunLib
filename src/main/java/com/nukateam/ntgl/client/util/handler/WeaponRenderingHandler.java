@@ -1,5 +1,9 @@
 package com.nukateam.ntgl.client.util.handler;
 
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.resources.model.cuboid.ItemTransform;
+import net.minecraft.util.LightCoordsUtil;
+import org.joml.Vector3fc;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.nukateam.ntgl.Config;
@@ -20,10 +24,6 @@ import com.nukateam.ntgl.Ntgl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransform;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.Identifier;
@@ -37,7 +37,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import com.nukateam.ntgl.platform.event.ClientTickEvent;
 import com.nukateam.ntgl.platform.event.client.RenderHandEvent;
 import com.nukateam.ntgl.platform.event.client.ViewportEvent;
@@ -46,7 +45,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
-import java.lang.reflect.Field;
 import java.util.*;
 
 import static com.nukateam.ntgl.client.util.helpers.PropertyHelper.*;
@@ -78,8 +76,6 @@ public class WeaponRenderingHandler {
     private float offhandTranslate;
     private float prevOffhandTranslate;
 
-    private Field equippedProgressMainHandField;
-    private Field prevEquippedProgressMainHandField;
 
     private float immersiveRoll;
     private float prevImmersiveRoll;
@@ -205,7 +201,7 @@ public class WeaponRenderingHandler {
 
         // Apply the new FOV
         var newFov = event.getFOV(); // Backwards compatibility
-        event.setFOV(Mth.lerp(time, event.getFOV(), newFov));
+        event.setFOV((float) Mth.lerp(time, event.getFOV(), newFov));
     }
 
     @SubscribeEvent
@@ -229,8 +225,8 @@ public class WeaponRenderingHandler {
 
         if (heldItem.getItem() instanceof IWeapon || heldItem.getItem() instanceof IThrowable) {
             event.setCanceled(true);
-            var model = minecraft.getItemRenderer().getModel(heldItem, player.level(), player, 0);
-            var rightHandTranslation = model.getTransforms().firstPersonRightHand.translation;
+            var model = ModelRenderUtil.getTransform(heldItem, ItemDisplayContext.FIRST_PERSON_RIGHT_HAND, player);
+            var rightHandTranslation = model.translation();
             var transformType = isRight ? ItemDisplayContext.FIRST_PERSON_RIGHT_HAND : ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
 
             poseStack.pushPose();
@@ -239,7 +235,7 @@ public class WeaponRenderingHandler {
 
                 if (heldItem.getItem() instanceof IWeapon weaponItem) {
                     var modifiedGun = weaponItem.getModifiedConfig(heldItem);
-                    var pos = model.getTransforms().firstPersonRightHand.translation;
+                    var pos = model.translation();
                     this.applyIronSightTransforms(event, poseStack, model, isRight, heldItem, modifiedGun);
                     this.applyAimingTransforms(poseStack, heldItem, pos, offset);
                     this.applySwayTransforms(poseStack, heldItem, player, rightHandTranslation, event.getPartialTick());
@@ -262,22 +258,10 @@ public class WeaponRenderingHandler {
 
 
     //        this.renderFirstPersonArms(event, poseStack, hand, heldItem, modifiedGun, packedLight);
-                this.renderWeapon(player, heldItem, transformType, event.getPoseStack(), event.getMultiBufferSource(), getWeaponLghtning(event, player));
+                this.renderWeapon(player, heldItem, transformType, event.getPoseStack(), event.getSubmitNodeCollector(), getWeaponLghtning(event, player));
             }
             poseStack.popPose();
         }
-    }
-
-    private Vec3 getArmTransforms(BakedModel model, InteractionHand hand){
-        ItemTransform handModel = hand == InteractionHand.MAIN_HAND ?
-                model.getTransforms().firstPersonRightHand :
-                model.getTransforms().firstPersonLeftHand;
-
-        float translateX = handModel.translation.x();
-        float translateY = handModel.translation.y();
-        float translateZ = handModel.translation.z();
-
-        return new Vec3(translateX, translateY, translateZ);
     }
 
     /* Determines the lighting for the weapon. Weapon will appear bright from muzzle flash or light sources */
@@ -285,7 +269,7 @@ public class WeaponRenderingHandler {
         int blockLight = player.isOnFire() ? 15 : player.level().getBrightness(LightLayer.BLOCK, BlockPos.containing(player.getEyePosition(event.getPartialTick())));
         blockLight += (this.entityIdForMuzzleFlash.contains(player.getId()) ? 3 : 0);
         blockLight = Math.min(blockLight, 15);
-        int packedLight = LightTexture.pack(blockLight, player.level().getBrightness(LightLayer.SKY, BlockPos.containing(player.getEyePosition(event.getPartialTick()))));
+        int packedLight = LightCoordsUtil.pack(blockLight, player.level().getBrightness(LightLayer.SKY, BlockPos.containing(player.getEyePosition(event.getPartialTick()))));
 
         return packedLight;
     }
@@ -299,14 +283,14 @@ public class WeaponRenderingHandler {
 //        poseStack.popPose();
 //    }
 
-    private void applyIronSightTransforms(RenderHandEvent event, PoseStack poseStack, BakedModel model,
+    private void applyIronSightTransforms(RenderHandEvent event, PoseStack poseStack, ItemTransform model,
                                           boolean isRight, ItemStack heldItem, WeaponConfig modifiedWeaponConfig) {
-        var scaleX = model.getTransforms().firstPersonRightHand.scale.x();
-        var scaleY = model.getTransforms().firstPersonRightHand.scale.y();
-        var scaleZ = model.getTransforms().firstPersonRightHand.scale.z();
-        var translateX = model.getTransforms().firstPersonRightHand.translation.x();
-        var translateY = model.getTransforms().firstPersonRightHand.translation.y();
-        var translateZ = model.getTransforms().firstPersonRightHand.translation.z();
+        var scaleX = model.scale().x();
+        var scaleY = model.scale().y();
+        var scaleZ = model.scale().z();
+        var translateX = model.translation().x();
+        var translateY = model.translation().y();
+        var translateZ = model.translation().z();
 
         if (AimingHandler.get().getNormalisedAdsProgress() > 0) {
             if (event.getHand() == InteractionHand.MAIN_HAND) {
@@ -363,9 +347,9 @@ public class WeaponRenderingHandler {
     private void applyBobbingTransforms(PoseStack poseStack, float partialTicks) {
         Minecraft mc = Minecraft.getInstance();
         if (mc.options.bobView().get() && mc.getCameraEntity() instanceof Player player) {
-            float deltaDistanceWalked = player.walkDist - player.walkDistO;
-            float distanceWalked = -(player.walkDist + deltaDistanceWalked * partialTicks);
-            float bobbing = Mth.lerp(partialTicks, player.oBob, player.bob);
+            var cameraEntity = mc.levelRenderer.levelRenderState.cameraRenderState.entityRenderState;
+            float distanceWalked = cameraEntity.backwardsInterpolatedWalkDistance;
+            float bobbing = cameraEntity.bob;
 
             /* Reverses the original bobbing rotations and translations so it can be controlled */
             poseStack.mulPose(Axis.XP.rotationDegrees(-(Math.abs(Mth.cos(distanceWalked * (float) Math.PI - 0.2F) * bobbing) * 5.0F)));
@@ -385,7 +369,7 @@ public class WeaponRenderingHandler {
     }
 
 
-    private void applyAimingTransforms(PoseStack poseStack, ItemStack heldItem, Vector3f pos, int offset) {
+    private void applyAimingTransforms(PoseStack poseStack, ItemStack heldItem, Vector3fc pos, int offset) {
 //        if (!Config.CLIENT.display.oldAnimations.get()) {
         var x = pos.x();
         var y = pos.y();
@@ -402,7 +386,7 @@ public class WeaponRenderingHandler {
 //        }
     }
 
-    private void applySwayTransforms(PoseStack poseStack, ItemStack heldItem, LocalPlayer player, Vector3f translation, float partialTicks) {
+    private void applySwayTransforms(PoseStack poseStack, ItemStack heldItem, LocalPlayer player, Vector3fc translation, float partialTicks) {
         if (Config.CLIENT.display.weaponSway.get() && player != null) {
             poseStack.translate(translation.x(), translation.y(), translation.z());
 
@@ -491,7 +475,7 @@ public class WeaponRenderingHandler {
 
     public void renderWeapon(@Nullable LivingEntity entity, ItemStack renderStack,
                              ItemDisplayContext transformType, PoseStack poseStack,
-                             MultiBufferSource bufferSource, int packedLight) {
+                             SubmitNodeCollector collector, int packedLight) {
         if (renderStack.getItem() instanceof WeaponItem weaponItem) {
             poseStack.pushPose();
             {
@@ -504,9 +488,7 @@ public class WeaponRenderingHandler {
                         renderStack,
                         transformType,
                         poseStack,
-                        bufferSource,
-                        null,
-                        null,
+                        collector,
                         packedLight);
 
                 this.renderingWeapon = null;
@@ -515,28 +497,9 @@ public class WeaponRenderingHandler {
         }
     }
 
-    /**
-     * A temporary hack to get the equip progress until Forge fixes the issue.
-     * @return
-     */
     private float getEquipProgress(float partialTicks) {
-        if (this.equippedProgressMainHandField == null) {
-            this.equippedProgressMainHandField = ObfuscationReflectionHelper.findField(ItemInHandRenderer.class, "mainHandHeight");
-            this.equippedProgressMainHandField.setAccessible(true);
-        }
-        if (this.prevEquippedProgressMainHandField == null) {
-            this.prevEquippedProgressMainHandField = ObfuscationReflectionHelper.findField(ItemInHandRenderer.class, "oMainHandHeight");
-            this.prevEquippedProgressMainHandField.setAccessible(true);
-        }
-        ItemInHandRenderer firstPersonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer();
-        try {
-            float equippedProgressMainHand = (float) this.equippedProgressMainHandField.get(firstPersonRenderer);
-            float prevEquippedProgressMainHand = (float) this.prevEquippedProgressMainHandField.get(firstPersonRenderer);
-            return 1.0F - Mth.lerp(partialTicks, prevEquippedProgressMainHand, equippedProgressMainHand);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return 0.0F;
+        ItemInHandRenderer firstPersonRenderer = Minecraft.getInstance().gameRenderer.itemInHandRenderer;
+        return 1.0F - Mth.lerp(partialTicks, firstPersonRenderer.oMainHandHeight, firstPersonRenderer.mainHandHeight);
     }
 
     private void updateImmersiveCamera() {
@@ -548,8 +511,8 @@ public class WeaponRenderingHandler {
             return;
 
         var heldItem = mc.player.getMainHandItem();
-        var targetAngle = heldItem.getItem() instanceof IWeapon || !Config.CLIENT.display.restrictCameraRollToWeapons.get() ? mc.player.input.leftImpulse : 0F;
-        var speed = mc.player.input.leftImpulse != 0 ? 0.1F : 0.15F;
+        var targetAngle = heldItem.getItem() instanceof IWeapon || !Config.CLIENT.display.restrictCameraRollToWeapons.get() ? mc.player.input.getMoveVector().x : 0F;
+        var speed = mc.player.input.getMoveVector().x != 0 ? 0.1F : 0.15F;
         this.immersiveRoll = Mth.lerp(speed, this.immersiveRoll, targetAngle);
 
         var deltaY = (float) Mth.clamp((mc.player.yo - mc.player.getY()), -1.0, 1.0);

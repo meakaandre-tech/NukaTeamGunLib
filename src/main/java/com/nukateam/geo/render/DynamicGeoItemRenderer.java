@@ -1,38 +1,43 @@
 package com.nukateam.geo.render;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.nukateam.ntgl.client.animators.WeaponAnimator;
-import com.nukateam.ntgl.client.registry.WeaponRegistry;
-import com.nukateam.ntgl.common.foundation.item.WeaponItem;
-import net.minecraft.client.Minecraft;
-import com.geckolib.cache.model.BakedGeoModel;
 import com.geckolib.cache.model.GeoBone;
 import com.geckolib.constant.DataTickets;
-import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.constant.dataticket.DataTicket;
 import com.geckolib.model.GeoModel;
-import com.geckolib.model.data.EntityModelData;
 import com.geckolib.renderer.GeoObjectRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import com.geckolib.renderer.base.BoneSnapshots;
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.renderer.base.RenderPassInfo;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Pair;
+import com.nukateam.ntgl.client.registry.WeaponRegistry;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.Vec3;
-import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Matrix4f;
+
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.BiFunction;
 
-public class DynamicGeoItemRenderer<Animator extends ItemAnimator> extends GeoObjectRenderer<Animator> {
+/**
+ * Renders a GeckoLib model for an item held by an entity, with one animator per (entity, display context).
+ * <p>
+ * GeckoLib 5 port notes: bones are immutable, so everything that used to be done in <code>renderRecursively</code>
+ * is split in two hooks: {@link #updateBone} (hide / move bones for this frame through their snapshot) and
+ * {@link #addBoneRenders} (extra geometry rendered at a bone).
+ */
+public class DynamicGeoItemRenderer<Animator extends ItemAnimator> extends GeoObjectRenderer<Animator, RenderContext, GeoRenderState> {
+    public static final DataTicket<RenderContext> CONTEXT = DataTicket.create("ntgl_render_context", RenderContext.class);
+
     private final Map<Pair<LivingEntity, ItemDisplayContext>, ItemAnimator> animatorsByTransform = new HashMap<>();
     private BiFunction<ItemDisplayContext, DynamicGeoItemRenderer<?>, Animator> animatorFactory = null;
-    private ItemStack currentStack;
-    private ItemDisplayContext currentTransform;
+    protected ItemStack currentStack;
+    protected ItemDisplayContext currentTransform;
     protected LivingEntity currentEntity;
     private LivingEntity buffEntity = null;
 
@@ -45,98 +50,116 @@ public class DynamicGeoItemRenderer<Animator extends ItemAnimator> extends GeoOb
         this.animatorFactory = animatorFactory;
     }
 
-    @Override
-    public void defaultRender(PoseStack poseStack, Animator animatable,
-                              MultiBufferSource bufferSource, @Nullable RenderType renderType,
-                              @Nullable VertexConsumer buffer, float yaw, float partialTick, int packedLight) {
-        animatable.setStack(currentStack);
-        super.defaultRender(poseStack, animatable, bufferSource, renderType, buffer, yaw, partialTick, packedLight);
-    }
-
-
-    @Override
-    public void actuallyRender(PoseStack poseStack, Animator animatable, BakedGeoModel model,
-                               RenderType renderType, MultiBufferSource bufferSource, VertexConsumer buffer,
-                               boolean isReRender, float partialTick, int packedLight, int packedOverlay,
-                               int colour) {
-        poseStack.pushPose();
-        {
-            boolean shouldSit = false;
-            float lerpBodyRot = 0;
-            float lerpHeadRot = 0;
-            float netHeadYaw = lerpHeadRot - lerpBodyRot;
-            float limbSwingAmount;
-            limbSwingAmount = 0.0F;
-            float limbSwing = 0.0F;
-
-            if (!isReRender)
-                setupRender(animatable, isReRender, partialTick, shouldSit, netHeadYaw, limbSwingAmount, limbSwing);
-
-            poseStack.translate(0.0, 0.009999999776482582, 0.0);
-            this.modelRenderTranslations = new Matrix4f(poseStack.last().pose());
-
-            super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
-        }
-        poseStack.popPose();
-    }
-
     public void render(LivingEntity entity, ItemStack stack, ItemDisplayContext transformType,
-                       PoseStack poseStack,
-                       @Nullable MultiBufferSource bufferSource,
-                       @Nullable RenderType renderType,
-                       @Nullable VertexConsumer buffer,
-                       int packedLight) {
+                       PoseStack poseStack, SubmitNodeCollector collector, int packedLight) {
         this.currentStack = stack;
         this.currentTransform = transformType;
         this.currentEntity = entity;
 
-        if(buffEntity != null){
+        if (buffEntity != null) {
             currentEntity = buffEntity;
             buffEntity = null;
         }
 
-        var partialTick = Minecraft.getInstance().getDeltaTracker().getRealtimeDeltaTicks();
-        super.render(poseStack, getAnimator(currentEntity, transformType, stack), bufferSource, renderType, buffer, packedLight, partialTick);
+        if (currentEntity == null || collector == null) return;
+
+        var minecraft = Minecraft.getInstance();
+        var partialTick = minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(false);
+        var cameraState = minecraft.levelRenderer.levelRenderState.cameraRenderState;
+        var animator = getAnimator(currentEntity, transformType, stack);
+        animator.setStack(stack);
+
+        performRenderPass(animator, new RenderContext(currentEntity, stack, transformType),
+                poseStack, collector, cameraState, packedLight, partialTick);
     }
 
+    @Override
+    public void addRenderData(Animator animatable, RenderContext context, GeoRenderState renderState, float partialTick) {
+        renderState.addGeckolibData(CONTEXT, context);
+        renderState.addGeckolibData(DataTickets.ITEM_RENDER_PERSPECTIVE, context.transformType());
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public RenderType getRenderType(GeoRenderState renderState, Identifier texture) {
+        if (getGeoModel() instanceof AnimatableGeoModel model) {
+            var animatable = model.getAnimatable(renderState);
+            if (animatable != null)
+                return model.getRenderType(animatable, texture);
+        }
+        return super.getRenderType(renderState, texture);
+    }
+
+    @Override
+    public void adjustRenderPose(RenderPassInfo<GeoRenderState> renderPassInfo) {
+        renderPassInfo.poseStack().translate(0.0F, 0.01F, 0.0F);
+        super.adjustRenderPose(renderPassInfo);
+    }
+
+    @Override
+    public void preRenderPass(RenderPassInfo<GeoRenderState> renderPassInfo, SubmitNodeCollector collector) {
+        super.preRenderPass(renderPassInfo, collector);
+        addBoneRenders(renderPassInfo);
+    }
+
+    @Override
+    public void adjustModelBonesForRender(RenderPassInfo<GeoRenderState> renderPassInfo, BoneSnapshots snapshots) {
+        super.adjustModelBonesForRender(renderPassInfo, snapshots);
+
+        for (var bone : renderPassInfo.model().boneLookup().get().values())
+            updateBone(renderPassInfo, bone, snapshots);
+    }
+
+    @Override
+    public void submitRenderTasks(RenderPassInfo<GeoRenderState> renderPassInfo, OrderedSubmitNodeCollector collector, RenderType renderType) {
+        // Bone updates are computed lazily by GeckoLib, possibly after this renderer was reused for another item.
+        // Compute them now, while the per-render fields of the renderer are still valid.
+        renderPassInfo.renderPosed(() -> {});
+        super.submitRenderTasks(renderPassInfo, collector, renderType);
+    }
+
+    /**
+     * Called once per bone and frame, after the animations were applied. Use <code>snapshots.get(bone)</code>
+     * to hide or move the bone for this frame.
+     */
+    protected void updateBone(RenderPassInfo<GeoRenderState> renderPassInfo, GeoBone bone, BoneSnapshots snapshots) {}
+
+    /**
+     * Called before rendering; register extra per-bone geometry with
+     * {@link RenderPassInfo#addPerBoneRender(GeoBone, com.geckolib.renderer.base.PerBoneRender)}.
+     */
+    protected void addBoneRenders(RenderPassInfo<GeoRenderState> renderPassInfo) {}
+
+    protected static void setHidden(BoneSnapshots snapshots, GeoBone bone, boolean hidden) {
+        snapshots.get(bone).skipRender(hidden).skipChildrenRender(hidden);
+    }
+
+    @SuppressWarnings("unchecked")
     public Animator getAnimator(LivingEntity entity, ItemDisplayContext transformType, ItemStack stack) {
         var key = Pair.of(entity, transformType);
+
         if (!animatorsByTransform.containsKey(key)) {
-            if(animatorFactory == null) {
+            if (animatorFactory == null) {
                 animatorFactory = (BiFunction<ItemDisplayContext, DynamicGeoItemRenderer<?>, Animator>)
-                        WeaponRegistry.getAnimator(stack.getItem());
+                        (Object) WeaponRegistry.getAnimator(stack.getItem());
             }
-            animatorsByTransform.put(key, animatorFactory.apply(transformType, this));
+            var animator = animatorFactory.apply(transformType, this);
+            animator.setStack(stack);
+            animatorsByTransform.put(key, animator);
         }
 
-        return (Animator)animatorsByTransform.get(key);
+        return (Animator) animatorsByTransform.get(key);
     }
 
     public LivingEntity getRenderEntity() {
         return currentEntity;
     }
 
-    public void setEntity(LivingEntity entity) {
-        this.buffEntity = entity;
+    public ItemDisplayContext getTransformType() {
+        return currentTransform;
     }
 
-    private void setupRender(Animator animatable, boolean isReRender, float partialTick, boolean shouldSit, float netHeadYaw, float limbSwingAmount, float limbSwing) {
-        var headPitch = 0;
-        var motionThreshold = 0;
-        var velocity = Vec3.ZERO;//nukateam
-        var avgVelocity = (float)(Math.abs(velocity.x) + Math.abs(velocity.z)) / 2.0F;
-        var animationState = new AnimationTest(animatable, limbSwing, limbSwingAmount, partialTick,
-                avgVelocity >= motionThreshold && limbSwingAmount != 0.0F);
-        var instanceId = this.getInstanceId(animatable);
-
-        animationState.setData(DataTickets.ITEM_RENDER_PERSPECTIVE, this.currentTransform);
-        animationState.setData(DataTickets.ITEMSTACK, this.currentStack);
-//        animationState.setData(DataTickets.TICK, animatable.getTick(animatable));
-        animationState.setData(DataTickets.ENTITY, currentEntity);
-        animationState.setData(DataTickets.ENTITY_MODEL_DATA, new EntityModelData(shouldSit, false, -netHeadYaw, -headPitch));
-        var var31 = this.model;
-        Objects.requireNonNull(animationState);
-        var31.addAdditionalStateData(animatable, instanceId, animationState::setData);
-        this.model.handleAnimations(animatable, instanceId, animationState, partialTick);
+    public void setEntity(LivingEntity entity) {
+        this.buffEntity = entity;
     }
 }

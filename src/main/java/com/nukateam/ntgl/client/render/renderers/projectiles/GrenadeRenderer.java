@@ -1,11 +1,12 @@
 package com.nukateam.ntgl.client.render.renderers.projectiles;
 
+import com.nukateam.ntgl.client.render.renderers.LegacyEntityRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import com.nukateam.ntgl.common.foundation.entity.GrenadeEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
@@ -14,18 +15,14 @@ import net.minecraft.world.item.ItemDisplayContext;
 /**
  * Author: MrCrayfish
  */
-public class GrenadeRenderer extends EntityRenderer<GrenadeEntity> {
+public class GrenadeRenderer extends LegacyEntityRenderer<GrenadeEntity> {
     public GrenadeRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
-    @Override
-    public Identifier getTextureLocation(GrenadeEntity entity) {
-        return null;
-    }
 
     @Override
-    public void render(GrenadeEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource renderTypeBuffer, int light) {
+    public void render(GrenadeEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, SubmitNodeCollector renderTypeBuffer, CameraRenderState cameraState, int light) {
         if (!entity.isVisible() || entity.tickCount <= 1) return;
 
         poseStack.pushPose();
@@ -41,8 +38,7 @@ public class GrenadeRenderer extends EntityRenderer<GrenadeEntity> {
 
         poseStack.translate(0.0, 0.5, 0.0);
 
-        Minecraft.getInstance().getItemRenderer().renderStatic(entity.getItem(), ItemDisplayContext.NONE, light,
-                OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, entity.level(), 0);
+        renderItem(entity.getItem(), ItemDisplayContext.NONE, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, entity);
 
         poseStack.popPose();
     }

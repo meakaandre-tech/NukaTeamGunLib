@@ -10,14 +10,14 @@ import net.minecraft.world.item.ItemStack;
 import com.nukateam.ntgl.platform.Lazy;
 import net.minecraft.core.registries.Registries;
 import org.jetbrains.annotations.Nullable;
-import com.geckolib.animatable.GeoEntity;
+import com.geckolib.util.GeckoLibUtil;
 import com.geckolib.animatable.instance.AnimatableInstanceCache;
 
 import static com.geckolib.util.GeckoLibUtil.createInstanceCache;
 
 
-public abstract class ItemAnimator implements GeoEntity, IItemAnimator, IResourceProvider {
-    protected final AnimatableInstanceCache cache = createInstanceCache(this);
+public abstract class ItemAnimator implements IItemAnimator, IResourceProvider {
+    protected final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     protected final ItemDisplayContext transformType;
     protected ItemStack itemStack;
     private final Lazy<Identifier> id = Lazy.of(this::crateId);

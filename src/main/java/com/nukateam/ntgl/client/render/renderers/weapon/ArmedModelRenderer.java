@@ -1,42 +1,37 @@
 package com.nukateam.ntgl.client.render.renderers.weapon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.nukateam.geo.render.DynamicGeoItemRenderer;
 import com.nukateam.geo.render.ItemAnimator;
 import com.nukateam.ntgl.Config;
 import com.nukateam.ntgl.client.handlers.ClientTickHandler;
 import com.nukateam.ntgl.client.render.layers.GlowingLayer;
 import com.nukateam.ntgl.client.util.helpers.TransformUtils;
-import com.nukateam.ntgl.common.util.helpers.compatibility.ChassisHelper;
-import com.geckolib.cache.model.GeoBone;
-import com.geckolib.model.GeoModel;
-import com.geckolib.util.RenderUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
 
 import static com.nukateam.ntgl.Ntgl.irisLoaded;
 import static com.nukateam.ntgl.client.render.GeoRenderUtils.*;
+import com.geckolib.cache.model.GeoBone;
+import com.geckolib.model.GeoModel;
+import com.geckolib.renderer.base.BoneSnapshots;
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.renderer.base.RenderPassInfo;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 
 public class ArmedModelRenderer<Animator extends ItemAnimator> extends DynamicGeoItemRenderer<Animator> {
     public static final String RIGHT_ARM = "right_arm";
     public static final String LEFT_ARM = "left_arm";
     public static final String RIGHT_ARM_ANIM = "right_arm_anim";
     public static final String LEFT_ARM_ANIM = "left_arm_anim";
-    protected MultiBufferSource bufferSource;
-    protected boolean firstRightRender = true;
-    protected boolean firstLeftRender = true;
+
     private ItemDisplayContext transformType;
 
     public ArmedModelRenderer(GeoModel<Animator> model) {
         super(model);
-        addRenderLayer(new GlowingLayer<>(this));
+        withRenderLayer(new GlowingLayer<>(this));
         ClientTickHandler.addTicker(this, this::tick);
     }
 
@@ -44,109 +39,73 @@ public class ArmedModelRenderer<Animator extends ItemAnimator> extends DynamicGe
 
     @Override
     public void render(LivingEntity entity, ItemStack stack, ItemDisplayContext transformType, PoseStack poseStack,
-                       @Nullable MultiBufferSource bufferSource,
-                       @Nullable RenderType renderType, @Nullable VertexConsumer buffer, int packedLight) {
-        this.bufferSource = bufferSource;
+                       SubmitNodeCollector collector, int packedLight) {
         this.transformType = transformType;
-        this.firstRightRender = true;
-        this.firstLeftRender  = true;
         this.currentEntity = entity;
 
         poseStack.pushPose();
         {
             poseStack.translate(0, 0, -50 / 10d / 16d);
-            super.render(entity, stack, transformType, poseStack, bufferSource, renderType, buffer, packedLight);
+            super.render(entity, stack, transformType, poseStack, collector, packedLight);
         }
         poseStack.popPose();
     }
 
     @Override
-    public void renderRecursively(PoseStack poseStack, Animator animatable, GeoBone bone, RenderType renderType,
-                                  MultiBufferSource bufferSource, VertexConsumer buffer,
-                                  boolean isReRender, float partialTick, int packedLight, int packedOverlay,
-                                  int colour) {
-        poseStack.pushPose();
-
-        switch (bone.getName()) {
-            case LEFT_ARM, RIGHT_ARM -> {
-                bone.setHidden(true);
-                bone.setChildrenHidden(false);
-                if(!irisLoaded && Config.CLIENT.display.renderHands.get()) {
-                    renderArms(poseStack, bone, packedLight, packedOverlay, bufferSource);
-                }
-            }
-            case LEFT_ARM_ANIM, RIGHT_ARM_ANIM ->{
-                if(!TransformUtils.isFirstPerson(transformType)){
-                    bone.setHidden(true);
-                }
-                else bone.setHidden(false);
-            }
+    protected void updateBone(RenderPassInfo<GeoRenderState> renderPassInfo, GeoBone bone, BoneSnapshots snapshots) {
+        switch (bone.name()) {
+            case LEFT_ARM, RIGHT_ARM -> snapshots.get(bone).skipRender(true).skipChildrenRender(false);
+            case LEFT_ARM_ANIM, RIGHT_ARM_ANIM -> setHidden(snapshots, bone, !TransformUtils.isFirstPerson(transformType));
         }
-
-        super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource,
-                this.bufferSource.getBuffer(renderType), isReRender, partialTick, packedLight,
-                packedOverlay, colour);
-        poseStack.popPose();
     }
 
+    @Override
+    protected void addBoneRenders(RenderPassInfo<GeoRenderState> renderPassInfo) {
+        if (irisLoaded || !Config.CLIENT.display.renderHands.get()) return;
+        if (!TransformUtils.isFirstPerson(this.transformType)) return;
 
-    protected void renderArms(PoseStack poseStack, GeoBone bone, int packedLight, int packedOverlay, MultiBufferSource bufferSource) {
+        for (var name : new String[]{LEFT_ARM, RIGHT_ARM}) {
+            renderPassInfo.model().getBone(name).ifPresent(bone ->
+                    renderPassInfo.addPerBoneRender(bone, (pass, armBone, collector) -> {
+                        var poseStack = pass.poseStack();
+                        // GeckoLib 5 hands the pose over at the bone pivot; the arm offsets expect the model origin
+                        armBone.translateAwayFromPivotPoint(poseStack);
+                        renderArms(poseStack, armBone, pass.packedLight(), pass.packedOverlay(), collector);
+                    }));
+        }
+    }
+
+    protected void renderArms(PoseStack poseStack, GeoBone bone, int packedLight, int packedOverlay, SubmitNodeCollector collector) {
         var client = Minecraft.getInstance();
         if(client.player == null) return;
 
         var isRightHand = this.transformType == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
         var isLeftHand = this.transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
 
-        if (bone.getName().equals(RIGHT_ARM)){
-            if(!firstRightRender)
-                return;
-            firstRightRender = false;
-        }
-        if (bone.getName().equals(LEFT_ARM)){
-            if(!firstLeftRender)
-                return;
-            firstLeftRender = false;
-        }
-
         if (isRightHand || isLeftHand) {
+            var snapshot = bone.frameSnapshot;
+
             poseStack.pushPose();
             {
-                RenderUtil.prepMatrixForBone(poseStack, bone);
                 poseStack.translate(0.01, -0.27, 0.05);
-                poseStack.scale(bone.getScaleX(), bone.getScaleY(), bone.getScaleZ());
+                if (snapshot != null)
+                    poseStack.scale(snapshot.getScaleX(), snapshot.getScaleY(), snapshot.getScaleZ());
 
-                if(ChassisHelper.isPlayerInChassis()){
-                    if(isRightHand) {
-                        if (bone.getName().equals(LEFT_ARM)) {
-                            ChassisHelper.renderChassisHand(poseStack, isRightHand, HumanoidArm.LEFT, packedLight);
-                        } else if (bone.getName().equals(RIGHT_ARM)) {
-                            ChassisHelper.renderChassisHand(poseStack, isRightHand, HumanoidArm.RIGHT, packedLight);
-                        }
-                    } else {
-                        if (bone.getName().equals(LEFT_ARM)) {
-                            ChassisHelper.renderChassisHand(poseStack, isRightHand, HumanoidArm.RIGHT, packedLight);
-                        } else if (bone.getName().equals(RIGHT_ARM)) {
-                            ChassisHelper.renderChassisHand(poseStack, isRightHand, HumanoidArm.LEFT, packedLight);
-                        }
+                if (isRightHand) {
+                    if (bone.name().equals(LEFT_ARM)) {
+                        poseStack.translate(-65 / 10d / 16d, 0 / 10d / 16d, 0 / 10d / 16d);
+                        renderArm(poseStack, bone, packedLight, collector, false);
+                    } else if (bone.name().equals(RIGHT_ARM)) {
+                        poseStack.translate(50 / 10d / 16d, -20 / 10d / 16d, 0 / 10d / 16d);
+                        renderArm(poseStack, bone, packedLight, collector, true);
                     }
-                }
-                else {
-                    if (isRightHand) {
-                        if (bone.getName().equals(LEFT_ARM)) {
-                            poseStack.translate(-65 / 10d / 16d, 0 / 10d / 16d, 0 / 10d / 16d);
-                            renderArm(poseStack, bone, packedLight, bufferSource, false);
-                        } else if (bone.getName().equals(RIGHT_ARM)) {
-                            poseStack.translate(50 / 10d / 16d, -20 / 10d / 16d, 0 / 10d / 16d);
-                            renderArm(poseStack, bone, packedLight, bufferSource, true);
-                        }
-                    } else {
-                        if (bone.getName().equals(LEFT_ARM)) {
-                            poseStack.translate(50 / 10d / 16d, -20 / 10d / 16d, 0 / 10d / 16d);
-                            renderArm(poseStack, bone, packedLight, bufferSource, true);
-                        } else if (bone.getName().equals(RIGHT_ARM)) {
-                            poseStack.translate(-65 / 10d / 16d, 0 / 10d / 16d, 0 / 10d / 16d);
-                            renderArm(poseStack, bone, packedLight, bufferSource, false);
-                        }
+                } else {
+                    if (bone.name().equals(LEFT_ARM)) {
+                        poseStack.translate(50 / 10d / 16d, -20 / 10d / 16d, 0 / 10d / 16d);
+                        renderArm(poseStack, bone, packedLight, collector, true);
+                    } else if (bone.name().equals(RIGHT_ARM)) {
+                        poseStack.translate(-65 / 10d / 16d, 0 / 10d / 16d, 0 / 10d / 16d);
+                        renderArm(poseStack, bone, packedLight, collector, false);
                     }
                 }
             }

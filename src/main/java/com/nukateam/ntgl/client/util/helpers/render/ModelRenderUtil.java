@@ -1,8 +1,9 @@
 package com.nukateam.ntgl.client.util.helpers.render;
 
+import net.minecraft.client.renderer.item.ItemStackRenderState;
+import net.minecraft.client.resources.model.cuboid.ItemTransform;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.*;
 import org.joml.Matrix3f;
@@ -23,18 +24,30 @@ public class ModelRenderUtil {
                 Math.max(0, width * scale), Math.max(0, height * scale));
     }
 
-    public static BakedModel getModel(Item item) {
-        return Minecraft.getInstance().getItemRenderer().getItemModelShaper().getItemModel(new ItemStack(item));
-    }
+    private static final ItemStackRenderState TRANSFORM_STATE = new ItemStackRenderState();
 
-    public static BakedModel getModel(ItemStack item) {
-        return Minecraft.getInstance().getItemRenderer().getItemModelShaper().getItemModel(item);
+    /**
+     * The display transform the item model defines for the given context
+     * (replacement for <code>BakedModel.getTransforms()</code>).
+     */
+    public static ItemTransform getTransform(ItemStack stack, ItemDisplayContext transformType, @Nullable LivingEntity entity) {
+        var minecraft = Minecraft.getInstance();
+        var level = entity != null ? entity.level() : minecraft.level;
+
+        try {
+            TRANSFORM_STATE.clear();
+            minecraft.getItemModelResolver().updateForTopItem(TRANSFORM_STATE, stack, transformType, level, entity, 0);
+            if (TRANSFORM_STATE.isEmpty()) return ItemTransform.NO_TRANSFORM;
+            var transform = TRANSFORM_STATE.firstLayer().itemTransform;
+            return transform != null ? transform : ItemTransform.NO_TRANSFORM;
+        } catch (RuntimeException e) {
+            return ItemTransform.NO_TRANSFORM;
+        }
     }
 
     public static void applyTransformType(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType, @Nullable LivingEntity entity) {
-        var model = Minecraft.getInstance().getItemRenderer().getModel(stack, entity != null ? entity.level() : null, entity, 0);
         var leftHanded = transformType == FIRST_PERSON_LEFT_HAND || transformType == THIRD_PERSON_LEFT_HAND;
-        model.applyTransform(transformType, poseStack, leftHanded);
+        getTransform(stack, transformType, entity).apply(leftHanded, poseStack.last());
 
         /* Flips the model and normals if left handed. */
         if (leftHanded) {

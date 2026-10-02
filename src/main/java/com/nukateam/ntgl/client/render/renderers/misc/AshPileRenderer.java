@@ -1,46 +1,78 @@
 package com.nukateam.ntgl.client.render.renderers.misc;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.geckolib.renderer.GeoObjectRenderer;
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.renderer.base.RenderPassInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.math.Axis;
+import com.nukateam.geo.render.AnimatableGeoModel;
 import com.nukateam.ntgl.client.model.misc.AshPileModel;
+import com.nukateam.ntgl.client.render.renderers.LegacyEntityRenderer;
 import com.nukateam.ntgl.common.foundation.entity.misc.AshPile;
-import com.geckolib.cache.model.BakedGeoModel;
-import com.geckolib.renderer.GeoEntityRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.ARGB;
 
-public class AshPileRenderer extends GeoEntityRenderer<AshPile> {
+/**
+ * Ash pile left by entities killed with fire/laser. It shrinks and fades out at the end of its life.
+ */
+public class AshPileRenderer extends LegacyEntityRenderer<AshPile> {
+    private final GeoRenderer geoRenderer = new GeoRenderer();
+
     public AshPileRenderer(EntityRendererProvider.Context renderManager) {
-        super(renderManager, new AshPileModel());
+        super(renderManager);
+    }
+
+    private static float getAlpha(AshPile entity) {
+        var prog = ((float) entity.getLife() / (float) entity.getMaxLife());
+
+        if (prog <= 0.2) {
+            var maxAlpha = ((entity.getMaxLife() * 0.2f));
+            return ((float) entity.getLife() / maxAlpha);
+        }
+
+        return 1.0F;
     }
 
     @Override
-    public void actuallyRender(PoseStack poseStack, AshPile entity, BakedGeoModel model, RenderType renderType,
-                               MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender,
-                               float partialTick, int packedLight, int packedOverlay,
-                               int colour) {
-        var prog = ((float) entity.getLife() / (float) entity.getMaxLife());
-        var newAlpha = ((colour >> 24) & 0xFF) / 255.0f;
-        if (prog <= 0.2) {
-            var maxAlpha = ((entity.getMaxLife() * 0.2f));
-            var newProg = ((float) entity.getLife() / maxAlpha);
-            newAlpha = newProg;
-        }
-        poseStack.pushPose();
-        {
-//            poseStack.scale(1.5f, 1.5f, 1.5f);
-//            poseStack.translate(0, 1f / 16D, 0);
-            poseStack.scale(newAlpha, newAlpha, newAlpha);
-            RenderSystem.setShaderColor(1, 1, 1, newAlpha);
-            super.actuallyRender(poseStack, animatable, model,
-                    renderType, bufferSource, buffer,
-                    isReRender, partialTick, packedLight,
-                    packedOverlay, colour);
+    public void render(AshPile entity, float entityYaw, float partialTicks, PoseStack poseStack,
+                       SubmitNodeCollector collector, CameraRenderState cameraState, int light) {
+        var alpha = getAlpha(entity);
+        if (alpha <= 0) return;
 
-            RenderSystem.setShaderColor(1, 1, 1, 1);
+        poseStack.mulPose(Axis.YP.rotationDegrees(180f - entityYaw));
+        poseStack.scale(alpha, alpha, alpha);
+        geoRenderer.performRenderPass(entity, null, poseStack, collector, cameraState, light, partialTicks);
+    }
+
+    private static class GeoRenderer extends GeoObjectRenderer<AshPile, Void, GeoRenderState> {
+        private final AshPileModel ashModel;
+
+        private GeoRenderer() {
+            this(new AshPileModel());
         }
-        poseStack.popPose();
+
+        private GeoRenderer(AshPileModel model) {
+            super(model);
+            this.ashModel = model;
+        }
+
+        @Override
+        public int getRenderColor(AshPile animatable, Void relatedObject, float partialTick) {
+            return ARGB.white(Math.clamp(getAlpha(animatable), 0f, 1f));
+        }
+
+        @Override
+        public RenderType getRenderType(GeoRenderState renderState, Identifier texture) {
+            return ashModel.getRenderType(null, texture);
+        }
+
+        @Override
+        public void adjustRenderPose(RenderPassInfo<GeoRenderState> renderPassInfo) {
+            // entities are rendered from their feet, not from the centre of a block
+        }
     }
 }

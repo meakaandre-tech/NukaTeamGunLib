@@ -5,16 +5,17 @@ import com.nukateam.ntgl.client.animators.WeaponAnimator;
 import com.nukateam.ntgl.client.model.IGlowingModel;
 import com.nukateam.ntgl.client.util.helpers.GeoModelHelper;
 import com.nukateam.ntgl.common.util.util.WeaponStateHelper;
-import com.geckolib.model.GeoModel;
+import com.nukateam.geo.render.AnimatableGeoModel;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 
-public class GeoWeaponModel<Animator extends WeaponAnimator> extends GeoModel<Animator> implements IGlowingModel<Animator> {
+public class GeoWeaponModel<Animator extends WeaponAnimator> extends AnimatableGeoModel<Animator> implements IGlowingModel<Animator> {
     public static final GeoWeaponModel INSTANCE = new GeoWeaponModel();
 
     @Override
     public Identifier getModelResource(Animator animator) {
-        return GeoModelHelper.getGunResource(animator, "geo/weapons/", ".geo.json");
+        return GeoModelHelper.getGunResource(animator, "weapons/", "");
     }
 
     @Override
@@ -30,12 +31,12 @@ public class GeoWeaponModel<Animator extends WeaponAnimator> extends GeoModel<An
 
     @Override
     public Identifier getAnimationResource(Animator animator) {
-        return GeoModelHelper.getGunResource(animator, "animations/weapons/", ".animation.json");
+        return GeoModelHelper.getGunResource(animator, "weapons/", "");
     }
 
     @Override
     public RenderType getRenderType(Animator animatable, Identifier texture) {
-        return RenderType.entityTranslucent(getTextureResource(animatable));
+        return RenderTypes.entityTranslucent(getTextureResource(animatable));
     }
 
     @Override

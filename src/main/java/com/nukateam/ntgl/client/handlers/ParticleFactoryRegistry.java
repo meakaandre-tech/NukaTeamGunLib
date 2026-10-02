@@ -12,12 +12,13 @@ import com.nukateam.ntgl.platform.SubscribeEvent;
  * Author: MrCrayfish
  */
 public class ParticleFactoryRegistry {
-    @SubscribeEvent
-    public static void onRegisterParticleFactory(RegisterParticleProvidersEvent event) {
-        event.registerSpecial(ModParticleTypes.BULLET_HOLE.get(),
-                (typeIn, worldIn, x, y, z, xSpeed, ySpeed, zSpeed) ->
+    public static void register() {
+        var registry = net.fabricmc.fabric.api.client.particle.v1.ParticleProviderRegistry.getInstance();
+
+        registry.register(ModParticleTypes.BULLET_HOLE.get(),
+                (typeIn, worldIn, x, y, z, xSpeed, ySpeed, zSpeed, random) ->
                         new BulletHoleParticle(worldIn, x, y, z, typeIn.direction(), typeIn.pos()));
-        event.registerSpriteSet(ModParticleTypes.BLOOD.get(), BloodParticle.Factory::new);
-        event.registerSpriteSet(ModParticleTypes.TRAIL.get(), TrailParticle.Factory::new);
+        registry.register(ModParticleTypes.BLOOD.get(), BloodParticle.Factory::new);
+        registry.register(ModParticleTypes.TRAIL.get(), TrailParticle.Factory::new);
     }
 }

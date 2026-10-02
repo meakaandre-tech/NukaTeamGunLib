@@ -1,5 +1,8 @@
 package com.nukateam.ntgl.client.render.renderers.projectiles;
 
+import com.nukateam.ntgl.client.render.renderers.LegacyEntityRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.nukateam.ntgl.Ntgl;
@@ -10,16 +13,14 @@ import com.nukateam.ntgl.common.util.data.RGB;
 import com.nukateam.ntgl.common.util.data.Rgba;
 import com.nukateam.ntgl.common.foundation.entity.LaserProjectile;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
-public class LaserProjectileRenderer extends EntityRenderer<LaserProjectile> {
+public class LaserProjectileRenderer extends LegacyEntityRenderer<LaserProjectile> {
     public static final float BEAM_ALPHA = 0.7F;
     public static Identifier LASER_TEXTURE = Identifier.tryBuild(Ntgl.MOD_ID, "textures/fx/laser.png");
     private static final float LASER_RADIUS = 0.05F / 4;
@@ -29,7 +30,6 @@ public class LaserProjectileRenderer extends EntityRenderer<LaserProjectile> {
         super(context);
     }
 
-    @Override
     public Identifier getTextureLocation(LaserProjectile entity) {
         var variant = entity.getProjectile().getProjectileVariant();
         return variant == ProjectileVariant.STANDARD ? LASER_TEXTURE : variant.getIcon();
@@ -54,7 +54,7 @@ public class LaserProjectileRenderer extends EntityRenderer<LaserProjectile> {
 
     @Override
     public void render(LaserProjectile projectile, float entityYaw, float partialTicks,
-                       PoseStack poseStack, @NotNull MultiBufferSource bufferSource, int light) {
+                       PoseStack poseStack, SubmitNodeCollector bufferSource, CameraRenderState cameraState, int light) {
         var prog = ((float) projectile.tickCount) / ((float) projectile.getLife());
         var fadingValue = Math.sin(Math.sqrt(prog) * Math.PI);
         var radius = (float) (getLaserRadius() * fadingValue * 2);

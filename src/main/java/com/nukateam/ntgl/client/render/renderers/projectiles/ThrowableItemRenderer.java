@@ -1,12 +1,13 @@
 package com.nukateam.ntgl.client.render.renderers.projectiles;
 
+import com.nukateam.ntgl.client.render.renderers.LegacyEntityRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.nukateam.ntgl.common.foundation.entity.throwable.ThrowableItemEntity;
 import com.nukateam.ntgl.common.foundation.item.interfaces.IThrowable;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
@@ -15,21 +16,16 @@ import net.minecraft.world.item.ItemDisplayContext;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-public class ThrowableItemRenderer extends EntityRenderer<ThrowableItemEntity> {
+public class ThrowableItemRenderer extends LegacyEntityRenderer<ThrowableItemEntity> {
     public static final int MAX_SIZE_TICK = 5;
 
     public ThrowableItemRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
-    @Nullable
-    @Override
-    public Identifier getTextureLocation(@NotNull ThrowableItemEntity entity) {
-        return null;
-    }
 
     @Override
-    public void render(ThrowableItemEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource renderTypeBuffer, int light) {
+    public void render(ThrowableItemEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, SubmitNodeCollector renderTypeBuffer, CameraRenderState cameraState, int light) {
         poseStack.pushPose();
         {
             /* Makes the grenade face in the direction of travel */
@@ -53,9 +49,7 @@ public class ThrowableItemRenderer extends EntityRenderer<ThrowableItemEntity> {
 
             var item = entity.getItem();
 
-            Minecraft.getInstance().getItemRenderer().renderStatic(
-                    item, ItemDisplayContext.GROUND, light, OverlayTexture.NO_OVERLAY,
-                    poseStack, renderTypeBuffer, entity.level(), 0);
+            renderItem(item, ItemDisplayContext.GROUND, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, entity);
         }
         poseStack.popPose();
     }

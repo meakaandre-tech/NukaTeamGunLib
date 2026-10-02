@@ -1,7 +1,6 @@
 package com.nukateam.ntgl.client.render.renderers.weapon;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.geo.render.ItemAnimator;
 import com.nukateam.ntgl.client.animators.WeaponAnimator;
@@ -14,28 +13,27 @@ import com.nukateam.ntgl.common.data.config.weapon.Modules;
 import com.nukateam.ntgl.common.data.config.weapon.WeaponConfig;
 import com.nukateam.ntgl.common.data.holders.AttachmentType;
 import com.nukateam.ntgl.common.util.util.WeaponModifierHelper;
-import com.nukateam.ntgl.common.util.data.Rgba;
 import com.nukateam.ntgl.common.foundation.item.attachment.BarrelItem;
 import com.nukateam.ntgl.common.util.util.WeaponStateHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
-import com.geckolib.cache.model.GeoBone;
-import com.geckolib.model.GeoModel;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.registries.Registries;
-import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 
 import java.util.ArrayList;
 
 import static com.nukateam.ntgl.client.util.ClientDebug.*;
+import com.geckolib.cache.model.GeoBone;
+import com.geckolib.model.GeoModel;
+import com.geckolib.renderer.base.BoneSnapshots;
+import com.geckolib.renderer.base.GeoRenderState;
+import com.geckolib.renderer.base.RenderPassInfo;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 
 public class DynamicWeaponRenderer<Animator extends ItemAnimator> extends ArmedModelRenderer<Animator> {
     public static final String MUZZLE_FLASH = "muzzle_flash";
-    protected MultiBufferSource bufferSource;
     protected ArrayList<ItemStack> gunAttachments;
     protected ArrayList<Modules.Attachment> configAttachments;
     protected ArrayList<String> hiddenBones = new ArrayList<>();
@@ -50,9 +48,7 @@ public class DynamicWeaponRenderer<Animator extends ItemAnimator> extends ArmedM
 
     @Override
     public void render(LivingEntity entity, ItemStack stack, ItemDisplayContext transformType, PoseStack poseStack,
-                       @Nullable MultiBufferSource bufferSource,
-                       @Nullable RenderType renderType, @Nullable VertexConsumer buffer, int packedLight) {
-        this.bufferSource = bufferSource;
+                       SubmitNodeCollector collector, int packedLight) {
         this.transformType = transformType;
         var data = new WeaponData(stack, entity);
         this.weaponConfig = WeaponModifierHelper.getConfig(data);
@@ -90,79 +86,66 @@ public class DynamicWeaponRenderer<Animator extends ItemAnimator> extends ArmedM
                 poseStack.translate(staticOffset.x / 16D, staticOffset.y / 16D, staticOffset.z / 16D);
                 poseStack.translate(0, -0.5 / 16D, 0 / 16d);
             }
-            super.render(entity, stack, transformType, poseStack, bufferSource, renderType, buffer, packedLight);
+            super.render(entity, stack, transformType, poseStack, collector, packedLight);
         }
         poseStack.popPose();
     }
 
     @Override
-    public void renderRecursively(PoseStack poseStack, Animator animatable, GeoBone bone, RenderType renderType,
-                                  MultiBufferSource bufferSource, VertexConsumer buffer,
-                                  boolean isReRender, float partialTick, int packedLight, int packedOverlay,
-                                  int colour) {
-        poseStack.pushPose();
-        renderAttachments(bone);
+    protected void updateBone(RenderPassInfo<GeoRenderState> renderPassInfo, GeoBone bone, BoneSnapshots snapshots) {
+        var boneName = bone.name();
 
-        if (bone.getName().equals(MUZZLE_FLASH)) {
-            if (barrelItem != null) {
-                renderMuzzleFlash(poseStack);
+        if (hiddenBones.contains(boneName))
+            setHidden(snapshots, bone, true);
+
+        if (boneName.equals(MUZZLE_FLASH) && barrelItem != null) {
+            var snapshot = snapshots.get(bone);
+            var length = barrelItem.getProperties().getLength();
+            snapshot.setTranslateZ(snapshot.getTranslateZ() - (float) length);
+
+            if (Ntgl.isDebugging()) {
+                snapshot.setTranslateX(snapshot.getTranslateX() + (float) (muzzleFlashX / 10D));
+                snapshot.setTranslateY(snapshot.getTranslateY() + (float) (muzzleFlashY / 10D));
+                snapshot.setTranslateZ(snapshot.getTranslateZ() + (float) (muzzleFlashZ / 10D));
             }
         }
 
-        if(bone.getName().startsWith(MUZZLE_FLASH) && !TransformUtils.isHandTransform(transformType)) {
-            bone.setHidden(true);
-        }
-        if (!bone.isHidden() && bone.getName().startsWith(MUZZLE_FLASH)) {
-            Matrix4f mat = new Matrix4f(poseStack.last().pose());
-            mat.translate(
-                (bone.getPivotX() + bone.getPosX()) / 16.0f,
-                (bone.getPivotY() + bone.getPosY()) / 16.0f,
-                (bone.getPivotZ() + bone.getPosZ()) / 16.0f
-            );
+        if (boneName.startsWith(MUZZLE_FLASH) && !TransformUtils.isHandTransform(transformType))
+            setHidden(snapshots, bone, true);
 
-            boolean isFirstPerson = this.transformType == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
-                    || this.transformType == ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
-            boolean isThirdPerson = this.transformType == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND
-                    || this.transformType == ItemDisplayContext.THIRD_PERSON_LEFT_HAND;
+        super.updateBone(renderPassInfo, bone, snapshots);
+    }
 
-            LivingEntity entity = this.getRenderEntity();
+    @Override
+    protected void addBoneRenders(RenderPassInfo<GeoRenderState> renderPassInfo) {
+        super.addBoneRenders(renderPassInfo);
 
-            if (entity != null) {
+        if (!TransformUtils.isHandTransform(transformType)) return;
+
+        var isFirstPerson = TransformUtils.isFirstPerson(transformType);
+        var entity = this.getRenderEntity();
+        if (entity == null) return;
+        var entityId = entity.getId();
+
+        for (var bone : renderPassInfo.model().boneLookup().get().values()) {
+            if (!bone.name().startsWith(MUZZLE_FLASH)) continue;
+
+            renderPassInfo.addPerBoneRender(bone, (pass, muzzleBone, collector) -> {
+                var snapshot = muzzleBone.frameSnapshot;
+                if (snapshot != null && snapshot.isHidden()) return;
+
+                // the pose is already positioned at the pivot of the bone
+                var mat = new Matrix4f(pass.poseStack().last().pose());
+
                 if (isFirstPerson) {
-                    MuzzleMatrixHelper.saveMuzzleMatrix(entity.getId(), mat, true);
+                    MuzzleMatrixHelper.saveMuzzleMatrix(entityId, mat, true);
                     MuzzleMatrixHelper.lastMuzzleMatrix = mat;
-                } else if (isThirdPerson) {
-                    MuzzleMatrixHelper.saveMuzzleMatrix(entity.getId(), mat, false);
+                } else {
+                    MuzzleMatrixHelper.saveMuzzleMatrix(entityId, mat, false);
                     MuzzleMatrixHelper.lastThirdPersonMuzzleMatrix = mat;
                 }
-            }
+            });
         }
-
-        renderRecursivelyPost(poseStack, animatable, bone, renderType, bufferSource,
-                buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
-
-        super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource,
-                this.bufferSource.getBuffer(renderType), isReRender, partialTick, packedLight,
-                packedOverlay, colour);
-        poseStack.popPose();
-    }
-    
-    protected void renderRecursivelyPost(PoseStack poseStack, Animator animatable, GeoBone bone, RenderType renderType,
-                                         MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender,
-                                         float partialTick, int packedLight, int packedOverlay, int colour) {}
-
-
-    protected void renderAttachments(GeoBone bone) {
-        var boneName = bone.getName();
-        var hideBone = hiddenBones.stream().anyMatch((s) -> s.equals(boneName));
-        bone.setHidden(hideBone);
-    }
-
-    protected void renderMuzzleFlash(PoseStack poseStack) {
-        var length = barrelItem.getProperties().getLength();
-        poseStack.translate(0, 0, -length / 16D);
-        if (Ntgl.isDebugging())
-            poseStack.translate(-muzzleFlashX / 10D / 16D, muzzleFlashY / 10D / 16D, muzzleFlashZ / 10D / 16D);
     }
 
     protected void prepareHiddenBones(ItemDisplayContext transformType) {

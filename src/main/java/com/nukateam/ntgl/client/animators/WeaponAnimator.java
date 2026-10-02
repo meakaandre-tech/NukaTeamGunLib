@@ -29,13 +29,15 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.*;
 import org.jetbrains.annotations.NotNull;
-import com.geckolib.animation.keyframe.event.SoundKeyframeEvent;
+import com.geckolib.animation.state.KeyFrameEvent;
+import com.geckolib.cache.animation.keyframeevent.SoundKeyframeData;
+import com.geckolib.animation.object.LoopType;
+import com.geckolib.animatable.manager.AnimatableManager;
 
 import static com.nukateam.ntgl.client.util.helpers.TransformUtils.*;
 import static com.nukateam.ntgl.common.data.constants.Animations.*;
 import static com.geckolib.animation.RawAnimation.begin;
-import static com.geckolib.animation.Animation.*;
-import static com.geckolib.animation.Animation.LoopType.*;
+import static com.geckolib.animation.object.LoopType.*;
 public class WeaponAnimator extends ItemAnimator implements IConfigProvider<WeaponConfig> {
     public static final String STATIC = "static";
     public static final String PREPARE = "prepare";
@@ -158,7 +160,7 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
 
     @NotNull
     protected AnimationController<WeaponAnimator> createController(String name, AnimationStateHandler<WeaponAnimator> animate) {
-        return new AnimationController<>(this, name, 0, animate);
+        return new AnimationController<>(name, 0, animate);
     }
 
     protected InteractionHand getArm() {
@@ -172,7 +174,7 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
                 return event.setAndContinue(playVoid());
             }
             try {
-                var controller = event.getController();
+                var controller = event.controller();
                 controller.setAnimationSpeed(1);
                 var shooter = getEntity();
 
@@ -241,7 +243,7 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
 
     protected AnimationStateHandler<WeaponAnimator> animateTick() {
         return event -> {
-            var controller = event.getController();
+            var controller = event.controller();
             controller.setAnimationSpeed(1);
             var holdAnimation = getHoldAnimation(event);
 
@@ -281,7 +283,7 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
     }
 
     protected PlayState getCycledAnimation(AnimationTest<WeaponAnimator> event, String animationName, Cycler cycler) {
-        event.getController().setAnimationSpeed(1.0);
+        event.controller().setAnimationSpeed(1.0);
 
         if (TransformUtils.isHandTransform(this.transformType) && cycler != null) {
             var entity = this.getEntity();
@@ -294,7 +296,7 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
                 this.animationHelper.syncAnimation(event, rate, finalAnim);
             }
 
-            return event.setAndContinue(animation);
+            return animation != null ? event.setAndContinue(animation) : PlayState.STOP;
         }
         return PlayState.STOP;
     }
@@ -308,6 +310,8 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
     }
 
     protected RawAnimation getHideAnimation(AnimationTest<WeaponAnimator> event) {
+        if (!animationHelper.hasAnimation(Animations.HIDE))
+            return begin();
         return begin().then(Animations.HIDE, HOLD_ON_LAST_FRAME);
     }
 
@@ -321,7 +325,6 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
     protected RawAnimation getChargingAnimation(AnimationTest<WeaponAnimator> event, ShootingData shootingData) {
             var animation = begin();
             if (animationHelper.hasAnimation(Animations.CHARGE)) {
-                BARREL_CONTROLLER.stop();
                 BARREL_CONTROLLER.setAnimation(playVoid());
                 animation = playGunAnim(Animations.CHARGE, LOOP);
                 animationHelper.syncAnimation(event, fireDelay, Animations.CHARGE);
@@ -413,9 +416,9 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
         return animation;
     }
 
-    protected void handleSoundEvent(SoundKeyframeEvent<WeaponAnimator> event) {
+    protected void handleSoundEvent(KeyFrameEvent<WeaponAnimator, SoundKeyframeData> event) {
         var player = minecraft.player;
-        var name = event.getKeyframeData().getSound();
+        var name = event.keyframeData().getSound();
         var sound = WeaponModifierHelper.getSound(name, getWeaponData());
 
         if (sound != null && player != null) {
@@ -427,6 +430,9 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
     protected RawAnimation playGunAnim(String name, LoopType loopType) {
         if(isFirstPerson(getTransformType())) {
             var gunAnim = getGunAnim(name);
+            // GeckoLib 5 reports a missing animation on every frame, so skip the ones the model does not have
+            if (!animationHelper.hasAnimation(gunAnim))
+                return begin();
             return begin().then(gunAnim, loopType);
         }
         else {

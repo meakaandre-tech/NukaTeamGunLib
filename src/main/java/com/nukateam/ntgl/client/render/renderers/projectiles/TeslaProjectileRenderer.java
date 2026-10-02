@@ -1,5 +1,8 @@
 package com.nukateam.ntgl.client.render.renderers.projectiles;
 
+import com.nukateam.ntgl.client.render.renderers.LegacyEntityRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.nukateam.ntgl.Ntgl;
@@ -10,16 +13,14 @@ import com.nukateam.ntgl.client.util.helpers.render.RenderUtil;
 import com.nukateam.ntgl.common.util.data.Rgba;
 import com.nukateam.ntgl.common.foundation.entity.TeslaProjectile;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.culling.Frustum;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.concurrent.ThreadLocalRandom;
-public class TeslaProjectileRenderer extends EntityRenderer<TeslaProjectile> {
+public class TeslaProjectileRenderer extends LegacyEntityRenderer<TeslaProjectile> {
     public static Identifier texture = Identifier.tryBuild(Ntgl.MOD_ID, "textures/fx/tesla.png");
     private final float laserRadius = 0.05F / 5;
     private final float laserGlowRadius = 0.055F / 5;
@@ -32,7 +33,6 @@ public class TeslaProjectileRenderer extends EntityRenderer<TeslaProjectile> {
         super(context);
     }
 
-    @Override
     public Identifier getTextureLocation(TeslaProjectile entity) {
         var variant = entity.getProjectile().getProjectileVariant();
         return variant == ProjectileVariant.STANDARD ? texture : variant.getIcon();
@@ -43,8 +43,9 @@ public class TeslaProjectileRenderer extends EntityRenderer<TeslaProjectile> {
         return true;
     }
 
+    @Override
     public void render(TeslaProjectile projectile, float entityYaw, float partialTicks,
-                        PoseStack poseStack, MultiBufferSource bufferSource, int light) {
+                        PoseStack poseStack, SubmitNodeCollector bufferSource, CameraRenderState cameraState, int light) {
         int shooterId = projectile.getOwnerId();
         Vec3 muzzleWorldPos = MuzzleMatrixHelper.getMuzzleWorldPosForEntity(shooterId, partialTicks);
 
@@ -68,7 +69,7 @@ public class TeslaProjectileRenderer extends EntityRenderer<TeslaProjectile> {
         renderLightning(projectile, partialTicks, poseStack, bufferSource, false, muzzleWorldPos != null);
     }
 
-    private void renderLightning(TeslaProjectile projectile, float partialTicks, PoseStack poseStack, MultiBufferSource bufferSource, boolean isVertical, boolean hasMuzzle) {
+    private void renderLightning(TeslaProjectile projectile, float partialTicks, PoseStack poseStack, SubmitNodeCollector bufferSource, boolean isVertical, boolean hasMuzzle) {
         var prog = ((float) projectile.tickCount) / ((float) projectile.getLife());
         var fadingValue = Math.sin(Math.sqrt(prog) * Math.PI);
         var radius = (float) (laserRadius * fadingValue * 2);

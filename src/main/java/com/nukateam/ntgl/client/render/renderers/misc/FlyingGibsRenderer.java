@@ -1,23 +1,23 @@
 package com.nukateam.ntgl.client.render.renderers.misc;
 
+import com.nukateam.ntgl.client.render.renderers.LegacyEntityRenderer;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import com.nukateam.ntgl.ClientProxy;
 import com.nukateam.ntgl.common.util.data.Rgba;
 import com.nukateam.ntgl.common.foundation.entity.FlyingGib;
-import com.geckolib.animatable.GeoAnimatable;
-import com.geckolib.renderer.GeoRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.resources.Identifier;
 
 import static com.nukateam.ntgl.client.render.renderers.misc.DeathFxRenderer.setupGoreData;
 import static com.nukateam.ntgl.common.foundation.entity.projectile.DeathEffect.getGoreData;
-public class FlyingGibsRenderer extends EntityRenderer<FlyingGib> {
+public class FlyingGibsRenderer extends LegacyEntityRenderer<FlyingGib> {
     public static final int MAX_DEATH_TIME = 20;
 
     public FlyingGibsRenderer(EntityRendererProvider.Context pContext) {
@@ -25,7 +25,7 @@ public class FlyingGibsRenderer extends EntityRenderer<FlyingGib> {
     }
     @Override
     public void render(FlyingGib flyingGib, float pEntityYaw, float pPartialTick, PoseStack poseStack,
-                       MultiBufferSource buffer, int packedLight) {
+                       SubmitNodeCollector buffer, CameraRenderState cameraState, int packedLight) {
         var entity = flyingGib.getLocalEntity();
         if(entity == null) return;
 
@@ -38,22 +38,21 @@ public class FlyingGibsRenderer extends EntityRenderer<FlyingGib> {
             poseStack.pushPose();
             {
                 var render = ClientProxy.getEntityRenderer(entity);
-                if (render instanceof LivingEntityRenderer<?, ?>) {
+                if (render instanceof LivingEntityRenderer livingRenderer) {
                     try {
-                        if (data.texture == null)
-                            data.texture = render.getTextureLocation(entity);
-                    } catch (IllegalArgumentException e) {
+                        if (data.texture == null) {
+                            var entityState = (LivingEntityRenderState) livingRenderer.createRenderState(entity, pPartialTick);
+                            data.texture = livingRenderer.getTextureLocation(entityState);
+                        }
+                    } catch (RuntimeException e) {
                         e.printStackTrace();
                     }
                     poseStack.mulPose(Axis.ZP.rotationDegrees(180));
                 }
-                else if(render instanceof GeoRenderer geoRenderer && entity instanceof GeoAnimatable animatable){
-                    if (data.texture == null) {
-                        var geoModel = geoRenderer.getGeoModel();
-                        data.texture = geoModel.getTextureResource(animatable);
-                    }
-                    poseStack.mulPose(Axis.YP.rotationDegrees(180));
-                    isGeoModel = true;
+
+                if (data.texture == null) {
+                    poseStack.popPose();
+                    return;
                 }
 
                 var partialTickTime = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
@@ -72,8 +71,7 @@ public class FlyingGibsRenderer extends EntityRenderer<FlyingGib> {
 
                 var partialTicks = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
                 var texture = data.texture;
-                var rendertype = RenderType.itemEntityTranslucentCull(texture);
-                var vertexConsumer = buffer.getBuffer(rendertype);
+                var rendertype = RenderTypes.entityTranslucent(texture);
                 var prog = (entity.deathTime + partialTicks - 1.0F) / MAX_DEATH_TIME;
                 var reverseProg = 1.0f - prog;
                 var scale = 1.0f + prog / 2;
@@ -123,12 +121,5 @@ public class FlyingGibsRenderer extends EntityRenderer<FlyingGib> {
             }
             poseStack.popPose();
         }
-    }
-
-    @Override
-    public Identifier getTextureLocation(FlyingGib entity) {
-        var render = ClientProxy.getEntityRenderer(entity.getLocalEntity());
-        return render.getTextureLocation(entity.getLocalEntity());
-//        return getGoreData(entity.entity).texture;
     }
 }

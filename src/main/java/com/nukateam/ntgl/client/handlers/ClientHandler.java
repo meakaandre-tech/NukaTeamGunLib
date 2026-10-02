@@ -7,7 +7,6 @@ import com.nukateam.ntgl.client.render.screen.*;
 import com.nukateam.ntgl.common.foundation.init.NtglContainers;
 import com.nukateam.ntgl.Ntgl;
 import net.minecraft.world.InteractionHand;
-import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.platform.SubscribeEvent;
 import com.nukateam.ntgl.platform.event.ClientTickEvent;
@@ -20,7 +19,6 @@ import java.lang.reflect.Field;
 public class ClientHandler {
     public static final int INSPECTION_DURATION = 60;
     public static final int INSPECTION_OFFSET = 5;
-    private static Field mouseOptionsField;
 
     public static void setup() {
         Ntgl.EVENT_BUS.register(AimingHandler.get());
@@ -31,14 +29,6 @@ public class ClientHandler {
         Ntgl.EVENT_BUS.register(ClientShootingHandler.get());
         Ntgl.EVENT_BUS.register(ClientEquipHandler.get());
         Ntgl.EVENT_BUS.register(SoundHandler.get());
-        Ntgl.EVENT_BUS.register(new EntityModelHandler());
-
-        /* Only register controller events if Controllable is loaded otherwise it will crash */
-        if (Ntgl.controllableLoaded) {
-//            ControllerHandler.init();
-            Ntgl.EVENT_BUS.register(new ControllerHandler());
-            GunButtonBindings.register();
-        }
 
 //        setupRenderLayers();
         AnimationRegistry.register();
@@ -57,13 +47,6 @@ public class ClientHandler {
 //        catch (Exception ignored) {
 //        }
 //    }
-
-    @SubscribeEvent
-    public static void onRegisterMenuScreens(RegisterMenuScreensEvent event) {
-        event.register(NtglContainers.WORKBENCH.get(), WorkbenchScreen::new);
-        event.register(NtglContainers.ATTACHMENTS.get(), AttachmentScreen::new);
-
-    }
 
     private static int inspectionTimerRight;
     private static int inspectionTimerLeft;

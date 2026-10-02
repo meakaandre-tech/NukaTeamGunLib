@@ -1,5 +1,11 @@
 package com.nukateam.ntgl.common.foundation.item;
 
+import com.geckolib.animatable.GeoItem;
+import com.geckolib.animatable.client.GeoRenderProvider;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.util.GeckoLibUtil;
+import java.util.function.Consumer;
 import com.google.common.collect.HashMultimap;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.client.input.NtglKeyBinds;
@@ -45,12 +51,35 @@ import javax.annotation.Nullable;
 
 import static net.minecraft.world.item.component.ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT;
 
-/**
- * Fabric port note: the item is no longer a GeckoLib GeoItem. Its animated model is drawn by the
- * "ntgl:weapon" special item model (see the item model definition of each weapon), which looks the
- * renderer up in WeaponRegistry.
- */
-public class WeaponItem extends Item implements IWeapon, IThrowable {
+public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable {
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {}
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return geoCache;
+    }
+
+    /**
+     * The item itself is not animated: its "geckolib:geckolib" special item model only forwards
+     * to the renderer registered in WeaponRegistry (see ProxyItemRenderer).
+     */
+    @Override
+    public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
+        consumer.accept(new GeoRenderProvider() {
+            private com.nukateam.geo.render.ProxyItemRenderer<WeaponItem> renderer;
+
+            @Override
+            public com.geckolib.renderer.GeoItemRenderer<?> getGeoItemRenderer() {
+                if (this.renderer == null)
+                    this.renderer = new com.nukateam.geo.render.ProxyItemRenderer<>();
+                return this.renderer;
+            }
+        });
+    }
+
     public static final String VARIANT = "variant";
     private final Lazy<Identifier> id = Lazy.of(this::getRegistryName);
     private final WeakHashMap<CompoundTag, WeaponConfig> modifiedGunCache = new WeakHashMap<>();

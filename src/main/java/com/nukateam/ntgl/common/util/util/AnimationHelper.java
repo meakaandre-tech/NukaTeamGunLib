@@ -1,8 +1,8 @@
 package com.nukateam.ntgl.common.util.util;
 
-import com.geckolib.cache.GeckoLibCache;
+import com.geckolib.cache.GeckoLibResources;
 import com.geckolib.animatable.GeoAnimatable;
-import com.geckolib.animation.Animation;
+import com.geckolib.cache.animation.Animation;
 import com.geckolib.animation.state.AnimationTest;
 import com.geckolib.model.GeoModel;
 
@@ -57,7 +57,8 @@ public class AnimationHelper<T extends GeoAnimatable> {
 
     public double getAnimationDuration(String animationName) {
         var animation = getAnimation(animationName);
-        return animation != null ? animation.length() : 1;
+        // GeckoLib 5 stores the length in seconds, the callers work in ticks
+        return animation != null ? animation.length() * 20.0 : 1;
     }
 
     public boolean containsAnimation(String animationName) {
@@ -67,12 +68,12 @@ public class AnimationHelper<T extends GeoAnimatable> {
     @Nullable
     public Animation getAnimation(String animationName){
         try {
-            var map = GeckoLibCache.getBakedAnimations();
             var animationResource = model.getAnimationResource(animatable);
-            var bakedAnimations = map.get(animationResource);
-            return bakedAnimations != null ? bakedAnimations.animations().get(animationName) : null;
+            if (animationResource == null) return null;
+            var bakedAnimations = GeckoLibResources.getBakedAnimations().cache().get(animationResource);
+            return bakedAnimations != null ? (Animation) bakedAnimations.animations().get(animationName) : null;
         }
-        catch (NullPointerException e){
+        catch (RuntimeException e){
             return null;
         }
     }

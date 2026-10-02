@@ -1,23 +1,26 @@
 package com.nukateam.ntgl.client.render.particle;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SingleQuadParticle;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.renderer.state.level.QuadParticleRenderState;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.util.Mth;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.util.RandomSource;
 import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
 /**
  * Author: MrCrayfish
  */
-public class BloodParticle extends TextureSheetParticle {
-    public BloodParticle(ClientLevel world, double x, double y, double z) {
-        super(world, x, y, z, 0.1, 0.1, 0.1);
+public class BloodParticle extends SingleQuadParticle {
+    public BloodParticle(ClientLevel world, double x, double y, double z, TextureAtlasSprite sprite) {
+        super(world, x, y, z, 0.1, 0.1, 0.1, sprite);
         this.setColor(0.541F, 0.027F, 0.027F);
         this.gravity = 1.5F;
         this.quadSize = 0.0625F;
@@ -25,8 +28,8 @@ public class BloodParticle extends TextureSheetParticle {
     }
 
     @Override
-    public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+    protected Layer getLayer() {
+        return Layer.OPAQUE;
     }
 
     @Override
@@ -40,8 +43,8 @@ public class BloodParticle extends TextureSheetParticle {
     }
 
     @Override
-    public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks) {
-        Vec3 projectedView = renderInfo.getPosition();
+    public void extract(QuadParticleRenderState renderState, Camera camera, float partialTicks) {
+        var projectedView = camera.position();
         float x = (float) (Mth.lerp(partialTicks, this.xo, this.x) - projectedView.x());
         float y = (float) (Mth.lerp(partialTicks, this.yo, this.y) - projectedView.y());
         float z = (float) (Mth.lerp(partialTicks, this.zo, this.z) - projectedView.z());
@@ -51,43 +54,19 @@ public class BloodParticle extends TextureSheetParticle {
         }
 
         var rotation = Direction.NORTH.getRotation();
-
         if (this.roll == 0.0F) {
             if (!this.onGround) {
-                rotation = renderInfo.rotation();
+                rotation = new Quaternionf(camera.rotation());
             }
         } else {
-            rotation = new Quaternionf(renderInfo.rotation());
+            rotation = new Quaternionf(camera.rotation());
             float angle = Mth.lerp(partialTicks, this.oRoll, this.roll);
             rotation.mul(Axis.ZP.rotation(angle));
         }
 
-        var vertices = new Vector3f[] {
-                new Vector3f(-1.0F, -1.0F, 0.0F),
-                new Vector3f(-1.0F, 1.0F, 0.0F),
-                new Vector3f(1.0F, 1.0F, 0.0F),
-                new Vector3f(1.0F, -1.0F, 0.0F)
-        };
-
-        float scale = this.getQuadSize(partialTicks);
-
-        for(int i = 0; i < 4; ++i) {
-            Vector3f vertex = vertices[i];
-            vertex.rotate(rotation);
-            vertex.mul(scale);
-            vertex.add(x, y, z);
-        }
-
-        float minU = this.getU0();
-        float maxU = this.getU1();
-        float minV = this.getV0();
-        float maxV = this.getV1();
-        int light = this.getLightColor(partialTicks);
-        buffer.addVertex(vertices[0].x(), vertices[0].y(), vertices[0].z()).setUv(maxU, maxV).setColor(this.rCol, this.gCol, this.bCol, this.alpha).setLight(light);
-        buffer.addVertex(vertices[1].x(), vertices[1].y(), vertices[1].z()).setUv(maxU, minV).setColor(this.rCol, this.gCol, this.bCol, this.alpha).setLight(light);
-        buffer.addVertex(vertices[2].x(), vertices[2].y(), vertices[2].z()).setUv(minU, minV).setColor(this.rCol, this.gCol, this.bCol, this.alpha).setLight(light);
-        buffer.addVertex(vertices[3].x(), vertices[3].y(), vertices[3].z()).setUv(minU, maxV).setColor(this.rCol, this.gCol, this.bCol, this.alpha).setLight(light);
+        this.extractRotatedQuad(renderState, rotation, x, y, z, partialTicks);
     }
+
     public static class Factory implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet spriteSet;
 
@@ -95,12 +74,11 @@ public class BloodParticle extends TextureSheetParticle {
             this.spriteSet = spriteSet;
         }
 
+        @Override
         public Particle createParticle(SimpleParticleType typeIn, ClientLevel worldIn,
                                        double x, double y, double z,
-                                       double xSpeed, double ySpeed, double zSpeed) {
-            var particle = new BloodParticle(worldIn, x, y, z);
-            particle.pickSprite(this.spriteSet);
-            return particle;
+                                       double xSpeed, double ySpeed, double zSpeed, RandomSource random) {
+            return new BloodParticle(worldIn, x, y, z, this.spriteSet.get(random));
         }
     }
 }

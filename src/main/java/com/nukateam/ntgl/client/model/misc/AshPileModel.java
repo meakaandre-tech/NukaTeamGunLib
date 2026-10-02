@@ -1,14 +1,16 @@
 package com.nukateam.ntgl.client.model.misc;
 
+import com.nukateam.geo.render.AnimatableGeoModel;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.common.foundation.entity.misc.AshPile;
-import com.geckolib.model.GeoModel;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.resources.Identifier;
 
-public class AshPileModel extends GeoModel<AshPile> {
+public class AshPileModel extends AnimatableGeoModel<AshPile> {
     @Override
     public Identifier getModelResource(AshPile object) {
-        return Identifier.tryBuild(Ntgl.MOD_ID, "geo/misc/ash.geo.json");
+        return Identifier.tryBuild(Ntgl.MOD_ID, "misc/ash");
     }
 
     @Override
@@ -18,6 +20,11 @@ public class AshPileModel extends GeoModel<AshPile> {
 
     @Override
     public Identifier getAnimationResource(AshPile object) {
-        return Identifier.tryBuild(Ntgl.MOD_ID, "animations/misc/void.animation.json");
+        return Identifier.tryBuild(Ntgl.MOD_ID, "misc/void");
+    }
+
+    @Override
+    public RenderType getRenderType(AshPile animatable, Identifier texture) {
+        return RenderTypes.entityTranslucent(texture);
     }
 }

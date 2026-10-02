@@ -1,11 +1,11 @@
 package com.nukateam.ntgl.client.util.helpers.render;
 
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.util.LightCoordsUtil;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.nukateam.ntgl.common.util.data.Rgba;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
@@ -15,7 +15,7 @@ import org.joml.Matrix4f;
 public class RenderUtil {
     public static final float BEAM_ALPHA = 0.7F;
 
-    public static void renderBeam(PoseStack poseStack, MultiBufferSource pBufferSource, Identifier pBeamLocation,
+    public static void renderBeam(PoseStack poseStack, SubmitNodeCollector collector, Identifier pBeamLocation,
                                   float pPartialTick, float pTextureScale, long gameTime, float pYOffset, float pHeight,
                                   Rgba colors, float pBeamRadius, float pGlowRadius) {
         var maxY = pYOffset + pHeight;
@@ -29,35 +29,32 @@ public class RenderUtil {
         var v = -1.0F + f2;
         var u = pHeight * pTextureScale * (BEAM_ALPHA / pBeamRadius) + v;
 
-        poseStack.pushPose();
-        {
-            poseStack.pushPose();
-            {
-                var vertexConsumer = pBufferSource
-                        .getBuffer(RenderType.beaconBeam(pBeamLocation, false));
+        final float beamMaxZ = maxZ;
+        final float beamU = u;
+        final float beamV = v;
+        final Rgba beamColor = new Rgba(colors.r(), colors.g(), colors.b(), 1.0F);
+        final Rgba glowColor = new Rgba(colors.r(), colors.g(), colors.b(), BEAM_ALPHA);
 
-                RenderUtil.renderPart(poseStack, vertexConsumer, colors.setAlpha(1.0F),
+        collector.submitCustomGeometry(poseStack, RenderTypes.beaconBeam(pBeamLocation, false), (pose, vertexConsumer) ->
+                RenderUtil.renderPart(pose, vertexConsumer, beamColor,
                         pYOffset, maxY,
                         0.0F, pBeamRadius,
                         pBeamRadius, 0.0F,
-                        maxZ, 0.0F,
+                        beamMaxZ, 0.0F,
                         0.0F, -pBeamRadius,
-                        u, v);
-            }
-            poseStack.popPose();
+                        beamU, beamV));
 
-            maxZ = -pGlowRadius;
-            v = -1.0F + f2;
-            u = pHeight * pTextureScale + v;
+        final float glowMaxZ = -pGlowRadius;
+        final float glowV = -1.0F + f2;
+        final float glowU = pHeight * pTextureScale + glowV;
 
-            RenderUtil.renderPart(poseStack, pBufferSource.getBuffer(RenderType.beaconBeam(pBeamLocation, true)),
-                    colors.setAlpha(BEAM_ALPHA), pYOffset, maxY, minX, maxX, pGlowRadius, minZ, maxZ,
-                    pGlowRadius, pGlowRadius, pGlowRadius, u, v);
-        }
-        poseStack.popPose();
+        collector.submitCustomGeometry(poseStack, RenderTypes.beaconBeam(pBeamLocation, true), (pose, vertexConsumer) ->
+                RenderUtil.renderPart(pose, vertexConsumer, glowColor,
+                        pYOffset, maxY, minX, maxX, pGlowRadius, minZ, glowMaxZ,
+                        pGlowRadius, pGlowRadius, pGlowRadius, glowU, glowV));
     }
 
-    public static void renderPart(PoseStack poseStack, VertexConsumer consumer,
+    public static void renderPart(PoseStack.Pose pose, VertexConsumer consumer,
                                    Rgba colors,
                                    float pMinY, float pMaxY,
                                    float minX, float maxX,
@@ -65,7 +62,6 @@ public class RenderUtil {
                                    float pX2, float pZ2,
                                    float pX3, float pZ3,
                                    float u, float v) {
-        var pose = poseStack.last();
 
         renderQuad(pose, consumer, colors, pMinY, pMaxY, minX, maxX, minZ, maxZ, u, v);
         renderQuad(pose, consumer, colors, pMinY, pMaxY, pX3, pZ3, pX2, pZ2, u, v);
@@ -96,7 +92,7 @@ public class RenderUtil {
                 .setColor(red, green, blue, alpha)
                 .setUv(pU, pV)
                 .setOverlay(OverlayTexture.NO_OVERLAY)
-                .setLight(LightTexture.FULL_BRIGHT)
+                .setLight(LightCoordsUtil.FULL_BRIGHT)
                 .setNormal(0.0F, 1.0F, 0.0F);
     }
 }

@@ -1,25 +1,25 @@
 package com.nukateam.geo.render;
 
 import com.geckolib.animatable.GeoAnimatable;
-import net.minecraft.resources.Identifier;
 import com.geckolib.model.GeoModel;
+import com.geckolib.renderer.base.GeoRenderState;
+import net.minecraft.resources.Identifier;
 
 public class PlaceholderModel<T extends GeoAnimatable> extends GeoModel<T> {
+    private static final Identifier EMPTY = Identifier.fromNamespaceAndPath("ntgl", "placeholder");
+
     @Override
-    public Identifier getModelResource(T gunItem) {
-//        return getGunResource(gunItem, "geo/guns/", ".geo.json");
-        return null;
+    public Identifier getModelResource(GeoRenderState renderState) {
+        return EMPTY;
     }
 
     @Override
-    public Identifier getTextureResource(T gunItem) {
-//        return getGunResource(gunItem, "textures/guns/" + gunItem.getName() + "/", ".png");
-        return null;
+    public Identifier getTextureResource(GeoRenderState renderState) {
+        return EMPTY;
     }
 
     @Override
-    public Identifier getAnimationResource(T gunItem) {
-//        return getGunResource(gunItem, "animations/guns/", ".animation.json");
-        return null;
+    public Identifier getAnimationResource(T animatable) {
+        return EMPTY;
     }
 }

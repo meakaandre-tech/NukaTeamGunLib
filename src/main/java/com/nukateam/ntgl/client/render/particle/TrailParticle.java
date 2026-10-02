@@ -31,7 +31,7 @@ public class TrailParticle extends BaseAshSmokeParticle {
 
         @Nullable
         @Override
-        public Particle createParticle(TrailData data, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+        public Particle createParticle(TrailData data, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed, net.minecraft.util.RandomSource random) {
             float red = data.isEnchanted() ? 0.611F : 0.5F;
             float green = data.isEnchanted() ? 0.443F : 0.5F;
             float blue = data.isEnchanted() ? 1.0F : 0.5F;
