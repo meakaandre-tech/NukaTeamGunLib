@@ -15,13 +15,6 @@ repositories {
 
 loom {
     accessWidenerPath = file("src/main/resources/ntgl.classtweaker")
-
-    runs {
-        configureEach {
-            // development runs only: log the weapon render path (see RenderDebug)
-            vmArg "-Dntgl.debugRender=true"
-        }
-    }
 }
 
 dependencies {
@@ -43,7 +36,7 @@ fabricApi {
     configureTests {
         createSourceSet = true
         modId = "ntgl_smoketest"
-        enableGameTests = false
+        enableGameTests = true
         enableClientGameTests = true
         eula = true
         // CI drops a gun pack into the run directory before the test starts

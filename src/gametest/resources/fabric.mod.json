@@ -8,6 +8,9 @@
   "entrypoints": {
     "fabric-client-gametest": [
       "com.nukateam.ntgl.smoketest.NtglSmokeTest"
+    ],
+    "fabric-gametest": [
+      "com.nukateam.ntgl.smoketest.NtglServerGameTest"
     ]
   },
   "depends": {

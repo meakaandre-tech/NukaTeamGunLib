@@ -63,6 +63,10 @@ jobs:
           pkill -f 'runServer' || true
           cp run/logs/latest.log /tmp/ci/smoke/server-latest.log 2>/dev/null || true
           cp -r run/crash-reports /tmp/ci/smoke/server-crash-reports 2>/dev/null || true
+          # --- server game test: a mock player shoots, reloads and throws a grenade on a real dedicated server
+          timeout 600 ./gradlew runGameTest --no-daemon -Dorg.gradle.console=plain > /tmp/ci/smoke/gametest-gradle.log 2>&1 || true
+          cp build/run/gameTest/logs/latest.log /tmp/ci/smoke/gametest-latest.log 2>/dev/null || true
+          cp -r build/run/gameTest/crash-reports /tmp/ci/smoke/gametest-crash-reports 2>/dev/null || true
           # --- a gun pack in the pre-26 layout (geo/, animations/, builtin/entity item model, no pack.mcmeta)
           pack=/tmp/legacy_pack; res=src/main/resources
           mkdir -p $pack/assets/legacytest/geo/weapons $pack/assets/legacytest/animations/weapons $pack/assets/legacytest/textures/weapons/testgun $pack/assets/legacytest/models/item $pack/data/legacytest/weapons/guns
