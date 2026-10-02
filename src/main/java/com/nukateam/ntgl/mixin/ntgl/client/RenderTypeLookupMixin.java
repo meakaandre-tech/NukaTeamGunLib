@@ -2,7 +2,7 @@ package com.nukateam.ntgl.mixin.ntgl.client;
 
 import com.nukateam.ntgl.client.util.handler.WeaponRenderingHandler;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;

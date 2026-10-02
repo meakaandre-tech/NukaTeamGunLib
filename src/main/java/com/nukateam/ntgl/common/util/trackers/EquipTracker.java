@@ -10,15 +10,13 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import com.nukateam.ntgl.platform.event.PlayerEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
+import com.nukateam.ntgl.platform.event.PlayerTickEvent;
 
 import java.util.Map;
 import java.util.WeakHashMap;
 
-@EventBusSubscriber(modid = Ntgl.MOD_ID)
 public class EquipTracker {
     private static final Map<Pair<InteractionHand, LivingEntity>, Tracker> TRACKER_MAP = new WeakHashMap<>();
 
@@ -26,7 +24,7 @@ public class EquipTracker {
     public static void onPlayerTick(PlayerTickEvent.Pre event) {
         try {
             var player = event.getEntity();
-            if (!player.level().isClientSide) {
+            if (!player.level().isClientSide()) {
                 handTick(player, InteractionHand.MAIN_HAND);
                 handTick(player, InteractionHand.OFF_HAND);
             }

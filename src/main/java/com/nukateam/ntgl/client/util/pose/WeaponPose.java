@@ -4,7 +4,7 @@ import com.mojang.math.Axis;
 import com.nukateam.ntgl.client.util.IHeldAnimation;
 import com.nukateam.ntgl.client.util.handler.AimingHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
-import software.bernie.geckolib.cache.object.GeoBone;
+import com.geckolib.cache.model.GeoBone;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -12,8 +12,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
@@ -57,7 +55,6 @@ public abstract class WeaponPose implements IHeldAnimation {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void applyHumanoidModelRotation(LivingEntity entity, ModelPart rightArm, ModelPart leftArm,
                                            ModelPart head, InteractionHand hand, float aimProgress) {
         var mc = Minecraft.getInstance();
@@ -87,7 +84,6 @@ public abstract class WeaponPose implements IHeldAnimation {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress,
                                      PoseStack poseStack, MultiBufferSource buffer) {
         boolean right = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT ?
@@ -104,7 +100,6 @@ public abstract class WeaponPose implements IHeldAnimation {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress,
                                         PoseStack poseStack, MultiBufferSource buffer) {
 

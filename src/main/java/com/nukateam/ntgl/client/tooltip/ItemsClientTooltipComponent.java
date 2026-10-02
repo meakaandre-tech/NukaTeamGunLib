@@ -1,7 +1,7 @@
 package com.nukateam.ntgl.client.tooltip;
 
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.world.item.ItemStack;
 
@@ -25,7 +25,7 @@ public class ItemsClientTooltipComponent implements ClientTooltipComponent {
     }
 
     @Override
-    public void renderImage(Font font, int x, int y, GuiGraphics guiGraphics) {
+    public void renderImage(Font font, int x, int y, GuiGraphicsExtractor guiGraphics) {
         for (int i = 0; i < items.size(); i++) {
             ItemStack item = items.get(i);
             guiGraphics.renderItem(item, x + i * 18, y);

@@ -4,12 +4,12 @@ import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.client.util.ClientDebug;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class DebugHud {
     private static final int OFFSET_Y = 12;
 
-    public static void render(GuiGraphics graphics, DeltaTracker partialTick) {
+    public static void render(GuiGraphicsExtractor graphics, DeltaTracker partialTick) {
         var minecraft = Minecraft.getInstance();
         var mainWindow = minecraft.getWindow();
         int width  = mainWindow.getGuiScaledWidth ();
@@ -24,12 +24,12 @@ public class DebugHud {
         renderAmmoCounter(graphics, "z", ClientDebug.getZ(), x, OFFSET_Y * 4);
     };
 
-    private static void renderAmmoCounter(GuiGraphics graphics, String label, float val, int x, int y) {
+    private static void renderAmmoCounter(GuiGraphicsExtractor graphics, String label, float val, int x, int y) {
         var text = label + ":" + val;
         graphics.drawString(Minecraft.getInstance().font, text, x, y, 0xFFFFFFFF, true);
     }
 
-    private static void renderString(GuiGraphics graphics, String text, int x, int y) {
+    private static void renderString(GuiGraphicsExtractor graphics, String text, int x, int y) {
         graphics.drawString(Minecraft.getInstance().font, text, x, y, 0xFFFFFFFF, true);
     }
 }

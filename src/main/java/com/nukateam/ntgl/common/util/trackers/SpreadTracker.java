@@ -6,10 +6,9 @@ import com.nukateam.ntgl.common.foundation.init.ModSyncedDataKeys;
 import com.nukateam.ntgl.common.foundation.item.interfaces.IWeapon;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import com.nukateam.ntgl.platform.event.LivingDeathEvent;
+import com.nukateam.ntgl.platform.event.PlayerEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.apache.commons.lang3.mutable.MutableLong;
 import org.apache.commons.lang3.tuple.Pair;
@@ -21,7 +20,6 @@ import java.util.WeakHashMap;
 /**
  * Author: MrCrayfish
  */
-@EventBusSubscriber(modid = Ntgl.MOD_ID)
 public class SpreadTracker {
     private static final Map<LivingEntity, SpreadTracker> TRACKER_MAP = new WeakHashMap<>();
 

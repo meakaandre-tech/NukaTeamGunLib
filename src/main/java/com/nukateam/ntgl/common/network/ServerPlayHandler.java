@@ -26,7 +26,7 @@ import com.nukateam.ntgl.common.foundation.container.AttachmentContainer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -46,7 +46,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
-import net.neoforged.neoforge.common.NeoForge;
+import com.nukateam.ntgl.Ntgl;
 
 import java.util.function.Predicate;
 
@@ -84,7 +84,7 @@ public class ServerPlayHandler {
 
         if (heldItem.getItem() instanceof IWeapon weaponItem
                 && (WeaponStateHelper.hasAmmo(data) || (shooter instanceof Player player && player.isCreative()))) {
-            if (NeoForge.EVENT_BUS.post(new GunFireEvent.Pre(shooter, heldItem, hand)).isCanceled()) {
+            if (Ntgl.EVENT_BUS.post(new GunFireEvent.Pre(shooter, heldItem, hand)).isCanceled()) {
                 return;
             }
 
@@ -130,7 +130,7 @@ public class ServerPlayHandler {
             if (shooter instanceof Player player)
                 player.awardStat(Stats.ITEM_USED.get(heldItem.getItem()));
 
-            NeoForge.EVENT_BUS.post(new GunFireEvent.Post(shooter, heldItem, hand));
+            Ntgl.EVENT_BUS.post(new GunFireEvent.Post(shooter, heldItem, hand));
         } else {
             level.playSound(null, shooter.getX(), shooter.getY(), shooter.getZ(),
                     SoundEvents.LEVER_CLICK, SoundSource.BLOCKS, 0.3F, 0.8F);
@@ -224,8 +224,8 @@ public class ServerPlayHandler {
         }
     }
 
-    private static ResourceLocation getFireSound(WeaponData data) {
-        ResourceLocation fireSound = null;
+    private static Identifier getFireSound(WeaponData data) {
+        Identifier fireSound = null;
         if (WeaponModifierHelper.isSilencedFire(data)) {
             fireSound = WeaponModifierHelper.getSound(SoundType.SILENCED_FIRE.getName(), data);
         } else if (data.weapon.isEnchanted()) {
@@ -324,7 +324,7 @@ public class ServerPlayHandler {
         var weapon = player.getItemInHand(hand);
         var data = new WeaponData(weapon, player).setWeaponMode(message.getWeaponMode());
 
-        if (!NeoForge.EVENT_BUS.post(new GunReloadEvent.Pre(data, hand)).isCanceled()) {
+        if (!Ntgl.EVENT_BUS.post(new GunReloadEvent.Pre(data, hand)).isCanceled()) {
             ReloadTracker.startReloading(data, hand);
         }
     }
@@ -439,7 +439,7 @@ public class ServerPlayHandler {
      * @param id     the id of an item which is registered as a valid workstation recipe
      * @param pos    the block position of the workstation the player is using
      */
-    public static void handleCraft(ServerPlayer player, ResourceLocation id, BlockPos pos) {
+    public static void handleCraft(ServerPlayer player, Identifier id, BlockPos pos) {
         Level world = player.level();
 
         if (player.containerMenu instanceof WorkbenchContainer workbench) {
@@ -449,7 +449,7 @@ public class ServerPlayHandler {
                     return;
 
                 var event = new WorkbenchCraftEvent(player, recipe.result().copy());
-                if (NeoForge.EVENT_BUS.post(event).isCanceled()) {
+                if (Ntgl.EVENT_BUS.post(event).isCanceled()) {
                     if (event.getRejectionMessage() != null) {
                         player.displayClientMessage(event.getRejectionMessage(), true);
                     }

@@ -3,8 +3,8 @@ package com.nukateam.ntgl.common.foundation.event;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
+import com.nukateam.ntgl.platform.Event;
+import com.nukateam.ntgl.platform.ICancellableEvent;
 
 public class WorkbenchCraftEvent extends Event implements ICancellableEvent {
     private final Player player;

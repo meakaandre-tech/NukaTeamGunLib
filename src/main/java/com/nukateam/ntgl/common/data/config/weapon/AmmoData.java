@@ -7,8 +7,7 @@ import com.nukateam.ntgl.common.util.annotation.Optional;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.nukateam.ntgl.platform.INBTSerializable;
 import net.minecraft.core.HolderLookup;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -29,11 +28,11 @@ public class AmmoData implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains("ammo", Tag.TAG_COMPOUND)) {
-            this.ammo = AmmoConfig.create(tag.getCompound("ammo"));
+        if (tag.contains("ammo")) {
+            this.ammo = AmmoConfig.create(tag.getCompoundOrEmpty("ammo"));
         }
-        if (tag.contains("projectile", Tag.TAG_COMPOUND)) {
-            this.projectile = ProjectileConfig.create(tag.getCompound("projectile"));
+        if (tag.contains("projectile")) {
+            this.projectile = ProjectileConfig.create(tag.getCompoundOrEmpty("projectile"));
         }
     }
 

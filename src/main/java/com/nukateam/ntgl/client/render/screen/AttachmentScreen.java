@@ -16,7 +16,7 @@ import com.nukateam.ntgl.common.foundation.item.interfaces.IWeapon;
 import com.nukateam.ntgl.common.util.data.Pos2I;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -39,8 +39,8 @@ import static net.minecraft.network.chat.Component.*;
  * Author: MrCrayfish
  */
 public class AttachmentScreen extends AbstractContainerScreen<AttachmentContainer> {
-    private static final ResourceLocation GUI_TEXTURES = ResourceLocation.tryBuild(Ntgl.MOD_ID, "textures/gui/attachments.png");
-    private static final ResourceLocation SLOT = ResourceLocation.tryBuild(Ntgl.MOD_ID, "textures/gui/slot.png");
+    private static final Identifier GUI_TEXTURES = Identifier.tryBuild(Ntgl.MOD_ID, "textures/gui/attachments.png");
+    private static final Identifier SLOT = Identifier.tryBuild(Ntgl.MOD_ID, "textures/gui/slot.png");
     private static final Component CONFIG_TOOLTIP = translatable("ntgl.button.config.tooltip");
     public static final String ATTACHMENT_NOT_APPLICABLE = "slot.ntgl.attachment.not_applicable";
     public static final String ATTACHMENT_INCOMPATIBLE = "slot.ntgl.attachment.incompatible";
@@ -101,7 +101,7 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(graphics, mouseX, mouseY, partialTicks);
         super.render(graphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(graphics, mouseX, mouseY); //Render tool tips
@@ -132,7 +132,7 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphicsExtractor graphics, float partialTicks, int mouseX, int mouseY) {
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         int left = (this.width - this.imageWidth) / 2;
         int top = (this.height - this.imageHeight) / 2;
@@ -182,7 +182,7 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
 //        }
     }
 
-    private static void renderAttachmentSlot(GuiGraphics graphics, AttachmentSlot attachmentSlot, Pos2I slotPos) {
+    private static void renderAttachmentSlot(GuiGraphicsExtractor graphics, AttachmentSlot attachmentSlot, Pos2I slotPos) {
         graphics.blit(SLOT, slotPos.x, slotPos.y, 0, 0, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE);
         if (!attachmentSlot.hasItem()) {
             graphics.blit(
@@ -241,7 +241,7 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
 //        return -1;
 //    }
 
-    protected void renderAttachmentTooltip(GuiGraphics graphics, int mouseX, int mouseY, AttachmentSlot attachmentSlot) {
+    protected void renderAttachmentTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY, AttachmentSlot attachmentSlot) {
         if (!attachmentSlot.isActive()) {
             graphics.renderComponentTooltip(this.font,
                     List.of((translatable(attachmentSlot.getType().getTranslationKey())),
@@ -259,7 +259,7 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
         }
     }
 
-    protected void renderGun(GuiGraphics graphics, int startX, int startY, int mouseX, int mouseY, ItemStack currentItem) {
+    protected void renderGun(GuiGraphicsExtractor graphics, int startX, int startY, int mouseX, int mouseY, ItemStack currentItem) {
         var poseStack = graphics.pose();
         poseStack.pushPose();
         {
@@ -286,7 +286,7 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
 //        renderHelp(graphics);
         int left = (this.width - this.imageWidth) / 2;
         int top = (this.height - this.imageHeight) / 2;

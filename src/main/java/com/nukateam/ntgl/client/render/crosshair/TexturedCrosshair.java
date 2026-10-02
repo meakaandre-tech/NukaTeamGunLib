@@ -8,22 +8,22 @@ import com.mojang.blaze3d.vertex.*;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Author: MrCrayfish
  */
 public class TexturedCrosshair extends Crosshair {
-    private ResourceLocation texture;
+    private Identifier texture;
     private boolean blend;
 
-    public TexturedCrosshair(ResourceLocation id) {
+    public TexturedCrosshair(Identifier id) {
         this(id, true);
     }
 
-    public TexturedCrosshair(ResourceLocation id, boolean blend) {
+    public TexturedCrosshair(Identifier id, boolean blend) {
         super(id);
-        this.texture = ResourceLocation.tryBuild(id.getNamespace(), "textures/crosshair/" + id.getPath() + ".png");
+        this.texture = Identifier.tryBuild(id.getNamespace(), "textures/crosshair/" + id.getPath() + ".png");
         this.blend = blend;
     }
 

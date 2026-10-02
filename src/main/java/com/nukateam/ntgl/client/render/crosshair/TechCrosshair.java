@@ -10,7 +10,7 @@ import com.mojang.blaze3d.vertex.*;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.joml.Matrix4f;
 
@@ -18,8 +18,8 @@ import org.joml.Matrix4f;
  * Author: MrCrayfish
  */
 public class TechCrosshair extends Crosshair {
-    private static final ResourceLocation TECH_CROSSHAIR = ResourceLocation.tryBuild(Ntgl.MOD_ID, "textures/crosshair/tech.png");
-    private static final ResourceLocation DOT_CROSSHAIR = ResourceLocation.tryBuild(Ntgl.MOD_ID, "textures/crosshair/dot.png");
+    private static final Identifier TECH_CROSSHAIR = Identifier.tryBuild(Ntgl.MOD_ID, "textures/crosshair/tech.png");
+    private static final Identifier DOT_CROSSHAIR = Identifier.tryBuild(Ntgl.MOD_ID, "textures/crosshair/dot.png");
 
     private float scale;
     private float prevScale;
@@ -27,7 +27,7 @@ public class TechCrosshair extends Crosshair {
     private float prevRotation;
 
     public TechCrosshair() {
-        super(ResourceLocation.tryBuild(Ntgl.MOD_ID, "tech"));
+        super(Identifier.tryBuild(Ntgl.MOD_ID, "tech"));
     }
 
     @Override

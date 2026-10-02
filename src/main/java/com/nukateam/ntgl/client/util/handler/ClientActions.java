@@ -12,7 +12,7 @@ import com.nukateam.ntgl.common.network.message.weapon.C2SMessageChangeAmmo;
 import com.nukateam.ntgl.common.util.util.WeaponModifierHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 
 import static com.nukateam.ntgl.common.foundation.init.ModSyncedDataKeys.getReloadKey;
@@ -33,7 +33,7 @@ public class ClientActions {
         PacketHandler.getPlayChannel().sendToServer(new C2SMessageHandAction(hand, HandAction.SWITCH_FIRE_MODE));
     }
 
-    public static void switchAmmo(InteractionHand hand, WeaponData data, ResourceLocation ammo) {
+    public static void switchAmmo(InteractionHand hand, WeaponData data, Identifier ammo) {
         if (!getReloadKey(hand).getValue(data.wielder)) {
             PacketHandler.getPlayChannel().sendToServer(new C2SMessageChangeAmmo(hand, ammo, data.weaponMode));
         }

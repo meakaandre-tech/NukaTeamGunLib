@@ -1,10 +1,10 @@
 package com.nukateam.ntgl.common.util.interfaces;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Author: MrCrayfish
  */
 public interface IResourceLocation {
-    ResourceLocation getLocation();
+    Identifier getLocation();
 }

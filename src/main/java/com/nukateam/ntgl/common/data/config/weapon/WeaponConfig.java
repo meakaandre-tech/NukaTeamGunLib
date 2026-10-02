@@ -14,14 +14,14 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.nukateam.ntgl.platform.INBTSerializable;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -47,11 +47,11 @@ public class WeaponConfig implements INBTSerializable<CompoundTag> {
     protected Modules modules = new Modules();
     @Optional
     protected Zoom zoom = new Zoom();
-    protected HashMap<AnimationType, ResourceLocation> animations = new HashMap<>();
-    protected LinkedHashMap<ResourceLocation, AmmoData> ammoData = new LinkedHashMap<>();
-    protected LinkedHashMap<ResourceLocation, Fuel> fuel = new LinkedHashMap<>();
-    protected HashMap<String, ResourceLocation> sounds = new HashMap<>();
-    protected HashMap<String, ResourceLocation> textures = new HashMap<>();
+    protected HashMap<AnimationType, Identifier> animations = new HashMap<>();
+    protected LinkedHashMap<Identifier, AmmoData> ammoData = new LinkedHashMap<>();
+    protected LinkedHashMap<Identifier, Fuel> fuel = new LinkedHashMap<>();
+    protected HashMap<String, Identifier> sounds = new HashMap<>();
+    protected HashMap<String, Identifier> textures = new HashMap<>();
     protected Display display = new Display();
 
     private static General getWeapon(){
@@ -82,46 +82,46 @@ public class WeaponConfig implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains(GENERAL, Tag.TAG_COMPOUND)) {
-            this.general.deserializeNBT(null,tag.getCompound(GENERAL));
+        if (tag.contains(GENERAL)) {
+            this.general.deserializeNBT(null,tag.getCompoundOrEmpty(GENERAL));
         }
-        if (tag.contains(MELEE, Tag.TAG_COMPOUND)) {
-            this.melee.deserializeNBT(null,tag.getCompound(MELEE));
+        if (tag.contains(MELEE)) {
+            this.melee.deserializeNBT(null,tag.getCompoundOrEmpty(MELEE));
         }
-        if (tag.contains(THROWABLE, Tag.TAG_COMPOUND)) {
-            this.throwable.deserializeNBT(null,tag.getCompound(THROWABLE));
+        if (tag.contains(THROWABLE)) {
+            this.throwable.deserializeNBT(null,tag.getCompoundOrEmpty(THROWABLE));
         }
-        if (tag.contains(SOUNDS, Tag.TAG_COMPOUND)) {
-            this.sounds = deserializeSounds(tag.getCompound(SOUNDS));
+        if (tag.contains(SOUNDS)) {
+            this.sounds = deserializeSounds(tag.getCompoundOrEmpty(SOUNDS));
         }
-        if (tag.contains(MODULES, Tag.TAG_COMPOUND)) {
-            this.modules.deserializeNBT(null,tag.getCompound(MODULES));
+        if (tag.contains(MODULES)) {
+            this.modules.deserializeNBT(null,tag.getCompoundOrEmpty(MODULES));
         }
-        if (tag.contains(TEXTURES, Tag.TAG_COMPOUND)) {
-            this.textures = NbtUtils.deserializeRLMap(tag.getCompound(TEXTURES));
+        if (tag.contains(TEXTURES)) {
+            this.textures = NbtUtils.deserializeRLMap(tag.getCompoundOrEmpty(TEXTURES));
         }
-        if (tag.contains(ANIMATIONS, Tag.TAG_COMPOUND)) {
-            this.animations = NbtUtils.deserializeMap(tag.getCompound(ANIMATIONS),
+        if (tag.contains(ANIMATIONS)) {
+            this.animations = NbtUtils.deserializeMap(tag.getCompoundOrEmpty(ANIMATIONS),
                     AnimationType::getType,
-                    (nbt, key) -> ResourceLocation.tryParse(nbt.getString(key))
+                    (nbt, key) -> Identifier.tryParse(nbt.getStringOr(key, ""))
             );
         }
-        if (tag.contains(AMMO_DATA, Tag.TAG_COMPOUND)) {
-            this.ammoData = NbtUtils.deserializeLinkedMap(tag.getCompound(AMMO_DATA), AmmoData::create);
+        if (tag.contains(AMMO_DATA)) {
+            this.ammoData = NbtUtils.deserializeLinkedMap(tag.getCompoundOrEmpty(AMMO_DATA), AmmoData::create);
         }
-        if (tag.contains(SECONDARY_AMMO, Tag.TAG_COMPOUND)) {
-            this.fuel = NbtUtils.deserializeLinkedMap(tag.getCompound(SECONDARY_AMMO), Fuel::create);
+        if (tag.contains(SECONDARY_AMMO)) {
+            this.fuel = NbtUtils.deserializeLinkedMap(tag.getCompoundOrEmpty(SECONDARY_AMMO), Fuel::create);
         }
-        if (tag.contains(MODES, Tag.TAG_COMPOUND)) {
-            this.modes = NbtUtils.deserializeMap(tag.getCompound(MODES),
+        if (tag.contains(MODES)) {
+            this.modes = NbtUtils.deserializeMap(tag.getCompoundOrEmpty(MODES),
                     WeaponMode::getType,
-                    (nbt, key) -> WeaponSettings.create(nbt.getCompound(key)));
+                    (nbt, key) -> WeaponSettings.create(nbt.getCompoundOrEmpty(key)));
         }
-        if(tag.contains("Zoom", Tag.TAG_COMPOUND)) {
-            this.zoom = Zoom.create(tag.getCompound("Zoom"));
+        if(tag.contains("Zoom")) {
+            this.zoom = Zoom.create(tag.getCompoundOrEmpty("Zoom"));
         }
-        if(tag.contains(DISPLAY, Tag.TAG_COMPOUND)) {
-            this.display = Display.create(tag.getCompound(DISPLAY));
+        if(tag.contains(DISPLAY)) {
+            this.display = Display.create(tag.getCompoundOrEmpty(DISPLAY));
         }
     }
 
@@ -147,9 +147,9 @@ public class WeaponConfig implements INBTSerializable<CompoundTag> {
         gun.general     = this.general.copy();
         gun.melee       = this.melee.copy();
         gun.throwable   = this.throwable.copy();
-        gun.sounds      = (HashMap<String, ResourceLocation>) this.sounds.clone();
-        gun.textures    = (HashMap<String, ResourceLocation>) this.textures.clone();
-        gun.animations  = (HashMap<AnimationType, ResourceLocation>) this.animations.clone();
+        gun.sounds      = (HashMap<String, Identifier>) this.sounds.clone();
+        gun.textures    = (HashMap<String, Identifier>) this.textures.clone();
+        gun.animations  = (HashMap<AnimationType, Identifier>) this.animations.clone();
         gun.ammoData    = copyAmmoData(this.ammoData);
         gun.fuel        = copyFuel(this.fuel);
         gun.modes       = copyModes(this.modes);
@@ -159,14 +159,14 @@ public class WeaponConfig implements INBTSerializable<CompoundTag> {
         return gun;
     }
 
-    private static LinkedHashMap<ResourceLocation, AmmoData> copyAmmoData(LinkedHashMap<ResourceLocation, AmmoData> source) {
-        var result = new LinkedHashMap<ResourceLocation, AmmoData>();
+    private static LinkedHashMap<Identifier, AmmoData> copyAmmoData(LinkedHashMap<Identifier, AmmoData> source) {
+        var result = new LinkedHashMap<Identifier, AmmoData>();
         source.forEach((key, value) -> result.put(key, value.copy()));
         return result;
     }
 
-    private static LinkedHashMap<ResourceLocation, Fuel> copyFuel(LinkedHashMap<ResourceLocation, Fuel> source) {
-        var result = new LinkedHashMap<ResourceLocation, Fuel>();
+    private static LinkedHashMap<Identifier, Fuel> copyFuel(LinkedHashMap<Identifier, Fuel> source) {
+        var result = new LinkedHashMap<Identifier, Fuel>();
         source.forEach((key, value) -> result.put(key, value.copy()));
         return result;
     }
@@ -177,7 +177,7 @@ public class WeaponConfig implements INBTSerializable<CompoundTag> {
         return result;
     }
 
-    public static WeaponConfig create(ResourceLocation id, CompoundTag tag) {
+    public static WeaponConfig create(Identifier id, CompoundTag tag) {
         var gun = new WeaponConfig();
         gun.deserializeNBT(null,tag);
         return gun;
@@ -197,15 +197,15 @@ public class WeaponConfig implements INBTSerializable<CompoundTag> {
         return this.throwable;
     }
 
-    public HashMap<String, ResourceLocation> getSounds() {
+    public HashMap<String, Identifier> getSounds() {
         return sounds;
     }
 
-    public HashMap<String, ResourceLocation> getSoundsMap() {
+    public HashMap<String, Identifier> getSoundsMap() {
         return sounds;
     }
 
-    public ResourceLocation getSound(String name){
+    public Identifier getSound(String name){
         return sounds.get(name);
     }
 
@@ -213,21 +213,21 @@ public class WeaponConfig implements INBTSerializable<CompoundTag> {
     public Modules getModules() {
         return this.modules;
     }
-//    public ResourceLocation getTexture(String variant) {
+//    public Identifier getTexture(String variant) {
 //        return preparedTextures.computeIfAbsent(variant, v ->
 //                prepareTexture(textures.get(variant))
 //        );
 //    }
 
-    public Map<String, ResourceLocation> getTextures() {
+    public Map<String, Identifier> getTextures() {
         return textures;
     }
 
-    public HashMap<AnimationType, ResourceLocation> getAnimations() {
+    public HashMap<AnimationType, Identifier> getAnimations() {
         return animations;
     }
 
-    public ResourceLocation getAnimation(AnimationType type) {
+    public Identifier getAnimation(AnimationType type) {
         return animations.get(type);
     }
 
@@ -271,31 +271,31 @@ public class WeaponConfig implements INBTSerializable<CompoundTag> {
         return new Modules.Attachment();
     }
 
-    public AmmoData getAmmoData(ResourceLocation ammo) {
+    public AmmoData getAmmoData(Identifier ammo) {
         return ammoData.getOrDefault(ammo, new AmmoData());
     }
 
-    public Fuel getFuelData(ResourceLocation ammo) {
+    public Fuel getFuelData(Identifier ammo) {
         return fuel.getOrDefault(ammo, new Fuel());
     }
 
-    public boolean hasAmmo(ResourceLocation ammo){
+    public boolean hasAmmo(Identifier ammo){
         return ammoData.containsKey(ammo);
     }
 
-    public ProjectileConfig getProjectileConfig(ResourceLocation ammo){
+    public ProjectileConfig getProjectileConfig(Identifier ammo){
         return getAmmoData(ammo).getProjectile();
     }
 
-    public AmmoConfig getAmmoConfig(ResourceLocation ammo){
+    public AmmoConfig getAmmoConfig(Identifier ammo){
         return getAmmoData(ammo).getAmmo();
     }
 
-    public Fuel getFuelConfig(ResourceLocation ammo) {
+    public Fuel getFuelConfig(Identifier ammo) {
         return getFuelData(ammo);
     }
 
-    public AmmoConfig getFuelAmmoConfig(ResourceLocation ammo){
+    public AmmoConfig getFuelAmmoConfig(Identifier ammo){
         return getFuelData(ammo).getAmmo();
     }
 
@@ -311,7 +311,7 @@ public class WeaponConfig implements INBTSerializable<CompoundTag> {
         else return modes.getOrDefault(mode, new WeaponSettings()).getMelee();
     }
 
-    public AmmoData getAmmoData(WeaponMode mode, ResourceLocation ammoId) {
+    public AmmoData getAmmoData(WeaponMode mode, Identifier ammoId) {
         if(mode == WeaponMode.PRIMARY)
             return ammoData.getOrDefault(ammoId, new AmmoData());
         else return modes.getOrDefault(mode, new WeaponSettings()).getAmmoData(ammoId);
@@ -337,19 +337,19 @@ public class WeaponConfig implements INBTSerializable<CompoundTag> {
         return modes;
     }
 
-    private HashMap<String, ResourceLocation> deserializeSounds(CompoundTag tag){
-        var result = new HashMap<String, ResourceLocation>();
-        for (var key: tag.getAllKeys()) {
-            if(tag.contains(key, Tag.TAG_STRING)) {
+    private HashMap<String, Identifier> deserializeSounds(CompoundTag tag){
+        var result = new HashMap<String, Identifier>();
+        for (var key: tag.keySet()) {
+            if(tag.contains(key)) {
                 result.put(key, createSound(tag, key));
             }
         }
         return result;
     }
 
-    private ResourceLocation createSound(CompoundTag tag, String key) {
-        var sound = tag.getString(key);
-        return sound.isEmpty() ? null : ResourceLocation.tryParse(sound);
+    private Identifier createSound(CompoundTag tag, String key) {
+        var sound = tag.getStringOr(key, "");
+        return sound.isEmpty() ? null : Identifier.tryParse(sound);
     }
 
     public static class Builder {

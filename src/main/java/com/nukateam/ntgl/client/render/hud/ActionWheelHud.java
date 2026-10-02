@@ -6,13 +6,13 @@ import com.nukateam.ntgl.modules.wheel.ActionWheel;
 import com.nukateam.ntgl.modules.wheel.ActionWheelManager;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 
 public class ActionWheelHud {
     private static final int WHEEL_SIZE = 128;
 
-    public static void render(GuiGraphics graphics, DeltaTracker partialTick) {
+    public static void render(GuiGraphicsExtractor graphics, DeltaTracker partialTick) {
         var minecraft = Minecraft.getInstance();
         var player = minecraft.player;
         if (player == null) return;
@@ -27,7 +27,7 @@ public class ActionWheelHud {
         }
     }
 
-    public static void render(GuiGraphics guiGraphics, ActionWheel wheel) {
+    public static void render(GuiGraphicsExtractor guiGraphics, ActionWheel wheel) {
         if (!wheel.isVisible() || wheel.getActions().isEmpty()) return;
         var minecraft = Minecraft.getInstance();
 
@@ -49,7 +49,7 @@ public class ActionWheelHud {
         guiGraphics.flush();
     }
 
-    private static void renderWheel(ActionWheel wheel, GuiGraphics guiGraphics, float scale, int centerX, int centerY) {
+    private static void renderWheel(ActionWheel wheel, GuiGraphicsExtractor guiGraphics, float scale, int centerX, int centerY) {
         var poseStack = guiGraphics.pose();
         poseStack.pushPose();
         {
@@ -89,7 +89,7 @@ public class ActionWheelHud {
         poseStack.popPose();
     }
 
-    private static void renderSelectedSegment(ActionWheel wheel, GuiGraphics guiGraphics, int centerX, int centerY, float scale) {
+    private static void renderSelectedSegment(ActionWheel wheel, GuiGraphicsExtractor guiGraphics, int centerX, int centerY, float scale) {
         var count = wheel.getActions().size();
         if (count == 0 || wheel.getSelectedSegment() < 0) return;
 
@@ -102,7 +102,7 @@ public class ActionWheelHud {
                 WHEEL_SIZE / 2f, startAngle, anglePerSegment, 0xF7FF00FF, 2);
     }
 
-    private static void renderIconsAndText(ActionWheel wheel, GuiGraphics guiGraphics, int centerX, int centerY, float scale) {
+    private static void renderIconsAndText(ActionWheel wheel, GuiGraphicsExtractor guiGraphics, int centerX, int centerY, float scale) {
         int count = wheel.getActions().size();
         if (count == 0) return;
 

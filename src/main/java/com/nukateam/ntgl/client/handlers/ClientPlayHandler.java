@@ -19,7 +19,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.resources.sounds.*;
 import net.minecraft.core.particles.*;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.*;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
@@ -204,12 +204,12 @@ public class ClientPlayHandler {
     private static SoundEvent getHitSound(boolean critical, boolean headshot, boolean player) {
         if (critical) {
             if (Config.CLIENT.sounds.playSoundWhenCritical.get()) {
-                SoundEvent event = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(Config.CLIENT.sounds.criticalSound.get()));
+                SoundEvent event = BuiltInRegistries.SOUND_EVENT.get(Identifier.parse(Config.CLIENT.sounds.criticalSound.get()));
                 return event != null ? event : SoundEvents.PLAYER_ATTACK_CRIT;
             }
         } else if (headshot) {
             if (Config.CLIENT.sounds.playSoundWhenHeadshot.get()) {
-                SoundEvent event = BuiltInRegistries.SOUND_EVENT.get(ResourceLocation.parse(Config.CLIENT.sounds.headshotSound.get()));
+                SoundEvent event = BuiltInRegistries.SOUND_EVENT.get(Identifier.parse(Config.CLIENT.sounds.headshotSound.get()));
                 return event != null ? event : SoundEvents.PLAYER_ATTACK_KNOCKBACK;
             }
         } else if (player) {

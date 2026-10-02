@@ -1,6 +1,6 @@
 //package com.nukateam.ntgl.common.data.holders;
 //
-//import net.minecraft.resources.ResourceLocation;
+//import net.minecraft.resources.Identifier;
 //
 //import java.util.HashMap;
 //import java.util.Map;
@@ -25,7 +25,7 @@
 //        registerType(COCK          );
 //    }
 //
-//    public SoundType(ResourceLocation id) {
+//    public SoundType(Identifier id) {
 //        super(id);
 //    }
 //
@@ -37,26 +37,26 @@
 //        typeMap.putIfAbsent(mode.getId(), mode);
 //    }
 //
-//    public static SoundType getType(ResourceLocation id) {
+//    public static SoundType getType(Identifier id) {
 //        return typeMap.getOrDefault(id, createDefault(id));
 //    }
 //
 //    public static SoundType getType(String path) {
-//        var id = ResourceLocation.tryParse(path);
+//        var id = Identifier.tryParse(path);
 //        return getType(id);
 //    }
 //
-//    private static SoundType createDefault(ResourceLocation id){
+//    private static SoundType createDefault(Identifier id){
 //        var type = new SoundType(id);
 //        registerType(type);
 //        return type;
 //    }
 //
-//    public ResourceLocation getId() {
+//    public Identifier getId() {
 //        return this.id;
 //    }
 //
-//    public boolean equals(ResourceLocation obj) {
+//    public boolean equals(Identifier obj) {
 //        return this.id.equals(obj);
 //    }
 //

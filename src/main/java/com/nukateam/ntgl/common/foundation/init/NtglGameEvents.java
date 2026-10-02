@@ -1,32 +1,29 @@
 package com.nukateam.ntgl.common.foundation.init;
 
 import com.nukateam.ntgl.Ntgl;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.RegisterEvent;
 
 public class NtglGameEvents {
     public static final ResourceKey<GameEvent> GUNSHOT_EVENT =
-            ResourceKey.create(Registries.GAME_EVENT, ResourceLocation.fromNamespaceAndPath(Ntgl.MOD_ID, "gunshot_event"));
+            ResourceKey.create(Registries.GAME_EVENT, Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "gunshot_event"));
 
-    public static void register(IEventBus modEventBus) {
-        modEventBus.addListener(NtglGameEvents::onRegisterGameEvents);
-    }
+    private static Holder.Reference<GameEvent> gunshot;
 
-    private static void onRegisterGameEvents(RegisterEvent event) {
-        event.register(Registries.GAME_EVENT, helper -> {
-            helper.register(GUNSHOT_EVENT, new GameEvent(32));
-        });
+    public static void register() {
+        gunshot = Registry.registerForHolder(BuiltInRegistries.GAME_EVENT, GUNSHOT_EVENT, new GameEvent(32));
     }
 
     public static void gunshotEvent(Level level, LivingEntity entity) {
-        level.registryAccess().registry(Registries.GAME_EVENT).ifPresent(registry -> {
-            level.gameEvent(GUNSHOT_EVENT, entity.blockPosition(), GameEvent.Context.of(entity));
-        });
+        if (gunshot != null) {
+            level.gameEvent(gunshot, entity.blockPosition(), GameEvent.Context.of(entity));
+        }
     }
 }

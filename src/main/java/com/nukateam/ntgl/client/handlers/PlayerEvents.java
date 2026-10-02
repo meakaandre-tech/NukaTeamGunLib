@@ -5,17 +5,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 
 import java.lang.reflect.InvocationTargetException;
 
-@EventBusSubscriber(value = Dist.CLIENT)
 public class PlayerEvents {
-    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent()
     public static void onRenderHand(RenderHandEvent event) {
         var reloadHandler = ClientReloadHandler.get();
@@ -31,8 +26,6 @@ public class PlayerEvents {
             event.setCanceled(true);
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void onRenderHand2(RenderHandEvent event) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 //        var mc = Minecraft.getInstance();

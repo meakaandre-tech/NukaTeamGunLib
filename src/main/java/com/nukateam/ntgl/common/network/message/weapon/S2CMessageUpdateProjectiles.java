@@ -9,15 +9,15 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraft.resources.Identifier;
+import com.nukateam.ntgl.platform.IPayloadContext;
 import org.apache.commons.lang3.Validate;
 
 public class S2CMessageUpdateProjectiles implements CustomPacketPayload {
-    private ImmutableMap<ResourceLocation, ProjectileConfig> registeredGuns;
+    private ImmutableMap<Identifier, ProjectileConfig> registeredGuns;
 
     public static final Type<S2CMessageUpdateProjectiles> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(Ntgl.MOD_ID, "s2c_message_update_projectiles"));
+            new Type<>(Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "s2c_message_update_projectiles"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CMessageUpdateProjectiles> CODEC = StreamCodec.of(
             S2CMessageUpdateProjectiles::encode,
@@ -46,7 +46,7 @@ public class S2CMessageUpdateProjectiles implements CustomPacketPayload {
         supplier.enqueueWork((() -> ClientPlayHandler.handleUpdateProjectile(message)));
     }
 
-    public ImmutableMap<ResourceLocation, ProjectileConfig> getRegisteredAmmo() {
+    public ImmutableMap<Identifier, ProjectileConfig> getRegisteredAmmo() {
         return this.registeredGuns;
     }
 }

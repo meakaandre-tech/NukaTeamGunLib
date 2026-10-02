@@ -23,20 +23,16 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
+import com.nukateam.ntgl.platform.event.ClientTickEvent;
 
 import java.util.ArrayList;
 
 import static com.nukateam.ntgl.client.util.handler.ClientShootingHandler.isInGame;
 import static com.nukateam.ntgl.common.util.util.WeaponModifierHelper.canUseOffhandWeapon;
 
-@EventBusSubscriber(value = Dist.CLIENT)
 public class InputHandler {
     static {
         KeyPressHandler.addCommand(new KeyCommand(NtglKeyBinds.KEY_RELOAD, () -> reloadUnload(true), InputHandler::closeWheel));

@@ -9,10 +9,9 @@ import com.nukateam.ntgl.common.debug.IEditorMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.nukateam.ntgl.platform.INBTSerializable;
 import net.minecraft.core.HolderLookup;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -47,11 +46,11 @@ public class Modules implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains("AttachmentScreen", Tag.TAG_BYTE)) {
-            this.attachmentScreen = tag.getBoolean("AttachmentScreen");
+        if (tag.contains("AttachmentScreen")) {
+            this.attachmentScreen = tag.getBooleanOr("AttachmentScreen", false);
         }
-        if (tag.contains("Attachments", Tag.TAG_COMPOUND)) {
-            var nbt = tag.getCompound("Attachments");
+        if (tag.contains("Attachments")) {
+            var nbt = tag.getCompoundOrEmpty("Attachments");
             this.attachments = NbtUtils.deserializeAttachmentMap(nbt, provider);
         }
     }
@@ -78,7 +77,7 @@ public class Modules implements INBTSerializable<CompoundTag> {
         public static final String OFFSET = "Offset";
 
         @Optional @Nullable String name;
-        @Optional @Nullable ResourceLocation item;
+        @Optional @Nullable Identifier item;
         @Optional ArrayList<String> hide = new ArrayList<>();
         @Optional ArrayList<String> bones = new ArrayList<>();
         @Optional Vec3 offset = Vec3.ZERO;
@@ -105,20 +104,20 @@ public class Modules implements INBTSerializable<CompoundTag> {
 
         @Override
         public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-            if (tag.contains("Name", Tag.TAG_STRING)) {
-                this.name = tag.getString("Name");
+            if (tag.contains("Name")) {
+                this.name = tag.getStringOr("Name", "");
             }
-            if (tag.contains("Item", Tag.TAG_STRING)) {
-                this.item = ResourceLocation.tryParse(tag.getString("Item"));
+            if (tag.contains("Item")) {
+                this.item = Identifier.tryParse(tag.getStringOr("Item", ""));
             }
-            if (tag.contains("Hide", Tag.TAG_COMPOUND)) {
-                this.hide = NbtUtils.deserializeStringArrayList(tag.getCompound("Hide"));
+            if (tag.contains("Hide")) {
+                this.hide = NbtUtils.deserializeStringArrayList(tag.getCompoundOrEmpty("Hide"));
             }
-            if (tag.contains("Bones", Tag.TAG_COMPOUND)) {
-                this.bones = NbtUtils.deserializeStringArrayList(tag.getCompound("Bones"));
+            if (tag.contains("Bones")) {
+                this.bones = NbtUtils.deserializeStringArrayList(tag.getCompoundOrEmpty("Bones"));
             }
-            if (tag.contains(OFFSET, Tag.TAG_COMPOUND)) {
-                this.offset = NbtUtils.readVec3(tag.getCompound(OFFSET));
+            if (tag.contains(OFFSET)) {
+                this.offset = NbtUtils.readVec3(tag.getCompoundOrEmpty(OFFSET));
             }
         }
 
@@ -158,7 +157,7 @@ public class Modules implements INBTSerializable<CompoundTag> {
         }
 
         @Nullable
-        public ResourceLocation getItemId() {
+        public Identifier getItemId() {
             return this.item;
         }
 

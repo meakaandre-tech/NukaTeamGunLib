@@ -3,13 +3,11 @@ package com.nukateam.ntgl.modules.data;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.common.network.PacketHandler;
 import com.nukateam.ntgl.modules.data.message.S2CMessageUpdateEntityData;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
+import com.nukateam.ntgl.platform.event.ServerTickEvent;
 
 import java.util.HashMap;
 
-@EventBusSubscriber(modid = Ntgl.MOD_ID)
 public class DataKeyManager {
     private static DataKeyManager instance = null;
     private final HashMap<Integer, DataKey> dataKeys = new HashMap<>();

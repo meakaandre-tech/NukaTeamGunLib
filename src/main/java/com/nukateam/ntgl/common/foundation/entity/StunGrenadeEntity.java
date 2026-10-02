@@ -34,8 +34,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 
 import javax.annotation.Nullable;
 
@@ -63,7 +62,7 @@ public class StunGrenadeEntity<T extends Item & IThrowable & IWeapon> extends Th
     public void onDeath() {
         double y = this.getY() + this.getType().getDimensions().height() * 0.5;
         this.level().playSound(null, this.getX(), y, this.getZ(), ModSounds.ENTITY_STUN_GRENADE_EXPLOSION.get(), SoundSource.BLOCKS, 4, (1 + (level().random.nextFloat() - level().random.nextFloat()) * 0.2F) * 0.7F);
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             return;
         }
         PacketHandler.getPlayChannel().sendToNearbyPlayers(() -> LevelLocation.create((ServerLevel)this.level(), this.getX(), y, this.getZ(), 64), new S2CMessageStunGrenade(this.getX(), y, this.getZ()));

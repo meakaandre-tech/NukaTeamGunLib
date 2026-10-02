@@ -11,11 +11,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
-@OnlyIn(Dist.CLIENT)
 public class ClientProxy {
     public static final int MAX_TICKS = 20 * 5;
     public static Map<Integer, DeathData> damageTypes = new HashMap<>();
@@ -34,8 +29,6 @@ public class ClientProxy {
     public static BlockPos getEntityBlockPos(Entity entity) {
         return new BlockPos(Mth.floor(entity.getX()), Mth.floor(entity.getY()), Mth.floor(entity.getZ()));
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static EntityRenderer getEntityRenderer(Entity entity) {
         return Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity);
     }

@@ -7,39 +7,36 @@ import com.nukateam.ntgl.client.render.screen.*;
 import com.nukateam.ntgl.common.foundation.init.NtglContainers;
 import com.nukateam.ntgl.Ntgl;
 import net.minecraft.world.InteractionHand;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import com.nukateam.ntgl.Ntgl;
+import com.nukateam.ntgl.platform.SubscribeEvent;
+import com.nukateam.ntgl.platform.event.ClientTickEvent;
 
 import java.lang.reflect.Field;
 
 /**
  * Author: MrCrayfish
  */
-@EventBusSubscriber(modid = Ntgl.MOD_ID, value = Dist.CLIENT)
 public class ClientHandler {
     public static final int INSPECTION_DURATION = 60;
     public static final int INSPECTION_OFFSET = 5;
     private static Field mouseOptionsField;
 
     public static void setup() {
-        NeoForge.EVENT_BUS.register(AimingHandler.get());
-        NeoForge.EVENT_BUS.register(CrosshairHandler.get());
-        NeoForge.EVENT_BUS.register(WeaponRenderingHandler.get());
-        NeoForge.EVENT_BUS.register(RecoilHandler.get());
-        NeoForge.EVENT_BUS.register(ClientReloadHandler.get());
-        NeoForge.EVENT_BUS.register(ClientShootingHandler.get());
-        NeoForge.EVENT_BUS.register(ClientEquipHandler.get());
-        NeoForge.EVENT_BUS.register(SoundHandler.get());
-        NeoForge.EVENT_BUS.register(new EntityModelHandler());
+        Ntgl.EVENT_BUS.register(AimingHandler.get());
+        Ntgl.EVENT_BUS.register(CrosshairHandler.get());
+        Ntgl.EVENT_BUS.register(WeaponRenderingHandler.get());
+        Ntgl.EVENT_BUS.register(RecoilHandler.get());
+        Ntgl.EVENT_BUS.register(ClientReloadHandler.get());
+        Ntgl.EVENT_BUS.register(ClientShootingHandler.get());
+        Ntgl.EVENT_BUS.register(ClientEquipHandler.get());
+        Ntgl.EVENT_BUS.register(SoundHandler.get());
+        Ntgl.EVENT_BUS.register(new EntityModelHandler());
 
         /* Only register controller events if Controllable is loaded otherwise it will crash */
         if (Ntgl.controllableLoaded) {
 //            ControllerHandler.init();
-            NeoForge.EVENT_BUS.register(new ControllerHandler());
+            Ntgl.EVENT_BUS.register(new ControllerHandler());
             GunButtonBindings.register();
         }
 

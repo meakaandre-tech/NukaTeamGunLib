@@ -42,11 +42,11 @@ public class ArrowLikeProjectile extends ProjectileEntity {
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
-        this.inGround = compound.getBoolean("inGround");
+        this.inGround = compound.getBooleanOr("inGround", false);
         if (compound.contains("inBlock")) {
             NbtUtils.readBlockPos(compound, "inBlockPos").ifPresent(pos -> this.inBlockPos = pos);
         }
-        this.shakeTime = compound.getInt("shakeTime");
+        this.shakeTime = compound.getIntOr("shakeTime", 0);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class ArrowLikeProjectile extends ProjectileEntity {
 
     @Override
     public void playerTouch(Player player) {
-        if ((this.level().isClientSide || this.inGround && this.shakeTime <= 0) && this.canBePickedUp(player)) {
+        if ((this.level().isClientSide() || this.inGround && this.shakeTime <= 0) && this.canBePickedUp(player)) {
             this.pickup(player);
         }
     }

@@ -15,19 +15,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import com.nukateam.ntgl.platform.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import com.nukateam.ntgl.platform.EventPriority;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.nukateam.ntgl.common.util.util.WeaponModifierHelper.canUseOffhandWeapon;
 
-@EventBusSubscriber(modid = Ntgl.MOD_ID, value = Dist.CLIENT)
 public class ClientThrowHandler {
     private static final Map<InteractionHand, Tracker> TRACKER_MAP = new HashMap<>();
 

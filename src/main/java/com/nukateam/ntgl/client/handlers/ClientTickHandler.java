@@ -3,16 +3,13 @@ package com.nukateam.ntgl.client.handlers;
 
 import com.nukateam.geo.render.ItemAnimator;
 import com.nukateam.ntgl.Ntgl;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
+import com.nukateam.ntgl.platform.event.ClientTickEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
-@EventBusSubscriber(modid = Ntgl.MOD_ID, value = Dist.CLIENT)
 public class ClientTickHandler {
     private static final Map<ItemAnimator, Runnable> tickingAnimators = new HashMap();
     private static final Map<Object, Runnable> tickers = new HashMap();

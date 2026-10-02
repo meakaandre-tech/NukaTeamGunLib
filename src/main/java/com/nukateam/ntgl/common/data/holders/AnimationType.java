@@ -2,7 +2,7 @@ package com.nukateam.ntgl.common.data.holders;
 
 import com.google.gson.JsonParseException;
 import com.nukateam.ntgl.Ntgl;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 
@@ -15,7 +15,7 @@ public class AnimationType extends ResourceHolder {
     public static final AnimationType RELOAD = new AnimationType("reload");
     public static final AnimationType MELEE = new AnimationType("melee");
 
-    private static final Map<ResourceLocation, AnimationType> typeMap = new HashMap<>();
+    private static final Map<Identifier, AnimationType> typeMap = new HashMap<>();
     private BiConsumer<Player, InteractionHand> animation;
 
     public static void register(){
@@ -24,13 +24,13 @@ public class AnimationType extends ResourceHolder {
         registerType(MELEE);
     }
 
-    public AnimationType(ResourceLocation id) {
+    public AnimationType(Identifier id) {
         super(id);
         this.animation = animation;
     }
 
     private AnimationType(String name) {
-        this(ResourceLocation.tryBuild(Ntgl.MOD_ID, name));
+        this(Identifier.tryBuild(Ntgl.MOD_ID, name));
     }
 
     public void setAnimation(BiConsumer<Player, InteractionHand> animation){
@@ -47,7 +47,7 @@ public class AnimationType extends ResourceHolder {
         typeMap.putIfAbsent(mode.getId(), mode);
     }
 
-    public static AnimationType getType(ResourceLocation id) {
+    public static AnimationType getType(Identifier id) {
 //        return typeMap.getOrDefault(id, FIRE);
 
         var type = typeMap.get(id);
@@ -58,6 +58,6 @@ public class AnimationType extends ResourceHolder {
     }
 
     public static AnimationType getType(String id) {
-        return getType(ResourceLocation.tryParse(id));
+        return getType(Identifier.tryParse(id));
     }
 }

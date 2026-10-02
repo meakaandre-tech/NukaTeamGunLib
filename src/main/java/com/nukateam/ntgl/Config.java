@@ -3,7 +3,7 @@ package com.nukateam.ntgl;
 import com.nukateam.ntgl.client.util.enums.SwayType;
 import com.nukateam.ntgl.client.render.crosshair.Crosshair;
 import com.nukateam.ntgl.client.render.screen.ButtonAlignment;
-import net.neoforged.neoforge.common.ModConfigSpec;
+import com.nukateam.ntgl.platform.ModConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Collections;
@@ -436,6 +436,17 @@ public class Config
         final Pair<Server, ModConfigSpec> serverSpecPair = new ModConfigSpec.Builder().configure(Server::new);
         serverSpec = serverSpecPair.getRight();
         SERVER = serverSpecPair.getLeft();
+    }
+
+    /** Reads (and writes back) config/ntgl-*.json. Called from the mod initializer. */
+    public static void load()
+    {
+        commonSpec.load("ntgl-common.json");
+        serverSpec.load("ntgl-server.json");
+        if (com.nukateam.ntgl.platform.PlatformHelper.isClient())
+        {
+            clientSpec.load("ntgl-client.json");
+        }
     }
 
     public static void saveClientConfig()

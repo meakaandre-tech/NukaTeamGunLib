@@ -5,9 +5,9 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.nukateam.ntgl.common.util.data.Rgba;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
@@ -15,7 +15,7 @@ import org.joml.Matrix4f;
 public class RenderUtil {
     public static final float BEAM_ALPHA = 0.7F;
 
-    public static void renderBeam(PoseStack poseStack, MultiBufferSource pBufferSource, ResourceLocation pBeamLocation,
+    public static void renderBeam(PoseStack poseStack, MultiBufferSource pBufferSource, Identifier pBeamLocation,
                                   float pPartialTick, float pTextureScale, long gameTime, float pYOffset, float pHeight,
                                   Rgba colors, float pBeamRadius, float pGlowRadius) {
         var maxY = pYOffset + pHeight;

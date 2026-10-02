@@ -7,15 +7,15 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataSerializer;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityDataRegistry;
+import net.minecraft.resources.Identifier;
+import com.nukateam.ntgl.platform.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.function.Supplier;
 
 public class NtglEntityDataSerializers {
-    public static final DeferredRegister<EntityDataSerializer<?>> SERIALIZERS =
-            DeferredRegister.create(NeoForgeRegistries.Keys.ENTITY_DATA_SERIALIZERS, Ntgl.MOD_ID);
+    
 
     public static final EntityDataSerializer<ProjectileConfig> PROJECTILE_CONFIG_SERIALIZER =
             EntityDataSerializer.forValueType(
@@ -34,10 +34,10 @@ public class NtglEntityDataSerializers {
             );
 
     public static final Supplier<EntityDataSerializer<ProjectileConfig>> PROJECTILE_CONFIG =
-            SERIALIZERS.register("projectile_config", () -> PROJECTILE_CONFIG_SERIALIZER);
+            () -> PROJECTILE_CONFIG_SERIALIZER;
 
     public static final Supplier<EntityDataSerializer<General>> GENERAL_CONFIG =
-            SERIALIZERS.register("general_config", () -> GENERAL_CONFIG_SERIALIZER);
+            () -> GENERAL_CONFIG_SERIALIZER;
 
     private static void writeProjectile(RegistryFriendlyByteBuf buf, ProjectileConfig config) {
         CompoundTag tag = config.serializeNBT(buf.registryAccess());
@@ -67,7 +67,8 @@ public class NtglEntityDataSerializers {
         return General.create(tag);
     }
 
-    public static void register(IEventBus bus){
-        SERIALIZERS.register(bus);
+    public static void register(){
+        FabricEntityDataRegistry.register(Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "projectile_config"), PROJECTILE_CONFIG_SERIALIZER);
+        FabricEntityDataRegistry.register(Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "general_config"), GENERAL_CONFIG_SERIALIZER);
     }
 }

@@ -10,9 +10,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.resources.Identifier;
+import com.nukateam.ntgl.platform.INBTSerializable;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
@@ -35,15 +34,15 @@ public class AttachmentConfig implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains(ATTACHMENT_TYPE, Tag.TAG_STRING)) {
-            this.type = AttachmentType.getType(ResourceLocation.tryParse(tag.getString(ATTACHMENT_TYPE)));
+        if (tag.contains(ATTACHMENT_TYPE)) {
+            this.type = AttachmentType.getType(Identifier.tryParse(tag.getStringOr(ATTACHMENT_TYPE, "")));
         }
         if (tag.contains(MODIFIERS)) {
-            this.modifiers.deserializeNBT(provider, tag.getCompound(MODIFIERS));
+            this.modifiers.deserializeNBT(provider, tag.getCompoundOrEmpty(MODIFIERS));
         }
     }
 
-    public static AttachmentConfig create(ResourceLocation id, CompoundTag tag) {
+    public static AttachmentConfig create(Identifier id, CompoundTag tag) {
         var attachment = new AttachmentConfig();
         attachment.deserializeNBT(null, tag);
         return attachment;

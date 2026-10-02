@@ -1,21 +1,20 @@
 package com.nukateam.ntgl.common.network.message.weapon;
 
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.nukateam.ntgl.platform.IPayloadContext;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.common.data.enums.DeathType;
-import com.nukateam.ntgl.common.network.message.chassis.S2CMessageUpdateEquipmentConfig;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.Objects;
 
 public class S2CMessageEntityDeath implements CustomPacketPayload {
     public static final Type<S2CMessageEntityDeath> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(Ntgl.MOD_ID, "s2c_message_entity_death"));
+            new Type<>(Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "s2c_message_entity_death"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CMessageEntityDeath> CODEC = StreamCodec.of(
             (buffer, message) -> encode(message, buffer),

@@ -86,8 +86,8 @@ public class NtglOptions {
                 }
             }
 
-            for (var key : compound.getAllKeys()) {
-                var value = compound.getString(key);
+            for (var key : compound.keySet()) {
+                var value = compound.getStringOr(key, "");
                 try {
                     readOption(key, value);
                 } catch (Exception e) {

@@ -5,12 +5,12 @@ import com.nukateam.ntgl.common.util.annotation.Optional;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.nukateam.ntgl.platform.INBTSerializable;
 
 public class AttributeModifier implements INBTSerializable<CompoundTag> {
-    protected ResourceLocation attribute;
+    protected Identifier attribute;
     protected double value = 0;
     @Optional
     protected Operation operation = Operation.ADD_MULTIPLIED_BASE;
@@ -34,10 +34,10 @@ public class AttributeModifier implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains("attribute", Tag.TAG_STRING)) {
-            this.attribute = ResourceLocation.tryParse(tag.getString("attribute"));
-            this.value = tag.getDouble("value");
-            this.operation = Operation.valueOf(tag.getString("operation"));
+        if (tag.contains("attribute")) {
+            this.attribute = Identifier.tryParse(tag.getStringOr("attribute", ""));
+            this.value = tag.getDoubleOr("value", 0D);
+            this.operation = Operation.valueOf(tag.getStringOr("operation", ""));
         }
     }
 
@@ -55,7 +55,7 @@ public class AttributeModifier implements INBTSerializable<CompoundTag> {
         return positioned;
     }
 
-    public ResourceLocation getAttribute() {
+    public Identifier getAttribute() {
         return attribute;
     }
 
@@ -82,7 +82,7 @@ public class AttributeModifier implements INBTSerializable<CompoundTag> {
             return new Builder();
         }
 
-        public Builder attribute(ResourceLocation attribute) {
+        public Builder attribute(Identifier attribute) {
             attributeModifier.attribute = attribute;
             return this;
         }

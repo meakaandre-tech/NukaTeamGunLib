@@ -1,14 +1,13 @@
 package com.nukateam.ntgl.common.network.message.weapon;
 
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.nukateam.ntgl.platform.IPayloadContext;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.client.handlers.ClientPlayHandler;
-import com.nukateam.ntgl.common.network.message.chassis.S2CMessageUpdateEquipmentConfig;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -18,12 +17,12 @@ import net.minecraft.world.phys.Vec3;
  */
 public class S2CMessageGunSound implements CustomPacketPayload {
     public static final Type<S2CMessageGunSound> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(Ntgl.MOD_ID, "s2c_message_gun_sound"));
+            new Type<>(Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "s2c_message_gun_sound"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CMessageGunSound> CODEC = StreamCodec.of(
             (buffer, message) -> encode(message, buffer),
             buffer -> decode(buffer));
-    private ResourceLocation id;
+    private Identifier id;
     private SoundSource category;
     private float x;
     private float y;
@@ -35,7 +34,7 @@ public class S2CMessageGunSound implements CustomPacketPayload {
 
     public S2CMessageGunSound() {}
 
-    public S2CMessageGunSound(ResourceLocation id, SoundSource category, LivingEntity shooter,
+    public S2CMessageGunSound(Identifier id, SoundSource category, LivingEntity shooter,
                               float volume, float pitch, boolean reload) {
         this.id = id;
         this.category = category;
@@ -48,7 +47,7 @@ public class S2CMessageGunSound implements CustomPacketPayload {
         this.reload = reload;
     }
 
-    public S2CMessageGunSound(ResourceLocation id, SoundSource category, Vec3 position,
+    public S2CMessageGunSound(Identifier id, SoundSource category, Vec3 position,
                               float volume, float pitch, int shooterId, boolean reload) {
         this.id = id;
         this.category = category;
@@ -61,7 +60,7 @@ public class S2CMessageGunSound implements CustomPacketPayload {
         this.reload = reload;
     }
 
-    public S2CMessageGunSound(ResourceLocation id, SoundSource category, float x, float y, float z,
+    public S2CMessageGunSound(Identifier id, SoundSource category, float x, float y, float z,
                               float volume, float pitch, int shooterId, boolean reload) {
         this.id = id;
         this.category = category;
@@ -103,7 +102,7 @@ public class S2CMessageGunSound implements CustomPacketPayload {
         supplier.enqueueWork((() -> ClientPlayHandler.handleMessageGunSound(message)));
     }
 
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return this.id;
     }
 

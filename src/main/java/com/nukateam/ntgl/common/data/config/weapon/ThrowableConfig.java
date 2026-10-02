@@ -12,9 +12,8 @@ import com.nukateam.ntgl.common.util.util.GunJsonUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.resources.Identifier;
+import com.nukateam.ntgl.platform.INBTSerializable;
 import net.minecraft.core.HolderLookup;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -43,17 +42,17 @@ public class ThrowableConfig implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains("mode", Tag.TAG_COMPOUND)) {
-            this.mode = NbtUtils.deserializeSet(tag.getCompound("mode"), ThrowMode::getType);
+        if (tag.contains("mode")) {
+            this.mode = NbtUtils.deserializeSet(tag.getCompoundOrEmpty("mode"), ThrowMode::getType);
         }
-        if (tag.contains(PREPARE_TIME, Tag.TAG_INT)) {
-            this.prepareTime = tag.getInt(PREPARE_TIME);
+        if (tag.contains(PREPARE_TIME)) {
+            this.prepareTime = tag.getIntOr(PREPARE_TIME, 0);
         }
-        if (tag.contains(THROW_TIME, Tag.TAG_INT)) {
-            this.throwTime = tag.getInt(THROW_TIME);
+        if (tag.contains(THROW_TIME)) {
+            this.throwTime = tag.getIntOr(THROW_TIME, 0);
         }
-        if (tag.contains(AMMO_DATA, Tag.TAG_COMPOUND)) {
-            this.ammoData = AmmoData.create(tag.getCompound(AMMO_DATA));
+        if (tag.contains(AMMO_DATA)) {
+            this.ammoData = AmmoData.create(tag.getCompoundOrEmpty(AMMO_DATA));
         }
     }
 
@@ -84,19 +83,19 @@ public class ThrowableConfig implements INBTSerializable<CompoundTag> {
         return ammoData.getAmmo();
     }
 
-    private HashMap<String, ResourceLocation> deserializeSounds(CompoundTag tag){
-        var result = new HashMap<String, ResourceLocation>();
-        for (var key: tag.getAllKeys()) {
-            if(tag.contains(key, Tag.TAG_STRING)) {
+    private HashMap<String, Identifier> deserializeSounds(CompoundTag tag){
+        var result = new HashMap<String, Identifier>();
+        for (var key: tag.keySet()) {
+            if(tag.contains(key)) {
                 result.put(key, createSound(tag, key));
             }
         }
         return result;
     }
 
-    private ResourceLocation createSound(CompoundTag tag, String key) {
-        var sound = tag.getString(key);
-        return sound.isEmpty() ? null : ResourceLocation.tryParse(sound);
+    private Identifier createSound(CompoundTag tag, String key) {
+        var sound = tag.getStringOr(key, "");
+        return sound.isEmpty() ? null : Identifier.tryParse(sound);
     }
 
     public int getPrepareTime() {
@@ -111,7 +110,7 @@ public class ThrowableConfig implements INBTSerializable<CompoundTag> {
         return mode;
     }
 
-    public static ThrowableConfig create(ResourceLocation id, CompoundTag tag) {
+    public static ThrowableConfig create(Identifier id, CompoundTag tag) {
         var gun = new ThrowableConfig();
         gun.deserializeNBT(null,tag);
         return gun;

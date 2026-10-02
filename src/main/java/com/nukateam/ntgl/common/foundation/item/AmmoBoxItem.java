@@ -143,7 +143,7 @@ public class AmmoBoxItem extends Item {
 //            if (k == 0) {
 //                return 0;
 //            } else {
-//                var listtag = tag.getList(TAG_ITEMS, 10);
+//                var listtag = tag.getListOrEmpty(TAG_ITEMS);
 //                var optional = getMatchingItem(insertedStack, listtag, player);
 //                var registryAccess = player.level().registryAccess();
 //                if (optional.isPresent()) {
@@ -201,12 +201,12 @@ public class AmmoBoxItem extends Item {
 //        if (!tag.contains(TAG_ITEMS)) {
 //            return Optional.empty();
 //        } else {
-//            ListTag listtag = tag.getList(TAG_ITEMS, 10);
+//            ListTag listtag = tag.getListOrEmpty(TAG_ITEMS);
 //            if (listtag.isEmpty()) {
 //                return Optional.empty();
 //            } else {
 //                boolean i = false;
-//                var compoundtag1 = listtag.getCompound(0);
+//                var compoundtag1 = listtag.getCompoundOrEmpty(0);
 //                ItemStack itemstack = ItemStack.parseOptional(null, compoundtag1);
 //                listtag.remove(0);
 //                if (listtag.isEmpty()) {
@@ -226,10 +226,10 @@ public class AmmoBoxItem extends Item {
 //            return false;
 //        } else {
 //            if (player instanceof ServerPlayer) {
-//                ListTag listtag = tag.getList(TAG_ITEMS, 10);
+//                ListTag listtag = tag.getListOrEmpty(TAG_ITEMS);
 //
 //                for(int i = 0; i < listtag.size(); ++i) {
-//                    CompoundTag compoundtag1 = listtag.getCompound(i);
+//                    CompoundTag compoundtag1 = listtag.getCompoundOrEmpty(i);
 //                    ItemStack itemstack = ItemStack.parseOptional(registryAccess, compoundtag1);
 //                    player.drop(itemstack, true);
 //                }
@@ -245,7 +245,7 @@ public class AmmoBoxItem extends Item {
 //        if (tag == null) {
 //            return Stream.empty();
 //        } else {
-//            var listTag = tag.getList(TAG_ITEMS, 10);
+//            var listTag = tag.getListOrEmpty(TAG_ITEMS);
 //            var tagStream = listTag.stream();
 //            Objects.requireNonNull(CompoundTag.class);
 //            return tagStream.map(CompoundTag.class::cast).map(ItemStack::of);

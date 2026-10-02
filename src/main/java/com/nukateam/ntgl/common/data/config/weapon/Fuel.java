@@ -8,9 +8,8 @@ import com.nukateam.ntgl.common.util.annotation.Optional;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.resources.Identifier;
+import com.nukateam.ntgl.platform.INBTSerializable;
 import net.minecraft.core.HolderLookup;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -36,17 +35,17 @@ public class Fuel implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains("Max", Tag.TAG_ANY_NUMERIC)) {
-            this.max = tag.getInt("Max");
+        if (tag.contains("Max")) {
+            this.max = tag.getIntOr("Max", 0);
         }
-        if (tag.contains("amountPerUse", Tag.TAG_ANY_NUMERIC)) {
-            this.amountPerUse = tag.getInt("amountPerUse");
+        if (tag.contains("amountPerUse")) {
+            this.amountPerUse = tag.getIntOr("amountPerUse", 0);
         }
-        if (tag.contains("Max", Tag.TAG_ANY_NUMERIC)) {
-            this.mandatory = tag.getBoolean("mandatory");
+        if (tag.contains("Max")) {
+            this.mandatory = tag.getBooleanOr("mandatory", false);
         }
-        if (tag.contains("ammo", Tag.TAG_COMPOUND)) {
-            this.ammo = AmmoConfig.create(tag.getCompound("ammo"));
+        if (tag.contains("ammo")) {
+            this.ammo = AmmoConfig.create(tag.getCompoundOrEmpty("ammo"));
         }
     }
 
@@ -115,7 +114,7 @@ public class Fuel implements INBTSerializable<CompoundTag> {
             return this.ammo.copy(); //Copy since the builder could be used again
         }
 
-        public Fuel.Builder setProjectileLife(ResourceLocation id, int life) {
+        public Fuel.Builder setProjectileLife(Identifier id, int life) {
             this.ammo.max = life;
             return this;
         }

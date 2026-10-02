@@ -1,7 +1,7 @@
 package com.nukateam.ntgl.modules.gunpack.resource;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.AbstractPackResources;
 import net.minecraft.server.packs.PackLocationInfo;
 import net.minecraft.server.packs.PackResources;
@@ -49,7 +49,7 @@ public class NTGLPackResources implements PackResources {
     }
 
     @Override
-    public IoSupplier<InputStream> getResource(PackType packType, ResourceLocation location) {
+    public IoSupplier<InputStream> getResource(PackType packType, Identifier location) {
         Path path = fs.getPath(type, location.getNamespace(), location.getPath());
         if (Files.exists(path)) {
             return () -> Files.newInputStream(path);
@@ -65,7 +65,7 @@ public class NTGLPackResources implements PackResources {
                 walk.filter(Files::isRegularFile)
                         .forEach(file -> {
                             String relative = root.relativize(file).toString().replace('\\', '/');
-                            ResourceLocation loc = ResourceLocation.tryBuild(namespace, path + "/" + relative);
+                            Identifier loc = Identifier.tryBuild(namespace, path + "/" + relative);
                             output.accept(loc, () -> Files.newInputStream(file));
                         });
             } catch (IOException e) {

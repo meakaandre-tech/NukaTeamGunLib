@@ -4,20 +4,17 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.nukateam.ntgl.Ntgl;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
+import net.minecraft.resources.Identifier;
 
 /**
  * Author: MrCrayfish
  */
-@OnlyIn(Dist.CLIENT)
 public class CheckBox extends AbstractWidget {
-    private static final ResourceLocation GUI = ResourceLocation.tryBuild(Ntgl.MOD_ID, "textures/gui/components.png");
+    private static final Identifier GUI = Identifier.tryBuild(Ntgl.MOD_ID, "textures/gui/components.png");
 
     private boolean toggled = false;
 
@@ -34,7 +31,7 @@ public class CheckBox extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderWidget(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         graphics.blit(GUI, this.getX(), this.getY(), 0, 0, 8, 8); // checkbox background
         if (this.toggled) {

@@ -10,10 +10,10 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.bus.api.SubscribeEvent;
+import com.nukateam.ntgl.platform.event.PlayerEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import com.nukateam.ntgl.platform.event.PlayerTickEvent;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -103,7 +103,7 @@ public class BoundingBoxManager {
         if (!Config.COMMON.gameplay.improvedHitboxes.get())
             return;
 
-        if (!event.getEntity().level().isClientSide) {
+        if (!event.getEntity().level().isClientSide()) {
             if (event.getEntity().isSpectator()) {
                 playerBoxes.remove(event.getEntity());
                 return;

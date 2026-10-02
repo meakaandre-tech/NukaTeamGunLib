@@ -9,16 +9,13 @@ import com.nukateam.ntgl.modules.wheel.ActionWheelManager;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
+import com.nukateam.ntgl.platform.event.ClientTickEvent;
 
 import java.util.ArrayList;
 
 import static com.nukateam.ntgl.client.util.handler.ClientShootingHandler.isInGame;
 
-@EventBusSubscriber(value = Dist.CLIENT)
 public class KeyPressHandler {
     private static final ArrayList<KeyCommand> commands = new ArrayList<>();
 

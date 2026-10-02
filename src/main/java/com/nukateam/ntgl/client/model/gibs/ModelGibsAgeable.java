@@ -7,7 +7,7 @@ import com.nukateam.ntgl.common.util.interfaces.IModelAccessor;
 import com.nukateam.ntgl.common.util.data.Rgba;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 

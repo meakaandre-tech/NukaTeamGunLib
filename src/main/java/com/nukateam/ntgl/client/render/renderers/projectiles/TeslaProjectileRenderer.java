@@ -14,18 +14,13 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.concurrent.ThreadLocalRandom;
-
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
-@OnlyIn(Dist.CLIENT)
 public class TeslaProjectileRenderer extends EntityRenderer<TeslaProjectile> {
-    public static ResourceLocation texture = ResourceLocation.tryBuild(Ntgl.MOD_ID, "textures/fx/tesla.png");
+    public static Identifier texture = Identifier.tryBuild(Ntgl.MOD_ID, "textures/fx/tesla.png");
     private final float laserRadius = 0.05F / 5;
     private final float laserGlowRadius = 0.055F / 5;
     private static final int MIN_ANGLE = -45;
@@ -38,7 +33,7 @@ public class TeslaProjectileRenderer extends EntityRenderer<TeslaProjectile> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(TeslaProjectile entity) {
+    public Identifier getTextureLocation(TeslaProjectile entity) {
         var variant = entity.getProjectile().getProjectileVariant();
         return variant == ProjectileVariant.STANDARD ? texture : variant.getIcon();
     }

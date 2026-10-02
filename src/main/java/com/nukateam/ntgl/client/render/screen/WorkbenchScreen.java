@@ -24,7 +24,7 @@ import com.nukateam.ntgl.modules.crafting.registry.ModRecipeTypes;
 import com.nukateam.ntgl.modules.datapack.managers.NetworkWeaponManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -34,7 +34,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -56,7 +56,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
  * Author: MrCrayfish
  */
 public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer> {
-    private static final ResourceLocation GUI_BASE = ResourceLocation.fromNamespaceAndPath(Ntgl.MOD_ID, "textures/gui/workbench.png");
+    private static final Identifier GUI_BASE = Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "textures/gui/workbench.png");
     private static boolean showRemaining = false;
 
     private Tab currentTab;
@@ -166,14 +166,14 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
     }
 
     @Override
-    protected void renderLabels(GuiGraphics graphics, int mouseX, int mouseY) {
+    protected void renderLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         int offset = this.tabs.isEmpty() ? 0 : 28;
         graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY - 28 + offset, 4210752, false);
         graphics.drawString(this.font, this.playerInventory.getDisplayName(), this.inventoryLabelX, this.inventoryLabelY - 9 + offset, 4210752, false);
     }
 
     @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
+    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(graphics, mouseX, mouseY, partialTicks);
         super.render(graphics, mouseX, mouseY, partialTicks);
         this.renderTooltip(graphics, mouseX, mouseY);
@@ -209,7 +209,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
     }
 
     @Override
-    protected void renderBg(GuiGraphics graphics, float partialTicks, int mouseX, int mouseY) {
+    protected void renderBg(GuiGraphicsExtractor graphics, float partialTicks, int mouseX, int mouseY) {
         try {
             /* Fixes partial ticks to use percentage from 0 to 1 */
             partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
@@ -291,7 +291,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
         }
     }
 
-    public static void renderGun(GuiGraphics graphics, float partialTicks, int startX, int startY, ItemStack currentItem) {
+    public static void renderGun(GuiGraphicsExtractor graphics, float partialTicks, int startX, int startY, ItemStack currentItem) {
         var minecraft = Minecraft.getInstance();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         ModelRenderUtil.scissor(startX + 8, startY + 17, 160, 70);
@@ -318,7 +318,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
         return ImmutableList.copyOf(this.tabs);
     }
 
-    private void drawSelectedTab(GuiGraphics graphics, int startX, int startY) {
+    private void drawSelectedTab(GuiGraphicsExtractor graphics, int startX, int startY) {
         if (this.currentTab != null) {
             int i = this.tabs.indexOf(this.currentTab);
             int u = i == 0 ? 80 : 108;
@@ -329,7 +329,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
         }
     }
 
-    private void drawUnselectedTabs(GuiGraphics graphics, int startX, int startY) {
+    private void drawUnselectedTabs(GuiGraphicsExtractor graphics, int startX, int startY) {
         for (int i = 0; i < this.tabs.size(); i++) {
             var tab = this.tabs.get(i);
             if (tab != this.currentTab) {

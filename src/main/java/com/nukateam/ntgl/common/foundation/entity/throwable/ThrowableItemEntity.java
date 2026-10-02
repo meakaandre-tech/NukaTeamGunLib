@@ -82,10 +82,10 @@ public abstract class ThrowableItemEntity<T extends Item & IWeapon & IThrowable>
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
         var provider = this.level().registryAccess();
-        this.shouldBounce = compound.getBoolean("ShouldBounce");
-        this.gravityVelocity = compound.getFloat("GravityVelocity");
-        setItem(ItemStack.parseOptional(provider, compound.getCompound("Item")));
-        setProjectile(ProjectileConfig.create(compound.getCompound("Projectile")));
+        this.shouldBounce = compound.getBooleanOr("ShouldBounce", false);
+        this.gravityVelocity = compound.getFloatOr("GravityVelocity", 0F);
+        setItem(ItemStack.parseOptional(provider, compound.getCompoundOrEmpty("Item")));
+        setProjectile(ProjectileConfig.create(compound.getCompoundOrEmpty("Projectile")));
     }
 
     @Override

@@ -9,10 +9,10 @@ import com.nukateam.ntgl.common.util.util.WeaponModifierHelper;
 import com.nukateam.ntgl.common.event.GunFireEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import com.nukateam.ntgl.platform.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
+import com.nukateam.ntgl.platform.EventPriority;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 
 import java.util.HashMap;

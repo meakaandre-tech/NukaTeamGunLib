@@ -11,31 +11,25 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.AgeableListModel;
 import net.minecraft.client.model.HierarchicalModel;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import com.geckolib.animatable.GeoAnimatable;
+import com.geckolib.renderer.GeoEntityRenderer;
 
 import static com.nukateam.ntgl.ClientProxy.setDamageType;
-
-@OnlyIn(Dist.CLIENT)
 public class DeathFxRenderer {
-    private static final ResourceLocation RES_BURN_EFFECT = ResourceLocation.tryBuild(Ntgl.MOD_ID, "textures/fx/death/burn.png");
-    private static final ResourceLocation RES_LASER_EFFECT = ResourceLocation.tryBuild(Ntgl.MOD_ID, "textures/fx/death/laser.png");
+    private static final Identifier RES_BURN_EFFECT = Identifier.tryBuild(Ntgl.MOD_ID, "textures/fx/death/burn.png");
+    private static final Identifier RES_LASER_EFFECT = Identifier.tryBuild(Ntgl.MOD_ID, "textures/fx/death/laser.png");
 
     private static final GoreData genericGore;
 
     static {
         genericGore = (new GoreData(null, 160, 21, 31))
-                .setTexture(ResourceLocation.tryBuild(Ntgl.MOD_ID, "textures/entity/gore.png"));
+                .setTexture(Identifier.tryBuild(Ntgl.MOD_ID, "textures/entity/gore.png"));
         genericGore.setRandomScale(0.5f, 0.8f);
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static void setupGoreData(LivingEntity entity, GoreData data) {
         var render = ClientProxy.getEntityRenderer(entity);
 
@@ -58,15 +52,11 @@ public class DeathFxRenderer {
             }
         }
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static void addClientEntity(FlyingGib entity) {
         entity.setId(Integer.MAX_VALUE);
         var level = Minecraft.getInstance().level;
         level.addEntity(entity);
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static void createDeathEffectClient(LivingEntity entity, GoreData data) {
         double x = entity.getX();
         double y = entity.getY() + (entity.getType().getHeight() / 2.0f);

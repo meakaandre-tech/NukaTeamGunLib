@@ -7,17 +7,17 @@ import com.nukateam.ntgl.common.data.holders.AttachmentType;
 import com.nukateam.ntgl.common.util.util.WeaponStateHelper;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
 
 public class ScopeHud{
     private static float scopeScale;
 
-    public static void render(GuiGraphics graphics, DeltaTracker partialTick) {
+    public static void render(GuiGraphicsExtractor graphics, DeltaTracker partialTick) {
         var minecraft = Minecraft.getInstance();
         var player = minecraft.player;
         var mainWindow = minecraft.getWindow();
@@ -44,7 +44,7 @@ public class ScopeHud{
         }
     }
 
-    private static void renderScope(GuiGraphics graphics, int width, int height, ResourceLocation overlay) {
+    private static void renderScope(GuiGraphicsExtractor graphics, int width, int height, Identifier overlay) {
         var f = (float) Math.min(width, height);
         var f1 = Math.min((float) width / f, (float) height / f) * scopeScale;
         int i = Mth.floor(f * f1);

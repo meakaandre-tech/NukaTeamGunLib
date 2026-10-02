@@ -1,8 +1,8 @@
 package com.nukateam.ntgl.client.util.handler;
 
 import net.minecraft.world.InteractionHand;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.bus.api.SubscribeEvent;
+import com.nukateam.ntgl.platform.event.ClientTickEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 
 import java.util.HashMap;
 import java.util.Map;

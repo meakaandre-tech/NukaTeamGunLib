@@ -1,23 +1,23 @@
 package com.nukateam.ntgl.common.data.holders;
 
 import com.nukateam.ntgl.Ntgl;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MeleeMode extends ResourceHolder {
-    public static final MeleeMode SINGLE = new MeleeMode(ResourceLocation.tryBuild(Ntgl.MOD_ID, "single"));
-    public static final MeleeMode AUTO = new MeleeMode(ResourceLocation.tryBuild(Ntgl.MOD_ID, "auto"));
+    public static final MeleeMode SINGLE = new MeleeMode(Identifier.tryBuild(Ntgl.MOD_ID, "single"));
+    public static final MeleeMode AUTO = new MeleeMode(Identifier.tryBuild(Ntgl.MOD_ID, "auto"));
 
-    private static final Map<ResourceLocation, MeleeMode> loadingTypeMap = new HashMap<>();
+    private static final Map<Identifier, MeleeMode> loadingTypeMap = new HashMap<>();
 
     static {
         registerType(SINGLE);
         registerType(AUTO);
     }
 
-    public MeleeMode(ResourceLocation id) {
+    public MeleeMode(Identifier id) {
         super(id);
     }
 
@@ -25,11 +25,11 @@ public class MeleeMode extends ResourceHolder {
         loadingTypeMap.putIfAbsent(mode.getId(), mode);
     }
 
-    public static MeleeMode getType(ResourceLocation id) {
+    public static MeleeMode getType(Identifier id) {
         return loadingTypeMap.getOrDefault(id, SINGLE);
     }
 
     public static MeleeMode getType(String id) {
-        return getType(ResourceLocation.tryParse(id));
+        return getType(Identifier.tryParse(id));
     }
 }

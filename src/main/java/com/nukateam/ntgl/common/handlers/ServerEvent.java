@@ -6,16 +6,14 @@ import com.nukateam.ntgl.common.foundation.init.ModSyncedDataKeys;
 import com.nukateam.ntgl.common.util.util.WeaponStateHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.neoforged.bus.api.SubscribeEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 import net.neoforged.fml.LogicalSide;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import com.nukateam.ntgl.platform.event.PlayerTickEvent;
 
 import static com.nukateam.ntgl.common.util.trackers.ShootTracker.*;
 import static com.nukateam.ntgl.common.network.ServerPlayHandler.*;
 import static com.nukateam.ntgl.common.util.util.WeaponModifierHelper.*;
 
-@EventBusSubscriber(modid = Ntgl.MOD_ID)
 public class ServerEvent {
     @SubscribeEvent
     public static void onServerTick(PlayerTickEvent.Post event) {

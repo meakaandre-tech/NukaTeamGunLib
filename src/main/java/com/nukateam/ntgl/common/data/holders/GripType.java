@@ -5,7 +5,7 @@ import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.client.util.IHeldAnimation;
 import com.nukateam.ntgl.client.util.pose.*;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
@@ -18,31 +18,31 @@ import java.util.Map;
  */
 public class GripType extends ResourceHolder {
     public static final GripType VANILLA =
-            new GripType(ResourceLocation.tryBuild(Ntgl.MOD_ID, "vanilla"), new VanillaPose(), true);
+            new GripType(Identifier.tryBuild(Ntgl.MOD_ID, "vanilla"), new VanillaPose(), true);
 
     /** A grip type designed for weapons that are held with only one hand, like a pistol. */
     public static final GripType ONE_HANDED =
-            new GripType(ResourceLocation.tryBuild(Ntgl.MOD_ID, "one_handed"), new OneHandedPose(), true);
+            new GripType(Identifier.tryBuild(Ntgl.MOD_ID, "one_handed"), new OneHandedPose(), true);
 
     /** A grip type designed for weapons that are held with two hands, like an assault rifle. */
     public static final GripType TWO_HANDED =
-            new GripType(ResourceLocation.tryBuild(Ntgl.MOD_ID, "two_handed"), new TwoHandedPose());
+            new GripType(Identifier.tryBuild(Ntgl.MOD_ID, "two_handed"), new TwoHandedPose());
 
     /** A custom grip type designed for the mini gun. */
     public static final GripType MINI_GUN =
-            new GripType(ResourceLocation.tryBuild(Ntgl.MOD_ID, "mini_gun"), new MiniGunPose());
+            new GripType(Identifier.tryBuild(Ntgl.MOD_ID, "mini_gun"), new MiniGunPose());
 
     /**A custom grip type designed for the bazooka. */
     public static final GripType BAZOOKA =
-            new GripType(ResourceLocation.tryBuild(Ntgl.MOD_ID, "bazooka"), new BazookaPose());
+            new GripType(Identifier.tryBuild(Ntgl.MOD_ID, "bazooka"), new BazookaPose());
 
     public static final GripType HAMMER =
-            new GripType(ResourceLocation.tryBuild(Ntgl.MOD_ID, "hammer"), new HammerPose());
+            new GripType(Identifier.tryBuild(Ntgl.MOD_ID, "hammer"), new HammerPose());
 
     public static final GripType KNIFE =
-            new GripType(ResourceLocation.tryBuild(Ntgl.MOD_ID, "knife"), new KnifePose(), true);
+            new GripType(Identifier.tryBuild(Ntgl.MOD_ID, "knife"), new KnifePose(), true);
 
-    private static final Map<ResourceLocation, GripType> gripTypeMap = new HashMap<>();
+    private static final Map<Identifier, GripType> gripTypeMap = new HashMap<>();
 
     static {
         registerType(VANILLA);
@@ -63,7 +63,7 @@ public class GripType extends ResourceHolder {
      * @param id            the id of the grip type
      * @param heldAnimation the animation functions to apply to the held weapon
      */
-    public GripType(ResourceLocation id, IHeldAnimation heldAnimation) {
+    public GripType(Identifier id, IHeldAnimation heldAnimation) {
         this(id, heldAnimation, false);
     }
 
@@ -73,7 +73,7 @@ public class GripType extends ResourceHolder {
      * @param id            the id of the grip type
      * @param heldAnimation the animation functions to apply to the held weapon
      */
-    public GripType(ResourceLocation id, IHeldAnimation heldAnimation, boolean isOneHanded) {
+    public GripType(Identifier id, IHeldAnimation heldAnimation, boolean isOneHanded) {
         super(id);
         this.heldAnimation = heldAnimation;
         this.isOneHanded = isOneHanded;
@@ -124,12 +124,12 @@ public class GripType extends ResourceHolder {
      * @param id the id of the grip type
      * @return returns a GripType of the grip type or ONE_HANDED if it doesn't exist
      */
-    public static GripType getType(ResourceLocation id) {
+    public static GripType getType(Identifier id) {
         return gripTypeMap.getOrDefault(id, ONE_HANDED);
     }
 
     public static GripType getType(String id) {
-        return getType(ResourceLocation.tryParse(id));
+        return getType(Identifier.tryParse(id));
     }
 
     /** Gets the held animation get. Used for rendering. */

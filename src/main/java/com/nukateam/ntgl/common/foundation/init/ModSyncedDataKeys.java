@@ -89,7 +89,7 @@ public class ModSyncedDataKeys {
 
 //    private static SyncedDataKey<LivingEntity, Boolean> registerBooleanKey(String name) {
 //        return SyncedDataKey.builder(SyncedClassKey.LIVING_ENTITY, Serializers.BOOLEAN)
-//                .id(ResourceLocation.tryBuild(Ntgl.MOD_ID, name))
+//                .id(Identifier.tryBuild(Ntgl.MOD_ID, name))
 //                .defaultValueSupplier(() -> false)
 //                .resetOnDeath()
 //                .build();

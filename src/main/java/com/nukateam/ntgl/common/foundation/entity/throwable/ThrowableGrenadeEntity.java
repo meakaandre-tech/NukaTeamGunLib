@@ -38,7 +38,7 @@ public class ThrowableGrenadeEntity<T extends Item & IThrowable & IWeapon> exten
         if (speed > 0.1) {
             this.rotation += speed * 50;
         }
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             this.level().addParticle(ParticleTypes.SMOKE, true, this.getX(), this.getY() + 0.25, this.getZ(), 0, 0, 0);
         }
     }

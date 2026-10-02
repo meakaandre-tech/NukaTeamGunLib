@@ -13,12 +13,12 @@ import com.nukateam.ntgl.common.foundation.item.interfaces.IWeapon;
 import com.nukateam.ntgl.common.util.interfaces.IWeaponModifier;
 import com.nukateam.ntgl.common.foundation.event.MeleeWeaponModifiersEvent;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.NeoForge;
+import com.nukateam.ntgl.Ntgl;
 import org.apache.commons.lang3.ArrayUtils;
 
 import java.util.ArrayList;
@@ -80,7 +80,7 @@ public class WeaponModifierHelper {
         return config.getMelee(weaponData.weaponMode);
     }
 
-    public static AmmoData getAmmoData(WeaponData weaponData, ResourceLocation ammoId) {
+    public static AmmoData getAmmoData(WeaponData weaponData, Identifier ammoId) {
         var config = getConfig(weaponData);
         return config.getAmmoData(weaponData.weaponMode, ammoId);
     }
@@ -142,7 +142,7 @@ public class WeaponModifierHelper {
         return autoReloading.get();
     }
 
-    public static ResourceLocation getSound(String name, WeaponData data) {
+    public static Identifier getSound(String name, WeaponData data) {
         var fireSound = new AtomicReference<>(getConfig(data).getSounds().get(name));
         forEachAttachment(data, (modifier -> fireSound.set(modifier.modifySound(name, fireSound.get(), data))));
         return fireSound.get();
@@ -243,13 +243,13 @@ public class WeaponModifierHelper {
 //        return fuel.get();
 //    }
 
-    public static Fuel getFuel(ResourceLocation type, WeaponData data) {
+    public static Fuel getFuel(Identifier type, WeaponData data) {
         var value = new AtomicReference<>(getConfig(data).getFuelConfig(type).copy());
         forEachAttachment(data, (modifier -> value.set(modifier.modifyFuel(value.get(), data))));
         return value.get() != null ? value.get().copy() : null;
     }
 
-    public static ResourceLocation getAnimation(AnimationType type, WeaponData data) {
+    public static Identifier getAnimation(AnimationType type, WeaponData data) {
         var value = new AtomicReference<>(getConfig(data).getAnimation(type));
         forEachAttachment(data, (modifier -> value.set(modifier.modifyAnimation(type, value.get(), data))));
         return value.get();
@@ -383,7 +383,7 @@ public class WeaponModifierHelper {
 
         forEachAttachment(data, (modifier -> finalSpread.set(modifier.modifyProjectileSpread(finalSpread.get(), data))));
         var event = new ProjectileSpreadEvent(data, finalSpread.get());
-        NeoForge.EVENT_BUS.post(event);
+        Ntgl.EVENT_BUS.post(event);
         return event.getSpread();
     }
 
@@ -440,7 +440,7 @@ public class WeaponModifierHelper {
         return Mth.clamp(minRadius.get(), 0.0, Double.MAX_VALUE);
     }
 
-    public static float getProjectileDamage(ResourceLocation ammo, WeaponData data) {
+    public static float getProjectileDamage(Identifier ammo, WeaponData data) {
         var damage = getConfig(data).getProjectileConfig(ammo).getDamage();
         var finalDamage = new AtomicReference<>(damage);
         forEachAttachment(data, (modifier -> finalDamage.set(modifier.modifyProjectileDamage(finalDamage.get(), ammo, data))));
@@ -480,7 +480,7 @@ public class WeaponModifierHelper {
         var finalTime = new AtomicInteger(time);
         forEachAttachment(data, (modifier -> finalTime.set(modifier.modifyMeleeCooldown(finalTime.get(), data))));
         MeleeWeaponModifiersEvent.Cooldown event = new MeleeWeaponModifiersEvent.Cooldown(data, finalTime.get());
-        NeoForge.EVENT_BUS.post(event);
+        Ntgl.EVENT_BUS.post(event);
         return event.getModifier();
     }
 
@@ -503,7 +503,7 @@ public class WeaponModifierHelper {
         var finalValue = new AtomicReference<>(value);
         forEachAttachment(data, (modifier -> finalValue.set(modifier.modifyMeleeDamage(finalValue.get(), data))));
         MeleeWeaponModifiersEvent.Damage event = new MeleeWeaponModifiersEvent.Damage(data, finalValue.get());
-        NeoForge.EVENT_BUS.post(event);
+        Ntgl.EVENT_BUS.post(event);
         return event.getModifier();
     }
 
@@ -551,7 +551,7 @@ public class WeaponModifierHelper {
         return finalValue.get();
     }
 
-    public static ProjectileConfig getProjectileConfig(ResourceLocation ammoId, WeaponData data) {
+    public static ProjectileConfig getProjectileConfig(Identifier ammoId, WeaponData data) {
         ProjectileConfig config = null;
         var item = WeaponStateHelper.getCurrentAmmoWithoutCheck(data);
 
@@ -570,19 +570,19 @@ public class WeaponModifierHelper {
         return finalValue.get().copy();
     }
 
-    public static AmmoConfig getAmmoConfig(ResourceLocation ammoId, WeaponData data) {
+    public static AmmoConfig getAmmoConfig(Identifier ammoId, WeaponData data) {
         var finalValue = new AtomicReference<>(getAmmoData(data, ammoId).getAmmo().copy());
         forEachAttachment(data, (modifier -> finalValue.set(modifier.modifyAmmo(finalValue.get(), data))));
         return finalValue.get().copy();
     }
 
-    public static AmmoConfig getFuelAmmoConfig(ResourceLocation ammoId, WeaponData data) {
+    public static AmmoConfig getFuelAmmoConfig(Identifier ammoId, WeaponData data) {
         var finalValue = new AtomicReference<>(getConfig(data).getFuelAmmoConfig(ammoId).copy());
         forEachAttachment(data, (modifier -> finalValue.set(modifier.modifyFuelAmmo(finalValue.get(), data))));
         return finalValue.get().copy();
     }
 
-    public static Integer getMaxFuel(ResourceLocation type, WeaponData data) {
+    public static Integer getMaxFuel(Identifier type, WeaponData data) {
         var fuel = getFuel(type, data);
         int max = fuel != null ? fuel.getMax() : 0;
         var result = new AtomicReference<>(max);
@@ -591,13 +591,13 @@ public class WeaponModifierHelper {
         return result.get();
     }
 
-    public static boolean isFuelMandatory(ResourceLocation ammoId, WeaponData data) {
+    public static boolean isFuelMandatory(Identifier ammoId, WeaponData data) {
         var finalValue = new AtomicReference<>(getConfig(data).getFuelConfig(ammoId).isMandatory());
         forEachAttachment(data, (modifier -> finalValue.set(modifier.modifyIsFuelMandatory(ammoId, finalValue.get(), data))));
         return finalValue.get();
     }
 
-    public static int getFuelAmountPerUse(ResourceLocation ammoId, WeaponData data) {
+    public static int getFuelAmountPerUse(Identifier ammoId, WeaponData data) {
         var finalValue = new AtomicReference<>(getConfig(data).getFuelConfig(ammoId).getAmountPerUse());
         forEachAttachment(data, (modifier -> finalValue.set(modifier.modifyFuelAmountPerUse(ammoId, finalValue.get(), data))));
         return finalValue.get();

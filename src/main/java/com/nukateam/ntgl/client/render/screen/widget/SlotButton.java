@@ -1,11 +1,11 @@
 package com.nukateam.ntgl.client.render.screen.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.CommonComponents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 
 public class SlotButton extends Button {
@@ -17,7 +17,7 @@ public class SlotButton extends Button {
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {}
+    public void renderWidget(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {}
 
     public ItemStack getStack() {
         return stack;

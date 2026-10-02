@@ -8,8 +8,8 @@ import com.nukateam.ntgl.common.util.util.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.resources.Identifier;
+import com.nukateam.ntgl.platform.INBTSerializable;
 
 import javax.annotation.Nullable;
 import java.util.*;
@@ -24,8 +24,8 @@ public class WeaponSettings implements INBTSerializable<CompoundTag> {
     protected General general = new General();
     protected Melee melee = new Melee();
     protected ThrowableConfig throwable = new ThrowableConfig();
-    protected LinkedHashMap<ResourceLocation, AmmoData> ammoData = new LinkedHashMap<>();
-    protected LinkedHashMap<ResourceLocation, Fuel> fuel = new LinkedHashMap<>();
+    protected LinkedHashMap<Identifier, AmmoData> ammoData = new LinkedHashMap<>();
+    protected LinkedHashMap<Identifier, Fuel> fuel = new LinkedHashMap<>();
     @Optional @Nullable protected Zoom zoom = new Zoom();
 
     @Override
@@ -44,23 +44,23 @@ public class WeaponSettings implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains(GENERAL, Tag.TAG_COMPOUND)) {
-            this.general.deserializeNBT(null,tag.getCompound(GENERAL));
+        if (tag.contains(GENERAL)) {
+            this.general.deserializeNBT(null,tag.getCompoundOrEmpty(GENERAL));
         }
-        if (tag.contains(MELEE, Tag.TAG_COMPOUND)) {
-            this.melee.deserializeNBT(null,tag.getCompound(MELEE));
+        if (tag.contains(MELEE)) {
+            this.melee.deserializeNBT(null,tag.getCompoundOrEmpty(MELEE));
         }
-        if (tag.contains(THROWABLE, Tag.TAG_COMPOUND)) {
-            this.throwable.deserializeNBT(null,tag.getCompound(THROWABLE));
+        if (tag.contains(THROWABLE)) {
+            this.throwable.deserializeNBT(null,tag.getCompoundOrEmpty(THROWABLE));
         }
-        if (tag.contains(AMMO_DATA, Tag.TAG_COMPOUND)) {
-            this.ammoData = NbtUtils.deserializeLinkedMap(tag.getCompound(AMMO_DATA), (nbt) -> AmmoData.create(nbt));
+        if (tag.contains(AMMO_DATA)) {
+            this.ammoData = NbtUtils.deserializeLinkedMap(tag.getCompoundOrEmpty(AMMO_DATA), (nbt) -> AmmoData.create(nbt));
         }
-        if (tag.contains(SECONDARY_AMMO, Tag.TAG_COMPOUND)) {
-            this.fuel = NbtUtils.deserializeLinkedMap(tag.getCompound(SECONDARY_AMMO), (nbt) -> Fuel.create(nbt));
+        if (tag.contains(SECONDARY_AMMO)) {
+            this.fuel = NbtUtils.deserializeLinkedMap(tag.getCompoundOrEmpty(SECONDARY_AMMO), (nbt) -> Fuel.create(nbt));
         }
-        if(tag.contains(ZOOM, Tag.TAG_COMPOUND)) {
-            this.zoom = Zoom.create(tag.getCompound(ZOOM));
+        if(tag.contains(ZOOM)) {
+            this.zoom = Zoom.create(tag.getCompoundOrEmpty(ZOOM));
         }
     }
 
@@ -106,15 +106,15 @@ public class WeaponSettings implements INBTSerializable<CompoundTag> {
         return this.throwable;
     }
 
-    public AmmoData getAmmoData(ResourceLocation ammo) {
+    public AmmoData getAmmoData(Identifier ammo) {
         return ammoData.getOrDefault(ammo, new AmmoData());
     }
 
-    public Fuel getFuelData(ResourceLocation ammo) {
+    public Fuel getFuelData(Identifier ammo) {
         return fuel.getOrDefault(ammo, new Fuel());
     }
 
-    public boolean hasAmmo(ResourceLocation ammo){
+    public boolean hasAmmo(Identifier ammo){
         return ammoData.containsKey(ammo);
     }
 
@@ -123,19 +123,19 @@ public class WeaponSettings implements INBTSerializable<CompoundTag> {
         return zoom;
     }
 
-    public ProjectileConfig getProjectileConfig(ResourceLocation ammo){
+    public ProjectileConfig getProjectileConfig(Identifier ammo){
         return getAmmoData(ammo).getProjectile();
     }
 
-    public AmmoConfig getAmmoConfig(ResourceLocation ammo){
+    public AmmoConfig getAmmoConfig(Identifier ammo){
         return getAmmoData(ammo).getAmmo();
     }
 
-    public Fuel getFuelConfig(ResourceLocation ammo) {
+    public Fuel getFuelConfig(Identifier ammo) {
         return getFuelData(ammo);
     }
 
-    public AmmoConfig getFuelAmmoConfig(ResourceLocation ammo){
+    public AmmoConfig getFuelAmmoConfig(Identifier ammo){
         return getFuelData(ammo).getAmmo();
     }
 

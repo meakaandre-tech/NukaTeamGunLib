@@ -8,7 +8,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.nukateam.ntgl.platform.INBTSerializable;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class Display implements INBTSerializable<CompoundTag> {
@@ -34,11 +34,11 @@ public class Display implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains(OFFSET, Tag.TAG_COMPOUND)) {
-            this.offset = NbtUtils.readVec3(tag.getCompound(OFFSET));
+        if (tag.contains(OFFSET)) {
+            this.offset = NbtUtils.readVec3(tag.getCompoundOrEmpty(OFFSET));
         }
-        if (tag.contains(NON_HAND_OFFSET, Tag.TAG_COMPOUND)) {
-            this.nonHandOffset = NbtUtils.readVec3(tag.getCompound(NON_HAND_OFFSET));
+        if (tag.contains(NON_HAND_OFFSET)) {
+            this.nonHandOffset = NbtUtils.readVec3(tag.getCompoundOrEmpty(NON_HAND_OFFSET));
         }
     }
 

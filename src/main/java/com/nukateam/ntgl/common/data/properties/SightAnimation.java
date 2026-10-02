@@ -13,9 +13,8 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.nukateam.ntgl.platform.INBTSerializable;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
@@ -68,17 +67,17 @@ public class SightAnimation implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains("ViewportCurve", Tag.TAG_STRING)) {
-            this.viewportCurve = Easings.byName(tag.getString("ViewportCurve"));
+        if (tag.contains("ViewportCurve")) {
+            this.viewportCurve = Easings.byName(tag.getStringOr("ViewportCurve", ""));
         }
-        if (tag.contains("SightCurve", Tag.TAG_STRING)) {
-            this.sightCurve = Easings.byName(tag.getString("SightCurve"));
+        if (tag.contains("SightCurve")) {
+            this.sightCurve = Easings.byName(tag.getStringOr("SightCurve", ""));
         }
-        if (tag.contains("FovCurve", Tag.TAG_STRING)) {
-            this.fovCurve = Easings.byName(tag.getString("FovCurve"));
+        if (tag.contains("FovCurve")) {
+            this.fovCurve = Easings.byName(tag.getStringOr("FovCurve", ""));
         }
-        if (tag.contains("AimTransformCurve", Tag.TAG_STRING)) {
-            this.aimTransformCurve = Easings.byName(tag.getString("AimTransformCurve"));
+        if (tag.contains("AimTransformCurve")) {
+            this.aimTransformCurve = Easings.byName(tag.getStringOr("AimTransformCurve", ""));
         }
     }
 

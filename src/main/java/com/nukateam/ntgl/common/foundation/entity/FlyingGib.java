@@ -20,9 +20,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PowderSnowBlock;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.common.util.Lazy;
+import com.nukateam.ntgl.platform.Lazy;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 import java.util.Optional;
@@ -124,7 +122,7 @@ public class FlyingGib extends Entity {
 //            var vec35 = this.handleRelativeFrictionAndCalculateMovement(getDeltaMovement(), friction);
 //            var d2 = vec35.y;
 //
-//            if (this.level().isClientSide && !this.level().hasChunkAt(blockpos)) {
+//            if (this.level().isClientSide() && !this.level().hasChunkAt(blockpos)) {
 //                if (this.getY() > (double)this.level().getMinBuildHeight())
 //                    d2 = -0.1D;
 //                else d2 = 0.0D;
@@ -141,7 +139,7 @@ public class FlyingGib extends Entity {
     }
 
     private void particleTick() {
-        if (this.level().isClientSide && getData().showBlood) {
+        if (this.level().isClientSide() && getData().showBlood) {
             for (int i = 5; i > 0; i--) {
                 this.level().addParticle(ModParticleTypes.BLOOD.get(), true,
                         this.getX() - (this.getDeltaMovement().x() / i),

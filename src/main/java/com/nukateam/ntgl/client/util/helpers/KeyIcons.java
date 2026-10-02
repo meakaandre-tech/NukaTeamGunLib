@@ -2,7 +2,7 @@ package com.nukateam.ntgl.client.util.helpers;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import com.nukateam.ntgl.Ntgl;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import javax.annotation.Nullable;
 
 import java.util.HashMap;
@@ -12,7 +12,7 @@ public class KeyIcons {
     public static final int MOUSE_BUTTON_5 = 4;
     public static final int ENTER = 257;
 
-    private static final HashMap<Integer, ResourceLocation> icons = new HashMap<>();
+    private static final HashMap<Integer, Identifier> icons = new HashMap<>();
 
     static {
         icons.put(InputConstants.MOUSE_BUTTON_RIGHT, getIcon("rmb"));
@@ -40,11 +40,11 @@ public class KeyIcons {
     }
 
     @Nullable
-    public static ResourceLocation getIcon(int key){
+    public static Identifier getIcon(int key){
         return icons.get(key);
     }
 
-    private static ResourceLocation getIcon(String name){
-        return ResourceLocation.tryBuild(Ntgl.MOD_ID,"textures/hud/keys/" + name + ".png");
+    private static Identifier getIcon(String name){
+        return Identifier.tryBuild(Ntgl.MOD_ID,"textures/hud/keys/" + name + ".png");
     }
 }

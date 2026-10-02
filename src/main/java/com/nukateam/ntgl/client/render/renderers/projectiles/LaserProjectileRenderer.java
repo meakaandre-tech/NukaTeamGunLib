@@ -14,18 +14,14 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
-@OnlyIn(Dist.CLIENT)
 public class LaserProjectileRenderer extends EntityRenderer<LaserProjectile> {
     public static final float BEAM_ALPHA = 0.7F;
-    public static ResourceLocation LASER_TEXTURE = ResourceLocation.tryBuild(Ntgl.MOD_ID, "textures/fx/laser.png");
+    public static Identifier LASER_TEXTURE = Identifier.tryBuild(Ntgl.MOD_ID, "textures/fx/laser.png");
     private static final float LASER_RADIUS = 0.05F / 4;
     private static final float LASER_GLOW_RADIUS = 0.055F / 4;
 
@@ -34,7 +30,7 @@ public class LaserProjectileRenderer extends EntityRenderer<LaserProjectile> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(LaserProjectile entity) {
+    public Identifier getTextureLocation(LaserProjectile entity) {
         var variant = entity.getProjectile().getProjectileVariant();
         return variant == ProjectileVariant.STANDARD ? LASER_TEXTURE : variant.getIcon();
     }

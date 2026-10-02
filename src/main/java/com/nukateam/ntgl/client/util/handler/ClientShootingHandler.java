@@ -22,14 +22,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import com.nukateam.ntgl.platform.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
+import com.nukateam.ntgl.Ntgl;
+import com.nukateam.ntgl.platform.EventPriority;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 import org.lwjgl.glfw.GLFW;
 import javax.annotation.Nullable;
 import java.util.HashMap;
@@ -167,8 +165,6 @@ public class ClientShootingHandler {
         } else if (shootMsGap < -0.05F)
             shootMsGap = 0F;
     }
-
-    @OnlyIn(Dist.CLIENT)
     private void cancelSwing(InputEvent.InteractionKeyMappingTriggered event) {
         event.setSwingHand(false);
         event.setCanceled(true);
@@ -236,7 +232,7 @@ public class ClientShootingHandler {
             var shootGap = getCooldown(shooter, hand);
 
             if (shootGap <= 0) {
-                if (NeoForge.EVENT_BUS.post(new GunFireEvent.Pre(shooter, heldItem, hand)).isCanceled())
+                if (Ntgl.EVENT_BUS.post(new GunFireEvent.Pre(shooter, heldItem, hand)).isCanceled())
                     return;
 
                 // CHECK HERE: Change this to test different rpm settings.
@@ -257,7 +253,7 @@ public class ClientShootingHandler {
                     Ntgl.LOGGER.error(e.getMessage(), e);
                 }
 
-                NeoForge.EVENT_BUS.post(new GunFireEvent.Post(shooter, heldItem, hand));
+                Ntgl.EVENT_BUS.post(new GunFireEvent.Post(shooter, heldItem, hand));
             }
         } else {
             return;

@@ -6,15 +6,15 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.minecraft.resources.Identifier;
+import com.nukateam.ntgl.platform.IPayloadContext;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class S2CMessageUpdateEntityData implements CustomPacketPayload {
     public static final Type<S2CMessageUpdateEntityData> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(Ntgl.MOD_ID, "s2c_message_update_entity_data"));
+            new Type<>(Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "s2c_message_update_entity_data"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CMessageUpdateEntityData> CODEC = StreamCodec.of(
             (buffer, message) -> encode(message, buffer),

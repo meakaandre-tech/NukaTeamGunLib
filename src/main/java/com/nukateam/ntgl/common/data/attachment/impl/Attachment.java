@@ -10,11 +10,9 @@ import com.nukateam.ntgl.common.util.interfaces.IWeaponModifier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.minecraft.core.registries.Registries;
 
 import java.util.ArrayList;
@@ -73,7 +71,7 @@ public class Attachment {
         return this.weapons;
     }
 
-    private static boolean hasAttachment(IWeapon weapon, ResourceLocation id) {
+    private static boolean hasAttachment(IWeapon weapon, Identifier id) {
         var list = weapon.getConfig().getModules().getAttachments().values();
 
         for (var configs : list){

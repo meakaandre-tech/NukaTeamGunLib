@@ -1,6 +1,6 @@
 package com.nukateam.ntgl.client.util;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ClientDebug {
     public static int X = 0;
@@ -219,5 +219,5 @@ public class ClientDebug {
 
     public static TuningMode tuningMode = TuningMode.GENERIC;
     public static boolean isHidden = false;
-    public static ResourceLocation currentlyTuningItem = null;
+    public static Identifier currentlyTuningItem = null;
 }

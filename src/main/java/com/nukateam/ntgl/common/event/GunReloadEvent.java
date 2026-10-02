@@ -5,8 +5,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.bus.api.ICancellableEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import com.nukateam.ntgl.platform.ICancellableEvent;
+import com.nukateam.ntgl.platform.event.PlayerEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 /**
  * <p>Fired when a player reloads a gun.</p>

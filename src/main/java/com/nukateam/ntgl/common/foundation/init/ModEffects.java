@@ -5,8 +5,8 @@ import com.nukateam.ntgl.Ntgl;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import com.nukateam.ntgl.platform.DeferredHolder;
+import com.nukateam.ntgl.platform.DeferredRegister;
 
 /**
  * Author: MrCrayfish

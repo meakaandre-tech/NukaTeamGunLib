@@ -4,27 +4,27 @@ import com.nukateam.ntgl.client.util.handler.CrosshairHandler;
 import com.nukateam.ntgl.common.util.interfaces.IResourceLocation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 /**
  * Author: MrCrayfish
  */
 public abstract class Crosshair implements IResourceLocation {
-    public static final Crosshair DEFAULT = new Crosshair(ResourceLocation.tryParse("default")) {
+    public static final Crosshair DEFAULT = new Crosshair(Identifier.tryParse("default")) {
     };
 
     static {
         CrosshairHandler.get().register(DEFAULT);
     }
 
-    private ResourceLocation id;
+    private Identifier id;
 
     /**
      * The default constructor for crosshairs
      *
      * @param id the id for the crosshair
      */
-    protected Crosshair(ResourceLocation id) {
+    protected Crosshair(Identifier id) {
         this.id = id;
     }
 
@@ -59,7 +59,7 @@ public abstract class Crosshair implements IResourceLocation {
      */
     @Override
 
-    public final ResourceLocation getLocation() {
+    public final Identifier getLocation() {
         return this.id;
     }
 

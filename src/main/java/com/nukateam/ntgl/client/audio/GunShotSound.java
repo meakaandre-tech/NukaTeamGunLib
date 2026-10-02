@@ -4,7 +4,7 @@ import com.nukateam.ntgl.Config;
 import com.nukateam.ntgl.client.settings.NtglOptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.AbstractSoundInstance;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.phys.Vec3;
 
@@ -12,7 +12,7 @@ import net.minecraft.world.phys.Vec3;
  * Author: MrCrayfish
  */
 public class GunShotSound extends AbstractSoundInstance {
-    public GunShotSound(ResourceLocation soundIn, SoundSource categoryIn, double x, double y, double z,
+    public GunShotSound(Identifier soundIn, SoundSource categoryIn, double x, double y, double z,
                         float volume, float pitch, boolean reload) {
         super(soundIn, categoryIn, Minecraft.getInstance().level.getRandom());
         this.x = x;
@@ -33,7 +33,7 @@ public class GunShotSound extends AbstractSoundInstance {
         }
     }
 
-    public GunShotSound(ResourceLocation soundIn, SoundSource categoryIn, Vec3 position,
+    public GunShotSound(Identifier soundIn, SoundSource categoryIn, Vec3 position,
                         float volume, float pitch, boolean reload) {
         this(soundIn, categoryIn,
                 position.x,

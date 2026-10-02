@@ -7,7 +7,7 @@ import com.nukateam.ntgl.common.util.helpers.compatibility.backpack.BackpackHelp
 import com.nukateam.ntgl.common.util.helpers.context.AmmoContext;
 import com.nukateam.ntgl.common.util.helpers.context.IAmmoContext;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -141,7 +141,7 @@ public class InventoryUtil {
     }
 
     @NotNull
-    public static AmmoContext getCreativeAmmoContext(ResourceLocation id) {
+    public static AmmoContext getCreativeAmmoContext(Identifier id) {
         var item = BuiltInRegistries.ITEM.get(id);
         var ammo = item != null ? new ItemStack(item, Integer.MAX_VALUE) : ItemStack.EMPTY;
         return new AmmoContext(ammo, null);

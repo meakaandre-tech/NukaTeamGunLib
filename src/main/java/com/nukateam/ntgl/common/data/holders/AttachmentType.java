@@ -4,7 +4,7 @@ import com.google.gson.JsonParseException;
 import com.nukateam.ntgl.Ntgl;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +20,7 @@ public class AttachmentType {
     public static AttachmentType MUZZLE       = new AttachmentType("muzzle");
     public static AttachmentType MELEE        = new AttachmentType("melee");
 
-    private static final Map<ResourceLocation, AttachmentType> typeMap = new HashMap<>();
+    private static final Map<Identifier, AttachmentType> typeMap = new HashMap<>();
     
     static {
         registerType(NONE       );
@@ -34,21 +34,21 @@ public class AttachmentType {
         registerType(MELEE      );
     }
 
-    private final ResourceLocation id;
+    private final Identifier id;
 
-    public AttachmentType(ResourceLocation id) {
+    public AttachmentType(Identifier id) {
         this.id = id;
     }
 
     private AttachmentType(String name) {
-        this.id = ResourceLocation.tryBuild(Ntgl.MOD_ID, name);
+        this.id = Identifier.tryBuild(Ntgl.MOD_ID, name);
     }
 
     public static void registerType(AttachmentType mode) {
         typeMap.putIfAbsent(mode.getId(), mode);
     }
 
-    public static AttachmentType getType(ResourceLocation id) {
+    public static AttachmentType getType(Identifier id) {
         var type = typeMap.get(id);
         if(type == null){
             throw new JsonParseException("Attachment type \"" + id.toString() + "\" doesn't exists");
@@ -57,16 +57,16 @@ public class AttachmentType {
     }
 
     public static AttachmentType getType(String path) {
-        var id = ResourceLocation.tryParse(path);
+        var id = Identifier.tryParse(path);
         return getType(id);
     }
 
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return this.id;
     }
 
-    public ResourceLocation getIcon() {
-        return ResourceLocation.tryBuild(getId().getNamespace(), "textures/gui/icons/" + getId().getPath() + ".png");
+    public Identifier getIcon() {
+        return Identifier.tryBuild(getId().getNamespace(), "textures/gui/icons/" + getId().getPath() + ".png");
     }
 
     public String getTranslationKey(){
@@ -77,7 +77,7 @@ public class AttachmentType {
         return Component.translatable(this.getTranslationKey());
     }
 
-    public boolean equals(ResourceLocation obj) {
+    public boolean equals(Identifier obj) {
         return this == getType(obj);
     }
 

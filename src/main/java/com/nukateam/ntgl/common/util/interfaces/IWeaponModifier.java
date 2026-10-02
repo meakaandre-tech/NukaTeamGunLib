@@ -5,7 +5,7 @@ import com.nukateam.ntgl.common.data.WeaponData;
 import com.nukateam.ntgl.common.data.attachment.impl.Barrel;
 import com.nukateam.ntgl.common.data.config.weapon.*;
 import com.nukateam.ntgl.common.data.holders.*;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public interface IWeaponModifier {
         return volume;
     }
 
-    default ResourceLocation modifySound(String name, ResourceLocation sound, WeaponData data) {
+    default Identifier modifySound(String name, Identifier sound, WeaponData data) {
         return sound;
     }
 
@@ -65,7 +65,7 @@ public interface IWeaponModifier {
      * @param data
      * @return new damage for the projectile
      */
-     default float modifyProjectileDamage(float damage, ResourceLocation ammo, WeaponData data) {
+     default float modifyProjectileDamage(float damage, Identifier ammo, WeaponData data) {
         return damage;
      }
 
@@ -354,7 +354,7 @@ public interface IWeaponModifier {
         return value;
     }
 
-    default ResourceLocation modifyAnimation(AnimationType tupe, ResourceLocation animation, WeaponData data) {
+    default Identifier modifyAnimation(AnimationType tupe, Identifier animation, WeaponData data) {
         return animation;
     }
 
@@ -366,15 +366,15 @@ public interface IWeaponModifier {
         return value;
     }
 
-    default int modifyMaxFuel(ResourceLocation ammo, int max, WeaponData data) {
+    default int modifyMaxFuel(Identifier ammo, int max, WeaponData data) {
         return max;
     }
 
-    default boolean modifyIsFuelMandatory(ResourceLocation ammo, boolean value, WeaponData data) {
+    default boolean modifyIsFuelMandatory(Identifier ammo, boolean value, WeaponData data) {
         return value;
     }
 
-    default int modifyFuelAmountPerUse(ResourceLocation ammo, int value, WeaponData data) {
+    default int modifyFuelAmountPerUse(Identifier ammo, int value, WeaponData data) {
         return value;
     }
 

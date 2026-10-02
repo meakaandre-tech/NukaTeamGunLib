@@ -1,7 +1,7 @@
 package com.nukateam.ntgl.common.foundation.event;
 
 import com.nukateam.ntgl.common.data.WeaponData;
-import net.neoforged.bus.api.Event;
+import com.nukateam.ntgl.platform.Event;
 
 public class ProjectileSpreadEvent extends Event {
     private final WeaponData weaponData;

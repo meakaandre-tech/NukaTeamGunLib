@@ -26,7 +26,7 @@ import net.minecraft.client.renderer.block.model.ItemTransform;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -38,10 +38,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.util.ObfuscationReflectionHelper;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import com.nukateam.ntgl.platform.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
-import net.neoforged.bus.api.SubscribeEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
@@ -63,7 +63,7 @@ public class WeaponRenderingHandler {
         return instance;
     }
 
-    public static final ResourceLocation MUZZLE_FLASH_TEXTURE = ResourceLocation.tryBuild(Ntgl.MOD_ID, "textures/effect/muzzle_flash.png");
+    public static final Identifier MUZZLE_FLASH_TEXTURE = Identifier.tryBuild(Ntgl.MOD_ID, "textures/effect/muzzle_flash.png");
 
     private final Random random = new Random();
     private final Set<Integer> entityIdForMuzzleFlash = new HashSet<>();
@@ -483,8 +483,8 @@ public class WeaponRenderingHandler {
 
     public void applyWeaponScale(ItemStack heldItem, PoseStack stack) {
         var tag = getWeaponTag(heldItem);
-        if (tag.contains(SCALE, Tag.TAG_FLOAT)) {
-            float scale = tag.getFloat(SCALE);
+        if (tag.contains(SCALE)) {
+            float scale = tag.getFloatOr(SCALE, 0F);
             stack.scale(scale, scale, scale);
         }
     }

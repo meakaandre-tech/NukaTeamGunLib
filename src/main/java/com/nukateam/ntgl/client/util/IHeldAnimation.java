@@ -1,7 +1,7 @@
 package com.nukateam.ntgl.client.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import software.bernie.geckolib.cache.object.GeoBone;
+import com.geckolib.cache.model.GeoBone;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -10,8 +10,6 @@ import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 /**
  * Author: MrCrayfish
@@ -25,7 +23,6 @@ public interface IHeldAnimation {
      * @param hand        the hand which is currently being used
      * @param aimProgress the current animation progress of looking down the weapons sight
      */
-    @OnlyIn(Dist.CLIENT)
     default void applyHumanoidModelRotation(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart head,
                                             InteractionHand hand, float aimProgress) {
     }
@@ -42,7 +39,6 @@ public interface IHeldAnimation {
      * @param poseStack   the current matrix stack
      * @param buffer      a render type buffer get
      */
-    @OnlyIn(Dist.CLIENT)
     default void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack, MultiBufferSource buffer) {
     }
 
@@ -55,7 +51,6 @@ public interface IHeldAnimation {
      * @param poseStack   the current matrix stack
      * @param buffer      a render type buffer get
      */
-    @OnlyIn(Dist.CLIENT)
     default void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack, MultiBufferSource buffer) {
     }
 
@@ -92,7 +87,6 @@ public interface IHeldAnimation {
      * @param source the model renderer to grab the rotations from
      * @param dest   the model renderer to apply the rotations to
      */
-    @OnlyIn(Dist.CLIENT)
     static void copyModelAngles(ModelPart source, ModelPart dest) {
         dest.xRot = source.xRot;
         dest.yRot = source.yRot;

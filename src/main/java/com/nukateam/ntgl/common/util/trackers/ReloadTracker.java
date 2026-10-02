@@ -16,12 +16,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import com.nukateam.ntgl.Ntgl;
+import com.nukateam.ntgl.platform.event.PlayerEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
+import com.nukateam.ntgl.platform.event.PlayerTickEvent;
+import com.nukateam.ntgl.platform.event.ServerTickEvent;
 
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -30,7 +29,6 @@ import java.util.WeakHashMap;
  * Author: MrCrayfish
  */
 @SuppressWarnings("unused")
-@EventBusSubscriber(modid = Ntgl.MOD_ID)
 public class ReloadTracker {
     private static final Map<LivingEntity, ReloadTracker> RELOAD_TRACKER_MAP = new WeakHashMap<>();
 
@@ -70,7 +68,7 @@ public class ReloadTracker {
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Pre event) {
         try {
-            if (!event.getEntity().level().isClientSide) {
+            if (!event.getEntity().level().isClientSide()) {
                 var player = event.getEntity();
                 handTick(player);
             }
@@ -115,7 +113,7 @@ public class ReloadTracker {
         if(tracker != null){
             var data = tracker.data;
             reloadSecondHand(data, hand);
-            NeoForge.EVENT_BUS.post(new GunReloadEvent.Post(data, hand));
+            Ntgl.EVENT_BUS.post(new GunReloadEvent.Post(data, hand));
             RELOAD_TRACKER_MAP.remove(wielder);
             ModSyncedDataKeys.getReloadKey(hand).setValue(wielder, false);
         }
@@ -299,7 +297,7 @@ public class ReloadTracker {
 //        var tag = this.weapon.getTag();
 //
 //        return !InventoryUtil.findAmmo(entity, weapon).stack().isEmpty() &&
-//                tag.getInt(Tags.AMMO_COUNT) < WeaponModifierHelper.getMaxAmmo(data);
+//                tag.getIntOr(Tags.AMMO_COUNT, 0) < WeaponModifierHelper.getMaxAmmo(data);
 //    }
 
     private void addMagazine(WeaponData data) {
@@ -360,6 +358,6 @@ public class ReloadTracker {
             startReloading(data, InteractionHand.OFF_HAND);
         }
 
-        NeoForge.EVENT_BUS.post(new GunReloadEvent.Post(data, hand));
+        Ntgl.EVENT_BUS.post(new GunReloadEvent.Post(data, hand));
     }
 }

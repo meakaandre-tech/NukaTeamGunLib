@@ -4,14 +4,14 @@ import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.client.input.NtglKeyBinds;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
 public class WeaponMode extends ResourceHolder {
-    private static final Map<ResourceLocation, WeaponMode> loadingTypeMap = new HashMap<>();
+    private static final Map<Identifier, WeaponMode> loadingTypeMap = new HashMap<>();
 
     public static final WeaponMode PRIMARY     = new WeaponMode("primary"    , 0xC6C6C6FF);
     public static final WeaponMode SECONDARY   = new WeaponMode("secondary"  , 0x7CBCE0FF);
@@ -28,11 +28,11 @@ public class WeaponMode extends ResourceHolder {
     }
 
     private WeaponMode(String id, int color) {
-        super(ResourceLocation.tryBuild(Ntgl.MOD_ID, id));
+        super(Identifier.tryBuild(Ntgl.MOD_ID, id));
         this.color = color;
     }
 
-    public WeaponMode(ResourceLocation id, int color) {
+    public WeaponMode(Identifier id, int color) {
         super(id);
         this.color = color;
     }
@@ -41,12 +41,12 @@ public class WeaponMode extends ResourceHolder {
         loadingTypeMap.putIfAbsent(mode.getId(), mode);
     }
 
-    public static WeaponMode getType(ResourceLocation id) {
+    public static WeaponMode getType(Identifier id) {
         return loadingTypeMap.getOrDefault(id, PRIMARY);
     }
 
     public static WeaponMode getType(String id) {
-        return getType(ResourceLocation.tryParse(id));
+        return getType(Identifier.tryParse(id));
     }
 
 

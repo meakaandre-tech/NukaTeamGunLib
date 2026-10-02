@@ -1,10 +1,10 @@
 package com.nukateam.ntgl.common.util.util;
 
-import software.bernie.geckolib.cache.GeckoLibCache;
-import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.animation.Animation;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.model.GeoModel;
+import com.geckolib.cache.GeckoLibCache;
+import com.geckolib.animatable.GeoAnimatable;
+import com.geckolib.animation.Animation;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.model.GeoModel;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -19,12 +19,12 @@ public class AnimationHelper<T extends GeoAnimatable> {
     }
 
     /**
-     * Deprecated: Use #syncAnimation(AnimationState, int, String...) instead
+     * Deprecated: Use #syncAnimation(AnimationTest, int, String...) instead
      * <p>
      * Sets the animation controller speed so that the animation duration matches the target duration
      */
     @Deprecated
-    public void syncAnimation(AnimationState event, String animationName, int targetDuration) {
+    public void syncAnimation(AnimationTest event, String animationName, int targetDuration) {
         var multiplier = (float) getSpeedMultiplier(animationName, targetDuration);
         event.setControllerSpeed(multiplier);
     }
@@ -32,12 +32,12 @@ public class AnimationHelper<T extends GeoAnimatable> {
     /**
      * Sets the animation controller speed so that the animation duration matches the target duration
      */
-    public void syncAnimation(AnimationState event, int targetDuration, String... animations) {
+    public void syncAnimation(AnimationTest event, int targetDuration, String... animations) {
         var multiplier = getSpeedMultiplier(targetDuration, List.of(animations));
         event.setControllerSpeed((float) multiplier);
     }
 
-    public void syncAnimation(AnimationState event, int targetDuration, Iterable<String> animations) {
+    public void syncAnimation(AnimationTest event, int targetDuration, Iterable<String> animations) {
         var multiplier = getSpeedMultiplier(targetDuration, animations);
         event.setControllerSpeed((float) multiplier);
     }

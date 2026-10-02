@@ -16,9 +16,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.bus.api.SubscribeEvent;
+import com.nukateam.ntgl.platform.event.ClientTickEvent;
+import com.nukateam.ntgl.Ntgl;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 
 import java.util.HashMap;
 
@@ -109,14 +109,14 @@ public class ClientReloadHandler {
 
                     if (WeaponStateHelper.getAmmoCount(data) >= WeaponModifierHelper.getMaxAmmo(data))
                         return;
-                    if (NeoForge.EVENT_BUS.post(new GunReloadEvent.Pre(data, hand)).isCanceled())
+                    if (Ntgl.EVENT_BUS.post(new GunReloadEvent.Pre(data, hand)).isCanceled())
                         return;
 
                     dataKey.setValue(player, true);
                     PacketHandler.getPlayChannel().sendToServer(new C2SMessageReload(hand, data.weaponMode));
                     this.reloadingSlot = player.getInventory().selected;
 
-                    NeoForge.EVENT_BUS.post(new GunReloadEvent.Post(data, hand));
+                    Ntgl.EVENT_BUS.post(new GunReloadEvent.Post(data, hand));
                 }
             }
         } else {

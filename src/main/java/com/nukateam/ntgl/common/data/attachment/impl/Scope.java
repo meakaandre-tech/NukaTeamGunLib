@@ -5,7 +5,7 @@ import com.nukateam.ntgl.common.debug.IDebugWidget;
 import com.nukateam.ntgl.common.debug.IEditorMenu;
 import com.nukateam.ntgl.common.util.interfaces.IWeaponModifier;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.tuple.Pair;
 import java.util.List;
@@ -19,14 +19,14 @@ import java.util.function.Supplier;
  * Author: MrCrayfish
  */
 public class Scope extends Attachment{
-    public static final ResourceLocation SCOPE_LOCATION = ResourceLocation.tryBuild(Ntgl.MOD_ID, "textures/hud/overlay/scope_long_overlay.png");
+    public static final Identifier SCOPE_LOCATION = Identifier.tryBuild(Ntgl.MOD_ID, "textures/hud/overlay/scope_long_overlay.png");
 
     protected float aimFovModifier;
     protected float additionalZoom;
     protected double reticleOffset;
     protected boolean stable;
     protected double viewFinderDist;
-    private ResourceLocation overlayTexture;
+    private Identifier overlayTexture;
 
     private Scope() {
     }
@@ -38,7 +38,7 @@ public class Scope extends Attachment{
         this.reticleOffset = reticleOffset;
     }
 
-    private Scope(float aimFovModifier, float additionalZoom, double reticleOffset, boolean stable, double viewFinderDist, ResourceLocation overlayTexture, IWeaponModifier... modifiers) {
+    private Scope(float aimFovModifier, float additionalZoom, double reticleOffset, boolean stable, double viewFinderDist, Identifier overlayTexture, IWeaponModifier... modifiers) {
         super(modifiers);
         this.aimFovModifier = aimFovModifier;
         this.additionalZoom = additionalZoom;
@@ -79,7 +79,7 @@ public class Scope extends Attachment{
         return this.overlayTexture != null;
     }
 
-    public ResourceLocation getOverlay() {
+    public Identifier getOverlay() {
         return overlayTexture;
     }
 
@@ -183,7 +183,7 @@ public class Scope extends Attachment{
         private double reticleOffset = 0.0;
         private boolean stable = false;
         private double viewFinderDist = 0.0;
-        private ResourceLocation overlayTexture = null;
+        private Identifier overlayTexture = null;
         private IWeaponModifier[] modifiers = new IWeaponModifier[]{};
 
         private Builder() {
@@ -244,7 +244,7 @@ public class Scope extends Attachment{
             return this;
         }
 
-        public Builder overlay(ResourceLocation overlayTexture) {
+        public Builder overlay(Identifier overlayTexture) {
             this.overlayTexture = overlayTexture;
             return this;
         }

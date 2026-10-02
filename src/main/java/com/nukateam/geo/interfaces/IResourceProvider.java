@@ -1,7 +1,7 @@
 package com.nukateam.geo.interfaces;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface IResourceProvider {
-    ResourceLocation getId();
+    Identifier getId();
 }

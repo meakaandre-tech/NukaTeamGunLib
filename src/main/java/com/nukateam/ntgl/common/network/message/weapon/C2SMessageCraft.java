@@ -1,6 +1,6 @@
 package com.nukateam.ntgl.common.network.message.weapon;
 
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.nukateam.ntgl.platform.IPayloadContext;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.common.network.ServerPlayHandler;
 import net.minecraft.core.BlockPos;
@@ -8,7 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 
 /**
@@ -16,19 +16,19 @@ import net.minecraft.server.level.ServerPlayer;
  */
 public class C2SMessageCraft implements CustomPacketPayload {
     public static final Type<C2SMessageCraft> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(Ntgl.MOD_ID, "c2s_message_craft"));
+            new Type<>(Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "c2s_message_craft"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, C2SMessageCraft> CODEC = StreamCodec.of(
             (buffer, message) -> encode(message, buffer),
             buffer -> decode(buffer));
 
-    private ResourceLocation id;
+    private Identifier id;
     private BlockPos pos;
 
     public C2SMessageCraft() {
     }
 
-    public C2SMessageCraft(ResourceLocation id, BlockPos pos) {
+    public C2SMessageCraft(Identifier id, BlockPos pos) {
         this.id = id;
         this.pos = pos;
     }

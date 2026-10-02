@@ -1,7 +1,7 @@
 package com.nukateam.ntgl.modules.datapack;
 
 import net.minecraft.nbt.CompoundTag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.nukateam.ntgl.platform.INBTSerializable;
 
 /**
  * A simple wrapper for a gun object to pass to WeaponItem. This is to indicate to developers that

@@ -3,19 +3,14 @@ package com.nukateam.ntgl.client.render.renderers.projectiles;
 import com.nukateam.ntgl.common.foundation.entity.FlameProjectile;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
-
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
-@OnlyIn(Dist.CLIENT)
+import net.minecraft.resources.Identifier;
 public class FlameRenderer extends EntityRenderer<FlameProjectile> {
     public FlameRenderer(EntityRendererProvider.Context context) {
         super(context);
     }
 
     @Override
-    public ResourceLocation getTextureLocation(FlameProjectile entity) {
+    public Identifier getTextureLocation(FlameProjectile entity) {
         return null;
     }
 

@@ -8,9 +8,8 @@ import com.nukateam.ntgl.common.debug.IEditorMenu;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.resources.Identifier;
+import com.nukateam.ntgl.platform.INBTSerializable;
 import net.minecraft.core.HolderLookup;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -52,29 +51,29 @@ public class Melee implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains(MODE, Tag.TAG_STRING)) {
-            this.mode = MeleeMode.getType(tag.getString(MODE));
+        if (tag.contains(MODE)) {
+            this.mode = MeleeMode.getType(tag.getStringOr(MODE, ""));
         }
-        if (tag.contains(DAMAGE, Tag.TAG_ANY_NUMERIC)) {
-            this.damage = tag.getFloat(DAMAGE);
+        if (tag.contains(DAMAGE)) {
+            this.damage = tag.getFloatOr(DAMAGE, 0F);
         }
-        if (tag.contains(COOLDOWN, Tag.TAG_ANY_NUMERIC)) {
-            this.cooldown = tag.getInt(COOLDOWN);
+        if (tag.contains(COOLDOWN)) {
+            this.cooldown = tag.getIntOr(COOLDOWN, 0);
         }
-        if (tag.contains(DELAY, Tag.TAG_ANY_NUMERIC)) {
-            this.delay = tag.getInt(DELAY);
+        if (tag.contains(DELAY)) {
+            this.delay = tag.getIntOr(DELAY, 0);
         }
-        if (tag.contains(DISTANCE, Tag.TAG_ANY_NUMERIC)) {
-            this.distance = tag.getFloat(DISTANCE);
+        if (tag.contains(DISTANCE)) {
+            this.distance = tag.getFloatOr(DISTANCE, 0F);
         }
-        if (tag.contains(ATTACK_RADIUS, Tag.TAG_ANY_NUMERIC)) {
-            this.angle = tag.getFloat(ATTACK_RADIUS);
+        if (tag.contains(ATTACK_RADIUS)) {
+            this.angle = tag.getFloatOr(ATTACK_RADIUS, 0F);
         }
-        if (tag.contains(KNOCKBACK, Tag.TAG_ANY_NUMERIC)) {
-            this.knockback = tag.getFloat(KNOCKBACK);
+        if (tag.contains(KNOCKBACK)) {
+            this.knockback = tag.getFloatOr(KNOCKBACK, 0F);
         }
-        if (tag.contains(MAX_TARGETS, Tag.TAG_ANY_NUMERIC)) {
-            this.maxTargets = tag.getInt(MAX_TARGETS);
+        if (tag.contains(MAX_TARGETS)) {
+            this.maxTargets = tag.getIntOr(MAX_TARGETS, 0);
         }
     }
 
@@ -169,7 +168,7 @@ public class Melee implements INBTSerializable<CompoundTag> {
             return this.projectile.copy(); //Copy since the builder could be used again
         }
 
-        public Melee.Builder setDamage(ResourceLocation id, float damage) {
+        public Melee.Builder setDamage(Identifier id, float damage) {
             this.projectile.damage = damage;
             return this;
         }

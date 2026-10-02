@@ -9,7 +9,7 @@ import com.nukateam.ntgl.common.foundation.init.Projectiles;
 import com.nukateam.ntgl.common.util.interfaces.IThrowableProjectileFactory;
 import com.nukateam.ntgl.common.util.util.WeaponStateHelper;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.core.registries.Registries;
 
@@ -28,10 +28,10 @@ public class ProjectileManager {
     
     private final IThrowableProjectileFactory DEFAULT_THROWABLE_FACTORY = ThrowableGrenadeEntity::new;
 
-    private final Map<ResourceLocation, IProjectileFactory> projectileForAmmoFactories = new HashMap();
-    private final Map<ResourceLocation, IProjectileFactory> projectileForTypeFactories = new HashMap();
+    private final Map<Identifier, IProjectileFactory> projectileForAmmoFactories = new HashMap();
+    private final Map<Identifier, IProjectileFactory> projectileForTypeFactories = new HashMap();
 
-    private final Map<ResourceLocation, IThrowableProjectileFactory> throwableProjectileFactories = new HashMap();
+    private final Map<Identifier, IThrowableProjectileFactory> throwableProjectileFactories = new HashMap();
 
     public ProjectileManager() {}
 

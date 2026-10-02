@@ -1,24 +1,24 @@
 package com.nukateam.ntgl.common.data.holders;
 
 import com.nukateam.ntgl.Ntgl;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class ResourceHolder {
-    protected final ResourceLocation id;
+    protected final Identifier id;
 
-    public ResourceHolder(ResourceLocation id) {
+    public ResourceHolder(Identifier id) {
         this.id = id;
     }
 
     public ResourceHolder(String name) {
-        this.id = ResourceLocation.tryBuild(Ntgl.MOD_ID, name);
+        this.id = Identifier.tryBuild(Ntgl.MOD_ID, name);
     }
 
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return this.id;
     }
 
-    public boolean equals(ResourceLocation obj) {
+    public boolean equals(Identifier obj) {
         return this.id.equals(obj);
     }
 

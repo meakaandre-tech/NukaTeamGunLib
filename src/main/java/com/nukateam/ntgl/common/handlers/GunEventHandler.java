@@ -27,10 +27,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.gameevent.GameEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 
-@EventBusSubscriber(modid = Ntgl.MOD_ID)
 public class GunEventHandler {
     @SubscribeEvent
     public static void attachmentsChanged(AttachmentEvent.ContainerUpdateEvent event) {}
@@ -117,7 +115,7 @@ public class GunEventHandler {
 
     public static void playCockSound(WeaponData data) {
         var wielder = data.wielder;
-        if(!wielder.level().isClientSide) {
+        if(!wielder.level().isClientSide()) {
             var cockSound = WeaponModifierHelper.getSound(SoundTypes.COCK, data);
             if (!wielder.isAlive()) return;
 

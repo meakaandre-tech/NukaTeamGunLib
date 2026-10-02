@@ -98,7 +98,7 @@ public class TeslaProjectile extends AbstractBeamProjectile {
 
         var entity = getOwner();
 
-        if (!level().isClientSide) {
+        if (!level().isClientSide()) {
             if(entity instanceof Creeper creeper)
                 powerCreeper(creeper);
 

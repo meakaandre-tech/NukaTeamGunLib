@@ -10,8 +10,8 @@ import com.nukateam.ntgl.common.util.annotation.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.resources.Identifier;
+import com.nukateam.ntgl.platform.INBTSerializable;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -128,104 +128,104 @@ public class General implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains(FIRE_MODE, Tag.TAG_COMPOUND)) {
-            this.fireMode = NbtUtils.deserializeFireMode(tag.getCompound(FIRE_MODE));
+        if (tag.contains(FIRE_MODE)) {
+            this.fireMode = NbtUtils.deserializeFireMode(tag.getCompoundOrEmpty(FIRE_MODE));
         }
-        if (tag.contains(FULL_CHARGE, Tag.TAG_ANY_NUMERIC)) {
-            this.fullCharge = tag.getBoolean(FULL_CHARGE);
+        if (tag.contains(FULL_CHARGE)) {
+            this.fullCharge = tag.getBooleanOr(FULL_CHARGE, false);
         }
-        if (tag.contains(ENCHANTABLE, Tag.TAG_ANY_NUMERIC)) {
-            this.enchantable = tag.getBoolean(ENCHANTABLE);
+        if (tag.contains(ENCHANTABLE)) {
+            this.enchantable = tag.getBooleanOr(ENCHANTABLE, false);
         }
-        if (tag.contains(SILENCED, Tag.TAG_ANY_NUMERIC)) {
-            this.silenced = tag.getBoolean(SILENCED);
+        if (tag.contains(SILENCED)) {
+            this.silenced = tag.getBooleanOr(SILENCED, false);
         }
-        if (tag.contains(ONE_HANDED, Tag.TAG_ANY_NUMERIC)) {
-            this.oneHanded = tag.getBoolean(ONE_HANDED);
+        if (tag.contains(ONE_HANDED)) {
+            this.oneHanded = tag.getBooleanOr(ONE_HANDED, false);
         }
-        if (tag.contains(RATE, Tag.TAG_ANY_NUMERIC)) {
-            this.rate = tag.getInt(RATE);
+        if (tag.contains(RATE)) {
+            this.rate = tag.getIntOr(RATE, 0);
         }
-        if (tag.contains(FIRE_TIMER, Tag.TAG_ANY_NUMERIC)) {
-            this.fireTimer = tag.getInt(FIRE_TIMER);
+        if (tag.contains(FIRE_TIMER)) {
+            this.fireTimer = tag.getIntOr(FIRE_TIMER, 0);
         }
-        if (tag.contains(GRIP_TYPE, Tag.TAG_STRING)) {
-            this.gripType = GripType.getType(ResourceLocation.tryParse(tag.getString(GRIP_TYPE)));
+        if (tag.contains(GRIP_TYPE)) {
+            this.gripType = GripType.getType(Identifier.tryParse(tag.getStringOr(GRIP_TYPE, "")));
         }
-        if (tag.contains(MAX_AMMO, Tag.TAG_ANY_NUMERIC)) {
-            this.maxAmmo = tag.getInt(MAX_AMMO);
+        if (tag.contains(MAX_AMMO)) {
+            this.maxAmmo = tag.getIntOr(MAX_AMMO, 0);
         }
-        if (tag.contains(RELOAD_SPEED, Tag.TAG_ANY_NUMERIC)) {
-            this.reloadAmount = tag.getInt(RELOAD_SPEED);
+        if (tag.contains(RELOAD_SPEED)) {
+            this.reloadAmount = tag.getIntOr(RELOAD_SPEED, 0);
         }
-        if (tag.contains(RELOAD_START, Tag.TAG_ANY_NUMERIC)) {
-            this.reloadStart = tag.getInt(RELOAD_START);
+        if (tag.contains(RELOAD_START)) {
+            this.reloadStart = tag.getIntOr(RELOAD_START, 0);
         }
-        if (tag.contains(RELOAD_TIME, Tag.TAG_ANY_NUMERIC)) {
-            this.reloadTime = tag.getInt(RELOAD_TIME);
+        if (tag.contains(RELOAD_TIME)) {
+            this.reloadTime = tag.getIntOr(RELOAD_TIME, 0);
         }
-        if (tag.contains(RELOAD_END, Tag.TAG_ANY_NUMERIC)) {
-            this.reloadEnd = tag.getInt(RELOAD_END);
+        if (tag.contains(RELOAD_END)) {
+            this.reloadEnd = tag.getIntOr(RELOAD_END, 0);
         }
-        if (tag.contains(EQUIP_TIME, Tag.TAG_ANY_NUMERIC)) {
-            this.equipTime = tag.getInt(EQUIP_TIME);
+        if (tag.contains(EQUIP_TIME)) {
+            this.equipTime = tag.getIntOr(EQUIP_TIME, 0);
         }
-        if (tag.contains(AMMO_PER_SHOT, Tag.TAG_ANY_NUMERIC)) {
-            this.ammoPerShot = tag.getInt(AMMO_PER_SHOT);
+        if (tag.contains(AMMO_PER_SHOT)) {
+            this.ammoPerShot = tag.getIntOr(AMMO_PER_SHOT, 0);
         }
-        if (tag.contains(LOADING_TYPE, Tag.TAG_STRING)) {
-            this.loadingType = LoadingType.getType(tag.getString(LOADING_TYPE));
+        if (tag.contains(LOADING_TYPE)) {
+            this.loadingType = LoadingType.getType(tag.getStringOr(LOADING_TYPE, ""));
         }
-        if (tag.contains(WEAPON_MODE, Tag.TAG_STRING)) {
-            this.action = WeaponAction.getType(tag.getString(WEAPON_MODE));
+        if (tag.contains(WEAPON_MODE)) {
+            this.action = WeaponAction.getType(tag.getStringOr(WEAPON_MODE, ""));
         }
-        if (tag.contains(WEAPON_MODE_META, Tag.TAG_STRING)) {
-            this.weaponModeMeta = WeaponModeMeta.getType(tag.getString(WEAPON_MODE_META));
+        if (tag.contains(WEAPON_MODE_META)) {
+            this.weaponModeMeta = WeaponModeMeta.getType(tag.getStringOr(WEAPON_MODE_META, ""));
         }
-        if (tag.contains(AUTO_RELOAD, Tag.TAG_BYTE)) {
-            this.autoReload = tag.getBoolean(AUTO_RELOAD);
+        if (tag.contains(AUTO_RELOAD)) {
+            this.autoReload = tag.getBooleanOr(AUTO_RELOAD, false);
         }
-        if (tag.contains(RENDER_HUD, Tag.TAG_BYTE)) {
-            this.renderHud = tag.getBoolean(RENDER_HUD);
+        if (tag.contains(RENDER_HUD)) {
+            this.renderHud = tag.getBooleanOr(RENDER_HUD, false);
         }
-        if (tag.contains(CATEGORY, Tag.TAG_STRING)) {
-            this.category = tag.getString(CATEGORY);
+        if (tag.contains(CATEGORY)) {
+            this.category = tag.getStringOr(CATEGORY, "");
         }
-        if (tag.contains(RECOIL_ANGLE, Tag.TAG_ANY_NUMERIC)) {
-            this.recoilAngle = tag.getFloat(RECOIL_ANGLE);
+        if (tag.contains(RECOIL_ANGLE)) {
+            this.recoilAngle = tag.getFloatOr(RECOIL_ANGLE, 0F);
         }
-        if (tag.contains(DAMAGE, Tag.TAG_ANY_NUMERIC)) {
-            this.damage = tag.getFloat(DAMAGE);
+        if (tag.contains(DAMAGE)) {
+            this.damage = tag.getFloatOr(DAMAGE, 0F);
         }
-        if (tag.contains(RECOIL_DURATION_OFFSET, Tag.TAG_ANY_NUMERIC)) {
-            this.recoilDurationOffset = tag.getFloat(RECOIL_DURATION_OFFSET);
+        if (tag.contains(RECOIL_DURATION_OFFSET)) {
+            this.recoilDurationOffset = tag.getFloatOr(RECOIL_DURATION_OFFSET, 0F);
         }
-        if (tag.contains(RECOIL_ADS_REDUCTION, Tag.TAG_ANY_NUMERIC)) {
-            this.recoilAdsReduction = tag.getFloat(RECOIL_ADS_REDUCTION);
+        if (tag.contains(RECOIL_ADS_REDUCTION)) {
+            this.recoilAdsReduction = tag.getFloatOr(RECOIL_ADS_REDUCTION, 0F);
         }
-        if (tag.contains(PROJECTILE_AMOUNT, Tag.TAG_ANY_NUMERIC)) {
-            this.projectileAmount = tag.getInt(PROJECTILE_AMOUNT);
+        if (tag.contains(PROJECTILE_AMOUNT)) {
+            this.projectileAmount = tag.getIntOr(PROJECTILE_AMOUNT, 0);
         }
-        if (tag.contains(MULTISHOT_AMOUNT, Tag.TAG_ANY_NUMERIC)) {
-            this.multishotAmount = tag.getInt(MULTISHOT_AMOUNT);
+        if (tag.contains(MULTISHOT_AMOUNT)) {
+            this.multishotAmount = tag.getIntOr(MULTISHOT_AMOUNT, 0);
         }
         if (tag.contains(ONE_TIME_CHARGE)) {
-            this.oneTimeCharge = tag.getBoolean(ONE_TIME_CHARGE);
+            this.oneTimeCharge = tag.getBooleanOr(ONE_TIME_CHARGE, false);
         }
         if (tag.contains(ALWAYS_SPREAD)) {
-            this.alwaysSpread = tag.getBoolean(ALWAYS_SPREAD);
+            this.alwaysSpread = tag.getBooleanOr(ALWAYS_SPREAD, false);
         }
-        if (tag.contains(SPREAD, Tag.TAG_ANY_NUMERIC)) {
-            this.spread = tag.getFloat(SPREAD);
+        if (tag.contains(SPREAD)) {
+            this.spread = tag.getFloatOr(SPREAD, 0F);
         }
-        if (tag.contains(ATTRIBUTE_MODIFIERS, Tag.TAG_COMPOUND)) {
-            this.attributeModifiers = NbtUtils.deserializeArray(tag.getCompound(ATTRIBUTE_MODIFIERS), AttributeModifier::create);
+        if (tag.contains(ATTRIBUTE_MODIFIERS)) {
+            this.attributeModifiers = NbtUtils.deserializeArray(tag.getCompoundOrEmpty(ATTRIBUTE_MODIFIERS), AttributeModifier::create);
         }
-        if (tag.contains(AMMO, Tag.TAG_COMPOUND)) {
-            this.ammo = NbtUtils.deserializeSet(tag.getCompound(AMMO), AmmoHolder::getType);
+        if (tag.contains(AMMO)) {
+            this.ammo = NbtUtils.deserializeSet(tag.getCompoundOrEmpty(AMMO), AmmoHolder::getType);
         }
-        if (tag.contains(FUEL, Tag.TAG_COMPOUND)) {
-            this.fuel = NbtUtils.deserializeSet(tag.getCompound(FUEL), AmmoHolder::getType);
+        if (tag.contains(FUEL)) {
+            this.fuel = NbtUtils.deserializeSet(tag.getCompoundOrEmpty(FUEL), AmmoHolder::getType);
         }
     }
 

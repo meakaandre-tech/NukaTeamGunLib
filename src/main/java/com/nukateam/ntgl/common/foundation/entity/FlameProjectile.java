@@ -38,7 +38,7 @@ public class FlameProjectile extends ProjectileEntity {
 
     @Override
     protected void onProjectileTick() {
-        if (this.level().isClientSide) {
+        if (this.level().isClientSide()) {
             int shooterId = this.getOwnerId();
 
             double startX = this.xOld;

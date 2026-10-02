@@ -38,30 +38,28 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
-import software.bernie.geckolib.animatable.GeoItem;
-import software.bernie.geckolib.animatable.client.GeoRenderProvider;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.GeoItem;
+import com.geckolib.animatable.client.GeoRenderProvider;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.*;
-import net.neoforged.neoforge.common.util.Lazy;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.util.GeckoLibUtil;
+import com.nukateam.ntgl.platform.Lazy;
+import com.geckolib.animatable.manager.AnimatableManager;
+import com.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 
-import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
+import static com.geckolib.util.GeckoLibUtil.createInstanceCache;
 import static net.minecraft.world.item.component.ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT;
 
 public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable{
     public static final String VARIANT = "variant";
-    private final Lazy<ResourceLocation> id = Lazy.of(this::getRegistryName);
+    private final Lazy<Identifier> id = Lazy.of(this::getRegistryName);
     private final WeakHashMap<CompoundTag, WeaponConfig> modifiedGunCache = new WeakHashMap<>();
     private WeaponConfig weaponConfig = new WeaponConfig();
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -93,7 +91,7 @@ public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable{
     }
 
     @Override
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return id.get();
     }
 
@@ -180,8 +178,6 @@ public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable{
         tooltip.add(Component.translatable("info.ntgl.attachment_help", name)
                 .withStyle(ChatFormatting.YELLOW));
     }
-
-    @OnlyIn(Dist.CLIENT)
     protected WeaponData getWeaponData(ItemStack stack) {
         return new WeaponData(stack, Minecraft.getInstance().player);
     }
@@ -189,15 +185,15 @@ public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable{
     @Override
     public WeaponConfig getModifiedConfig(ItemStack stack) {
         var tag = NtglComponents.getWeaponTag(stack);
-        if (tag.contains("Gun", Tag.TAG_COMPOUND)) {
+        if (tag.contains("Gun")) {
             return this.modifiedGunCache.computeIfAbsent(tag, item ->
             {
-                if (tag.getBoolean("Custom")) {
+                if (tag.getBooleanOr("Custom", false)) {
                     var key = BuiltInRegistries.ITEM.getKey(stack.getItem());
-                    return WeaponConfig.create(key, tag.getCompound("Gun"));
+                    return WeaponConfig.create(key, tag.getCompoundOrEmpty("Gun"));
                 } else {
                     var gunCopy = this.weaponConfig.copy();
-                    gunCopy.deserializeNBT(null, tag.getCompound("Gun"));
+                    gunCopy.deserializeNBT(null, tag.getCompoundOrEmpty("Gun"));
                     return gunCopy;
                 }
             });
@@ -236,7 +232,7 @@ public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable{
         return this.weaponConfig.getGeneral().isEnchantable() ? 5 : 0;
     }
 
-    private ResourceLocation getRegistryName() {
+    private Identifier getRegistryName() {
         return BuiltInRegistries.ITEM.getKey(this);
     }
 

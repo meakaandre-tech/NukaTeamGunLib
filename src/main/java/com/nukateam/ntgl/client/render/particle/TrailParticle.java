@@ -6,15 +6,12 @@ import net.minecraft.client.particle.BaseAshSmokeParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.particle.SpriteSet;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 
 /**
  * Author: MrCrayfish
  */
-@OnlyIn(Dist.CLIENT)
 public class TrailParticle extends BaseAshSmokeParticle {
     protected TrailParticle(ClientLevel world, double x, double y, double z, float scale, float red, float green, float blue, SpriteSet spriteWithAge) {
         super(world, x, y, z, 0.0F, 0.0F, 0.0F, 0.0, 0.0,
@@ -25,8 +22,6 @@ public class TrailParticle extends BaseAshSmokeParticle {
         this.bCol = blue;
         this.alpha = 0.25F;
     }
-
-    @OnlyIn(Dist.CLIENT)
     public static class Factory implements ParticleProvider<TrailData> {
         private final SpriteSet spriteSet;
 

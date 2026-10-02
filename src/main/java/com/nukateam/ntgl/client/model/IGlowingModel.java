@@ -1,8 +1,8 @@
 package com.nukateam.ntgl.client.model;
 
-import software.bernie.geckolib.animatable.GeoAnimatable;
-import net.minecraft.resources.ResourceLocation;
+import com.geckolib.animatable.GeoAnimatable;
+import net.minecraft.resources.Identifier;
 
 public interface IGlowingModel<T extends GeoAnimatable> {
-    ResourceLocation getGlowingTextureResource(T animatable);
+    Identifier getGlowingTextureResource(T animatable);
 }

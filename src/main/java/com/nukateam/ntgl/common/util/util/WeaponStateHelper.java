@@ -20,7 +20,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.LivingEntity;
@@ -97,7 +97,7 @@ public class WeaponStateHelper {
     }
 
     //AMMO TYPE
-    public static void setCurrentAmmo(WeaponData data, ResourceLocation ammo) {
+    public static void setCurrentAmmo(WeaponData data, Identifier ammo) {
         assert data.weapon != null;
         data.weapon.set(NtglComponents.AMMO, ammo.toString());
     }
@@ -175,9 +175,9 @@ public class WeaponStateHelper {
         var result = new ArrayList<ItemStack>();
 
         var attachment = getAttachments(weapon);
-        for (var slot: attachment.getAllKeys()){
-            if (attachment.contains(slot, Tag.TAG_COMPOUND)) {
-                result.add(ItemStack.parseOptional(lookupProvider, attachment.getCompound(slot)));
+        for (var slot: attachment.keySet()){
+            if (attachment.contains(slot)) {
+                result.add(ItemStack.parseOptional(lookupProvider, attachment.getCompoundOrEmpty(slot)));
             }
         }
         return result;
@@ -191,7 +191,7 @@ public class WeaponStateHelper {
                 return ItemStack.EMPTY;
             }
 
-            return ItemStack.parseOptional(registryAccess, attachment.getCompound(type.toString()));
+            return ItemStack.parseOptional(registryAccess, attachment.getCompoundOrEmpty(type.toString()));
         }
         return ItemStack.EMPTY;
     }
@@ -313,15 +313,15 @@ public class WeaponStateHelper {
     private static @NotNull CompoundTag getOrCreateTag(CompoundTag tag, String ammoCount) {
         var ammoTag = new CompoundTag();
 
-        if (tag.contains(ammoCount, Tag.TAG_COMPOUND))
-            ammoTag = tag.getCompound(ammoCount);
+        if (tag.contains(ammoCount))
+            ammoTag = tag.getCompoundOrEmpty(ammoCount);
         return ammoTag;
     }
 
     public static String getVariant(ItemStack stack) {
         var gunTag = NtglComponents.getWeaponTag(stack);
-        return gunTag.contains(WeaponItem.VARIANT, Tag.TAG_STRING)
-                ? gunTag.getString(WeaponItem.VARIANT)
+        return gunTag.contains(WeaponItem.VARIANT)
+                ? gunTag.getStringOr(WeaponItem.VARIANT, "")
                 : "default";
     }
 

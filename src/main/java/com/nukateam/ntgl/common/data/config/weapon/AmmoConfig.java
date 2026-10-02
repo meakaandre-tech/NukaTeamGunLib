@@ -8,7 +8,7 @@ import com.nukateam.ntgl.common.util.annotation.Optional;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.nukateam.ntgl.platform.INBTSerializable;
 import net.minecraft.core.HolderLookup;
 
 public class AmmoConfig implements INBTSerializable<CompoundTag>{
@@ -25,11 +25,11 @@ public class AmmoConfig implements INBTSerializable<CompoundTag>{
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains("type", Tag.TAG_STRING)) {
-            this.type = AmmoType.getType(tag.getString("type"));
+        if (tag.contains("type")) {
+            this.type = AmmoType.getType(tag.getStringOr("type", ""));
         }
-        if (tag.contains("counter", Tag.TAG_STRING)) {
-            this.counter = CounterType.getType(tag.getString("counter"));
+        if (tag.contains("counter")) {
+            this.counter = CounterType.getType(tag.getStringOr("counter", ""));
         }
     }
 

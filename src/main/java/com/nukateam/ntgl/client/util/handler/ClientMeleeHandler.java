@@ -13,15 +13,12 @@ import com.nukateam.ntgl.common.util.util.WeaponModifierHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.*;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import com.nukateam.ntgl.platform.event.ClientTickEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@EventBusSubscriber(modid = Ntgl.MOD_ID, value = Dist.CLIENT)
 public class ClientMeleeHandler {
     private static final Map<Pair<LivingEntity, InteractionHand>, ClientMeleeTracker> TRACKER_MAP = new HashMap<>();
 

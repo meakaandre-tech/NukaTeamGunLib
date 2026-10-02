@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import static com.nukateam.ntgl.client.render.screen.AttachmentScreen.ATTACHMENT_Y;
 import static com.nukateam.ntgl.client.render.screen.AttachmentScreen.SLOT_SIZE;
 import static com.nukateam.ntgl.common.util.util.WeaponModifierHelper.*;
-import static net.neoforged.neoforge.common.NeoForge.*;
+import static com.nukateam.ntgl.Ntgl.EVENT_BUS;
 
 /**
  * Author: MrCrayfish

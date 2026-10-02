@@ -10,12 +10,14 @@ import com.nukateam.ntgl.common.data.config.attachment.AttachmentConfig;
 import com.nukateam.ntgl.common.network.message.weapon.S2CMessageUpdateAttachments;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.minecraft.server.packs.PackType;
+import com.nukateam.ntgl.Ntgl;
 import org.apache.commons.lang3.Validate;
 
 import javax.annotation.Nullable;
@@ -25,16 +27,16 @@ public class NetworkAttachmentManager extends SimplePreparableReloadListener<Map
     private static List<IAttachment<?>> clientRegisteredAttachments = new ArrayList<>();
     private static NetworkAttachmentManager instance;
 
-    private Map<ResourceLocation, AttachmentConfig> registeredAttachments = new HashMap<>();
+    private Map<Identifier, AttachmentConfig> registeredAttachments = new HashMap<>();
 
     public static void onServerStopped() {
-        NetworkAttachmentManager.instance = null;
+        // the reload listener is registered once on Fabric and lives for the whole game session
     }
 
-    public static void register(AddReloadListenerEvent event) {
-        NetworkAttachmentManager networkManager = new NetworkAttachmentManager();
-        event.addListener(networkManager);
-        NetworkAttachmentManager.instance = networkManager;
+    public static void register() {
+        NetworkAttachmentManager manager = new NetworkAttachmentManager();
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(Ntgl.ntglResource("attachments"), manager);
+        NetworkAttachmentManager.instance = manager;
     }
 
     @Override
@@ -44,7 +46,7 @@ public class NetworkAttachmentManager extends SimplePreparableReloadListener<Map
 
     @Override
     protected void apply(Map<IAttachment<?>, AttachmentConfig> objects, ResourceManager resourceManager, ProfilerFiller profiler) {
-        ImmutableMap.Builder<ResourceLocation, AttachmentConfig> builder = ImmutableMap.builder();
+        ImmutableMap.Builder<Identifier, AttachmentConfig> builder = ImmutableMap.builder();
 
         objects.forEach((abstractItem, config) -> {
             if(abstractItem instanceof Item item) {
@@ -65,11 +67,11 @@ public class NetworkAttachmentManager extends SimplePreparableReloadListener<Map
         });
     }
 
-    public static ImmutableMap<ResourceLocation, AttachmentConfig> readRegistered(FriendlyByteBuf buffer) {
+    public static ImmutableMap<Identifier, AttachmentConfig> readRegistered(FriendlyByteBuf buffer) {
         var size = buffer.readVarInt();
 
         if (size > 0) {
-            var builder = ImmutableMap.<ResourceLocation, AttachmentConfig>builder();
+            var builder = ImmutableMap.<Identifier, AttachmentConfig>builder();
 
             for (int i = 0; i < size; i++) {
                 var id = buffer.readResourceLocation();
@@ -85,10 +87,10 @@ public class NetworkAttachmentManager extends SimplePreparableReloadListener<Map
         return updateRegisteredAttachments(message.getRegistered());
     }
 
-    private static boolean updateRegisteredAttachments(Map<ResourceLocation, AttachmentConfig> registered) {
+    private static boolean updateRegisteredAttachments(Map<Identifier, AttachmentConfig> registered) {
         clientRegisteredAttachments.clear();
         if (registered != null) {
-            for (Map.Entry<ResourceLocation, AttachmentConfig> entry : registered.entrySet()) {
+            for (Map.Entry<Identifier, AttachmentConfig> entry : registered.entrySet()) {
                 Item item = BuiltInRegistries.ITEM.get(entry.getKey());
                 if (!(item instanceof IAttachment<?>)) {
                     return false;
@@ -101,7 +103,7 @@ public class NetworkAttachmentManager extends SimplePreparableReloadListener<Map
         return false;
     }
 
-    public Map<ResourceLocation, AttachmentConfig> getRegisteredAttachments() {
+    public Map<Identifier, AttachmentConfig> getRegisteredAttachments() {
         return this.registeredAttachments;
     }
 

@@ -2,7 +2,7 @@ package com.nukateam.ntgl.common.debug.screen.widget;
 
 import com.nukateam.ntgl.common.debug.IDebugWidget;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
@@ -25,7 +25,7 @@ public class DebugButton extends Button implements IDebugWidget {
     }
 
 //    @Override
-//    public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+//    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
 //        this.active = this.enabled.get();
 //        super.render(graphics, mouseX, mouseY, partialTicks);
 //    }

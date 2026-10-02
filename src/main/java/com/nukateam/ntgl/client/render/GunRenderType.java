@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.VertexFormat;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.client.util.handler.WeaponRenderingHandler;
 import net.minecraft.client.renderer.RenderStateShard;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 
 /**
  * Author: MrCrayfish

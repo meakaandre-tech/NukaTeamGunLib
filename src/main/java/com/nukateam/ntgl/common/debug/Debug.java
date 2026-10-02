@@ -7,9 +7,8 @@ import com.nukateam.ntgl.common.data.attachment.impl.Scope;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.common.foundation.item.interfaces.IWeapon;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import com.nukateam.ntgl.platform.event.ServerStartedEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +16,6 @@ import java.util.Map;
 /**
  * Author: MrCrayfish
  */
-@EventBusSubscriber(modid = Ntgl.MOD_ID)
 public class Debug {
     private static final Map<IWeapon, WeaponConfig> GUNS = new HashMap<>();
     private static final Map<Item, Scope> SCOPES = new HashMap<>();

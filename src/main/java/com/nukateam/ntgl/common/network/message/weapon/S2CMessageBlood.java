@@ -1,15 +1,14 @@
 package com.nukateam.ntgl.common.network.message.weapon;
 
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.nukateam.ntgl.platform.IPayloadContext;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.client.handlers.ClientPlayHandler;
-import com.nukateam.ntgl.common.network.message.chassis.S2CMessageUpdateEquipmentConfig;
 import com.nukateam.ntgl.common.util.util.NbtUtils;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
 
 /**
@@ -17,7 +16,7 @@ import net.minecraft.world.phys.Vec3;
  */
 public class S2CMessageBlood implements CustomPacketPayload {
     public static final Type<S2CMessageBlood> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(Ntgl.MOD_ID, "s2c_message_blood"));
+            new Type<>(Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "s2c_message_blood"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CMessageBlood> CODEC = StreamCodec.of(
             (buffer, message) -> encode(message, buffer),

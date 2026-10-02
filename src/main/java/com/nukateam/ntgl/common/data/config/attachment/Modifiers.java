@@ -14,8 +14,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.minecraft.resources.Identifier;
+import com.nukateam.ntgl.platform.INBTSerializable;
 import net.minecraft.core.HolderLookup;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -109,42 +109,42 @@ public class Modifiers implements INBTSerializable<CompoundTag>, IWeaponModifier
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
         // Existing deserialization
-        if (tag.contains("fireSoundVolume", Tag.TAG_STRING)) this.fireSoundVolume = tag.getString("fireSoundVolume");
-        if (tag.contains("fireSound", Tag.TAG_STRING)) this.fireSound = tag.getString("fireSound");
-        if (tag.contains("silencedFire", Tag.TAG_BYTE)) this.silencedFire = tag.getString("silencedFire");
+        if (tag.contains("fireSoundVolume")) this.fireSoundVolume = tag.getStringOr("fireSoundVolume", "");
+        if (tag.contains("fireSound")) this.fireSound = tag.getStringOr("fireSound", "");
+        if (tag.contains("silencedFire")) this.silencedFire = tag.getStringOr("silencedFire", "");
 
         // Numeric fields
-        if (tag.contains("additionalDamage", Tag.TAG_FLOAT)) this.additionalDamage = tag.getFloat("additionalDamage");
-        if (tag.contains("damage", Tag.TAG_STRING)) this.damage = tag.getString("damage");
-        if (tag.contains("projectileSpeed", Tag.TAG_STRING)) this.projectileSpeed = tag.getString("projectileSpeed");
-        if (tag.contains("spread", Tag.TAG_STRING)) this.spread = tag.getString("spread");
-        if (tag.contains("additionalProjectileGravity", Tag.TAG_FLOAT)) this.additionalProjectileGravity = tag.getFloat("additionalProjectileGravity");
-        if (tag.contains("projectileGravity", Tag.TAG_STRING)) this.projectileGravity = tag.getString("projectileGravity");
-        if (tag.contains("projectileLife", Tag.TAG_STRING)) this.projectileLife = tag.getString("projectileLife");
-        if (tag.contains("recoilModifier", Tag.TAG_FLOAT)) this.recoilModifier = tag.getFloat("recoilModifier");
-        if (tag.contains("kickModifier", Tag.TAG_FLOAT)) this.kickModifier = tag.getFloat("kickModifier");
-        if (tag.contains("muzzleFlashSize", Tag.TAG_STRING)) this.muzzleFlashSize = tag.getString("muzzleFlashSize");
-        if (tag.contains("muzzleFlashScale", Tag.TAG_STRING)) this.muzzleFlashScale = tag.getString("muzzleFlashScale");
-        if (tag.contains("aimDownSightSpeed", Tag.TAG_STRING)) this.aimDownSightSpeed = tag.getString("aimDownSightSpeed");
-        if (tag.contains("rate", Tag.TAG_STRING)) this.rate = tag.getString("rate");
-        if (tag.contains("criticalChance", Tag.TAG_FLOAT)) this.criticalChance = tag.getFloat("criticalChance");
-        if (tag.contains("maxAmmo", Tag.TAG_STRING)) this.maxAmmo = tag.getString("maxAmmo");
-        if (tag.contains("projectileAmount", Tag.TAG_STRING)) this.projectileAmount = tag.getString("projectileAmount");
-        if (tag.contains("fireDelay", Tag.TAG_STRING)) this.fireDelay = tag.getString("fireDelay");
-        if (tag.contains("reloadStart", Tag.TAG_STRING)) this.reloadStart = tag.getString("reloadStart");
-        if (tag.contains("reloadTime", Tag.TAG_STRING)) this.reloadTime = tag.getString("reloadTime");
-        if (tag.contains("reloadEnd", Tag.TAG_STRING)) this.reloadEnd = tag.getString("reloadEnd");
-        if (tag.contains("equipTime", Tag.TAG_STRING)) this.equipTime = tag.getString("equipTime");
-        if (tag.contains("ammoPerShot", Tag.TAG_STRING)) this.ammoPerShot = tag.getString("ammoPerShot");
+        if (tag.contains("additionalDamage")) this.additionalDamage = tag.getFloatOr("additionalDamage", 0F);
+        if (tag.contains("damage")) this.damage = tag.getStringOr("damage", "");
+        if (tag.contains("projectileSpeed")) this.projectileSpeed = tag.getStringOr("projectileSpeed", "");
+        if (tag.contains("spread")) this.spread = tag.getStringOr("spread", "");
+        if (tag.contains("additionalProjectileGravity")) this.additionalProjectileGravity = tag.getFloatOr("additionalProjectileGravity", 0F);
+        if (tag.contains("projectileGravity")) this.projectileGravity = tag.getStringOr("projectileGravity", "");
+        if (tag.contains("projectileLife")) this.projectileLife = tag.getStringOr("projectileLife", "");
+        if (tag.contains("recoilModifier")) this.recoilModifier = tag.getFloatOr("recoilModifier", 0F);
+        if (tag.contains("kickModifier")) this.kickModifier = tag.getFloatOr("kickModifier", 0F);
+        if (tag.contains("muzzleFlashSize")) this.muzzleFlashSize = tag.getStringOr("muzzleFlashSize", "");
+        if (tag.contains("muzzleFlashScale")) this.muzzleFlashScale = tag.getStringOr("muzzleFlashScale", "");
+        if (tag.contains("aimDownSightSpeed")) this.aimDownSightSpeed = tag.getStringOr("aimDownSightSpeed", "");
+        if (tag.contains("rate")) this.rate = tag.getStringOr("rate", "");
+        if (tag.contains("criticalChance")) this.criticalChance = tag.getFloatOr("criticalChance", 0F);
+        if (tag.contains("maxAmmo")) this.maxAmmo = tag.getStringOr("maxAmmo", "");
+        if (tag.contains("projectileAmount")) this.projectileAmount = tag.getStringOr("projectileAmount", "");
+        if (tag.contains("fireDelay")) this.fireDelay = tag.getStringOr("fireDelay", "");
+        if (tag.contains("reloadStart")) this.reloadStart = tag.getStringOr("reloadStart", "");
+        if (tag.contains("reloadTime")) this.reloadTime = tag.getStringOr("reloadTime", "");
+        if (tag.contains("reloadEnd")) this.reloadEnd = tag.getStringOr("reloadEnd", "");
+        if (tag.contains("equipTime")) this.equipTime = tag.getStringOr("equipTime", "");
+        if (tag.contains("ammoPerShot")) this.ammoPerShot = tag.getStringOr("ammoPerShot", "");
 
         // Collections and enums
         readFireModes(tag);
         readGripType(tag);
-        if (tag.contains("needsFullCharge", Tag.TAG_BYTE)) this.needsFullCharge = tag.getString("needsFullCharge");
-        if (tag.contains("oneTimeCharge", Tag.TAG_BYTE)) this.oneTimeCharge = tag.getString("oneTimeCharge");
+        if (tag.contains("needsFullCharge")) this.needsFullCharge = tag.getStringOr("needsFullCharge", "");
+        if (tag.contains("oneTimeCharge")) this.oneTimeCharge = tag.getStringOr("oneTimeCharge", "");
         readAmmoItems(tag);
-        if (tag.contains("autoReload", Tag.TAG_BYTE)) this.autoReload = tag.getString("autoReload");
-        if (tag.contains("renderHud", Tag.TAG_BYTE)) this.renderHud = tag.getString("renderHud");
+        if (tag.contains("autoReload")) this.autoReload = tag.getStringOr("autoReload", "");
+        if (tag.contains("renderHud")) this.renderHud = tag.getStringOr("renderHud", "");
         readLoadingType(tag);
         readFuelTypes(tag);
         readFuelMax(tag);
@@ -158,9 +158,9 @@ public class Modifiers implements INBTSerializable<CompoundTag>, IWeaponModifier
     }
 
     private void readFireModes(CompoundTag tag) {
-        if (tag.contains("fireModes", Tag.TAG_LIST)) {
+        if (tag.contains("fireModes")) {
             this.fireModes.clear();
-            tag.getList("fireModes", Tag.TAG_STRING).forEach(t ->
+            tag.getListOrEmpty("fireModes").forEach(t ->
                     this.fireModes.add(FireMode.getType(t.getAsString()))
             );
         }
@@ -173,8 +173,8 @@ public class Modifiers implements INBTSerializable<CompoundTag>, IWeaponModifier
     }
 
     private void readGripType(CompoundTag tag) {
-        if (tag.contains("gripType", Tag.TAG_STRING)) {
-            this.gripType = GripType.getType(tag.getString("gripType"));
+        if (tag.contains("gripType")) {
+            this.gripType = GripType.getType(tag.getStringOr("gripType", ""));
         }
     }
 
@@ -185,9 +185,9 @@ public class Modifiers implements INBTSerializable<CompoundTag>, IWeaponModifier
     }
 
     private void readAmmoItems(CompoundTag tag) {
-        if (tag.contains("ammoItems", Tag.TAG_LIST)) {
+        if (tag.contains("ammoItems")) {
             this.ammoItems.clear();
-            tag.getList("ammoItems", Tag.TAG_STRING).forEach(t ->
+            tag.getListOrEmpty("ammoItems").forEach(t ->
                     this.ammoItems.add(AmmoHolder.getType(t.getAsString()))
             );
         }
@@ -200,8 +200,8 @@ public class Modifiers implements INBTSerializable<CompoundTag>, IWeaponModifier
     }
 
     private void readLoadingType(CompoundTag tag) {
-        if (tag.contains("loadingType", Tag.TAG_STRING)) {
-            this.loadingType = LoadingType.getType(tag.getString("loadingType"));
+        if (tag.contains("loadingType")) {
+            this.loadingType = LoadingType.getType(tag.getStringOr("loadingType", ""));
         }
     }
 
@@ -212,9 +212,9 @@ public class Modifiers implements INBTSerializable<CompoundTag>, IWeaponModifier
     }
 
     private void readFuelTypes(CompoundTag tag) {
-        if (tag.contains("fuel", Tag.TAG_LIST)) {
+        if (tag.contains("fuel")) {
             this.fuel.clear();
-            tag.getList("fuel", Tag.TAG_STRING).forEach(t ->
+            tag.getListOrEmpty("fuel").forEach(t ->
                     this.fuel.add(AmmoHolder.getType(t.getAsString()))
             );
         }
@@ -228,12 +228,12 @@ public class Modifiers implements INBTSerializable<CompoundTag>, IWeaponModifier
 
     // В методе deserializeNBT
     private void readFuelMax(CompoundTag tag) {
-        if (tag.contains("maxFuel", Tag.TAG_COMPOUND)) {
-            CompoundTag fuelTag = tag.getCompound("maxFuel");
-            fuelTag.getAllKeys().forEach(key ->
+        if (tag.contains("maxFuel")) {
+            CompoundTag fuelTag = tag.getCompoundOrEmpty("maxFuel");
+            fuelTag.keySet().forEach(key ->
                     this.maxFuel.put(
                             AmmoHolder.getType(key),
-                            fuelTag.getInt(key)
+                            fuelTag.getIntOr(key, 0)
                     )
             );
         }
@@ -335,7 +335,7 @@ public class Modifiers implements INBTSerializable<CompoundTag>, IWeaponModifier
     }
 
     @Override
-    public ResourceLocation modifySound(String name, ResourceLocation sound, WeaponData data) {
+    public Identifier modifySound(String name, Identifier sound, WeaponData data) {
         return IWeaponModifier.super.modifySound(name, sound, data);
     }
 

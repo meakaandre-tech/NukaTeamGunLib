@@ -10,15 +10,15 @@ import com.nukateam.ntgl.common.event.GunFireEvent;
 import com.google.common.collect.ImmutableList;
 import com.nukateam.ntgl.common.foundation.item.interfaces.IWeapon;
 import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import com.nukateam.ntgl.platform.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import net.neoforged.bus.api.SubscribeEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -39,23 +39,23 @@ public class CrosshairHandler {
         return instance;
     }
 
-    private final Map<ResourceLocation, Crosshair> idToCrosshair = new HashMap<>();
+    private final Map<Identifier, Crosshair> idToCrosshair = new HashMap<>();
     private final List<Crosshair> registeredCrosshairs = new ArrayList<>();
     private Crosshair currentCrosshair = null;
 
     private CrosshairHandler() {
-        this.register(new TexturedCrosshair(ResourceLocation.tryBuild(Ntgl.MOD_ID, "better_default")));
-        this.register(new TexturedCrosshair(ResourceLocation.tryBuild(Ntgl.MOD_ID, "circle")));
-        this.register(new TexturedCrosshair(ResourceLocation.tryBuild(Ntgl.MOD_ID, "filled_circle"), false));
-        this.register(new TexturedCrosshair(ResourceLocation.tryBuild(Ntgl.MOD_ID, "square")));
-        this.register(new TexturedCrosshair(ResourceLocation.tryBuild(Ntgl.MOD_ID, "round")));
-        this.register(new TexturedCrosshair(ResourceLocation.tryBuild(Ntgl.MOD_ID, "arrow")));
-        this.register(new TexturedCrosshair(ResourceLocation.tryBuild(Ntgl.MOD_ID, "dot")));
-        this.register(new TexturedCrosshair(ResourceLocation.tryBuild(Ntgl.MOD_ID, "box")));
-        this.register(new TexturedCrosshair(ResourceLocation.tryBuild(Ntgl.MOD_ID, "hit_marker")));
-        this.register(new TexturedCrosshair(ResourceLocation.tryBuild(Ntgl.MOD_ID, "line")));
-        this.register(new TexturedCrosshair(ResourceLocation.tryBuild(Ntgl.MOD_ID, "t")));
-        this.register(new TexturedCrosshair(ResourceLocation.tryBuild(Ntgl.MOD_ID, "smiley")));
+        this.register(new TexturedCrosshair(Identifier.tryBuild(Ntgl.MOD_ID, "better_default")));
+        this.register(new TexturedCrosshair(Identifier.tryBuild(Ntgl.MOD_ID, "circle")));
+        this.register(new TexturedCrosshair(Identifier.tryBuild(Ntgl.MOD_ID, "filled_circle"), false));
+        this.register(new TexturedCrosshair(Identifier.tryBuild(Ntgl.MOD_ID, "square")));
+        this.register(new TexturedCrosshair(Identifier.tryBuild(Ntgl.MOD_ID, "round")));
+        this.register(new TexturedCrosshair(Identifier.tryBuild(Ntgl.MOD_ID, "arrow")));
+        this.register(new TexturedCrosshair(Identifier.tryBuild(Ntgl.MOD_ID, "dot")));
+        this.register(new TexturedCrosshair(Identifier.tryBuild(Ntgl.MOD_ID, "box")));
+        this.register(new TexturedCrosshair(Identifier.tryBuild(Ntgl.MOD_ID, "hit_marker")));
+        this.register(new TexturedCrosshair(Identifier.tryBuild(Ntgl.MOD_ID, "line")));
+        this.register(new TexturedCrosshair(Identifier.tryBuild(Ntgl.MOD_ID, "t")));
+        this.register(new TexturedCrosshair(Identifier.tryBuild(Ntgl.MOD_ID, "smiley")));
         this.register(new TechCrosshair());
     }
 
@@ -75,7 +75,7 @@ public class CrosshairHandler {
      *
      * @param id the id of the crosshair
      */
-    public void setCrosshair(ResourceLocation id) {
+    public void setCrosshair(Identifier id) {
         this.currentCrosshair = this.idToCrosshair.getOrDefault(id, Crosshair.DEFAULT);
     }
 
@@ -85,7 +85,7 @@ public class CrosshairHandler {
     @Nullable
     public Crosshair getCurrentCrosshair() {
         if (this.currentCrosshair == null && this.registeredCrosshairs.size() > 0) {
-            ResourceLocation id = ResourceLocation.tryParse(Config.CLIENT.display.crosshair.get());
+            Identifier id = Identifier.tryParse(Config.CLIENT.display.crosshair.get());
             this.currentCrosshair = id != null ? this.idToCrosshair.getOrDefault(id, Crosshair.DEFAULT) : Crosshair.DEFAULT;
         }
         return this.currentCrosshair;
@@ -161,7 +161,7 @@ public class CrosshairHandler {
     public static void onConfigReload(ModConfigEvent.Reloading event) {
         ModConfig config = event.getConfig();
         if (config.getType() == ModConfig.Type.CLIENT && config.getModId().equals(Ntgl.MOD_ID)) {
-            ResourceLocation id = ResourceLocation.tryParse(Config.CLIENT.display.crosshair.get());
+            Identifier id = Identifier.tryParse(Config.CLIENT.display.crosshair.get());
             if (id != null) {
                 CrosshairHandler.get().setCrosshair(id);
             }

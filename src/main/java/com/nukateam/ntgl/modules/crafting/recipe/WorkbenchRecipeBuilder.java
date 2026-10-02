@@ -6,7 +6,7 @@ import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.RecipeUnlockedTrigger;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -70,7 +70,7 @@ public class WorkbenchRecipeBuilder {
         validate(id);
 
         this.advancement
-                .parent(ResourceLocation.parse("recipes/root"))
+                .parent(Identifier.parse("recipes/root"))
                 .addCriterion("has_the_recipe",
                         RecipeUnlockedTrigger.unlocked(id))
                 .rewards(AdvancementRewards.Builder.recipe(id));
@@ -85,7 +85,7 @@ public class WorkbenchRecipeBuilder {
 
     // ---------------- validation ----------------
 
-    private void validate(ResourceLocation id) {
+    private void validate(Identifier id) {
         if (this.ingredients.isEmpty()) {
             throw new IllegalStateException("Recipe " + id + " has no ingredients");
         }

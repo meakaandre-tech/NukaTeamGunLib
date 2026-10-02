@@ -5,7 +5,7 @@ import com.nukateam.ntgl.common.data.WeaponData;
 import com.nukateam.ntgl.common.foundation.init.NtglComponents;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
 
@@ -31,7 +31,7 @@ public class FuelUtils {
         return true;
     }
 
-    public static boolean hasFuel(ResourceLocation id, WeaponData data){
+    public static boolean hasFuel(Identifier id, WeaponData data){
         var amount = WeaponModifierHelper.getFuelAmountPerUse(id, data);
         var fuel = getFuel(data.weapon, AmmoHolder.getType(id));
         return fuel >= amount;
@@ -47,7 +47,7 @@ public class FuelUtils {
         var fuelTag = getOrCreateFuelTag(stack);
 
         if(fuelTag.contains(ammoHolder.toString(), Tag.TAG_INT))
-            return fuelTag.getInt(ammoHolder.toString());
+            return fuelTag.getIntOr(ammoHolder.toString(), 0);
         return 0;
     }
 

@@ -1,7 +1,7 @@
 package com.nukateam.ntgl.common.data.holders;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.function.*;
 
 public class AmmoHolder extends ResourceHolder {
-    private static final Map<ResourceLocation, AmmoHolder> ammoTypeMap = new HashMap<>();
+    private static final Map<Identifier, AmmoHolder> ammoTypeMap = new HashMap<>();
 
     private boolean canReturnAmmo = false;
     private Function<ItemStack, Boolean> isAcceptable = (stack) -> false;
@@ -19,7 +19,7 @@ public class AmmoHolder extends ResourceHolder {
     private Function<AmmoHolder, String> getDescriptionId = (ammo) ->
             "info." + ammo.id.getNamespace() + "." + ammo.id.getPath();
 
-    public AmmoHolder(ResourceLocation id) {
+    public AmmoHolder(Identifier id) {
         super(id);
     }
 
@@ -48,14 +48,14 @@ public class AmmoHolder extends ResourceHolder {
     }
 
     public static AmmoHolder getType(String id) {
-        return getType(ResourceLocation.tryParse(id));
+        return getType(Identifier.tryParse(id));
     }
 
-    public static AmmoHolder getType(ResourceLocation id) {
+    public static AmmoHolder getType(Identifier id) {
         return ammoTypeMap.getOrDefault(id, createDefault(id));
     }
 
-    private static AmmoHolder createDefault(ResourceLocation id){
+    private static AmmoHolder createDefault(Identifier id){
         var holder = Builder.create(id)
                 .isAcceptable((stack) -> Objects.equals(getKey(stack), id))
                 .value((s) -> 1)
@@ -82,7 +82,7 @@ public class AmmoHolder extends ResourceHolder {
                     && this.id.getPath().equals(holder.id.getPath());
     }
 
-    private static @Nullable ResourceLocation getKey(ItemStack stack) {
+    private static @Nullable Identifier getKey(ItemStack stack) {
         return BuiltInRegistries.ITEM.getKey(stack.getItem());
     }
 
@@ -93,7 +93,7 @@ public class AmmoHolder extends ResourceHolder {
             this.holder = holder;
         }
 
-        public static Builder create(ResourceLocation id) {
+        public static Builder create(Identifier id) {
             var holder = new AmmoHolder(id);
             return new Builder(holder);
         }

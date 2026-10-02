@@ -2,34 +2,34 @@ package com.nukateam.ntgl.client.util.helpers.render;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
 
 public class Figures {
-    public static void drawBar(GuiGraphics graphics, int x, int y, int width, int height, float percent, int color){
+    public static void drawBar(GuiGraphicsExtractor graphics, int x, int y, int width, int height, float percent, int color){
 //        var color = percent < 0.25 ? 0xFFFF5555 : 0xFFFFFFFF;
         var value = (int)(width * percent);
         drawFrame(graphics, x, y, width, height, color);
         graphics.fill(x, y, x + value, y + height, color);
     }
 
-    public static void drawFrame(GuiGraphics graphics, int x, int y, int width, int height, int color) {
+    public static void drawFrame(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int color) {
         graphics.fill(x, y, x + width, y + 1, color); //TOP
         graphics.fill(x, y + height, x + width, y + height + 1, color); //BOTTOM
         graphics.fill(x, y, x + 1, y + height, color); //LEFT
         graphics.fill(x + width - 1, y, x + width, y + height, color); //RIGHT
     }
 
-    public static void drawLine(GuiGraphics graphics, int x, int y, int width, int height) {
+    public static void drawLine(GuiGraphicsExtractor graphics, int x, int y, int width, int height) {
         drawLine(graphics, x, y, x + width, y + height, 0xFFFFFFFF);
     }
 
-    public static void drawLine(GuiGraphics graphics, int x, int y, int width, int height, int color) {
+    public static void drawLine(GuiGraphicsExtractor graphics, int x, int y, int width, int height, int color) {
         graphics.fill(x, y, x + width, y + height, color);
     }
 
-    public static void drawBorder(GuiGraphics guiGraphics, float centerX, float centerY,
+    public static void drawBorder(GuiGraphicsExtractor guiGraphics, float centerX, float centerY,
                                   float radius, float startAngle, float sweepAngle,
                                   int color, float thickness) {
 
@@ -113,7 +113,7 @@ public class Figures {
         poseStack.popPose();
     }
 
-    public static void drawOutline(GuiGraphics guiGraphics, float centerX, float centerY,
+    public static void drawOutline(GuiGraphicsExtractor guiGraphics, float centerX, float centerY,
                                    float radius, float startAngle, float sweepAngle,
                                    int color, float lineWidth) {
 
@@ -175,7 +175,7 @@ public class Figures {
         poseStack.popPose();
     }
 
-    public static void drawSegment(GuiGraphics guiGraphics, float centerX, float centerY,
+    public static void drawSegment(GuiGraphicsExtractor guiGraphics, float centerX, float centerY,
                                    float radius, float startAngle, float sweepAngle, int color) {
         if (radius <= 0 || sweepAngle <= 0) return;
 

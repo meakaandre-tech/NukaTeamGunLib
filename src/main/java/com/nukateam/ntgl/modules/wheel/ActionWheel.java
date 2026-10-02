@@ -1,7 +1,7 @@
 package com.nukateam.ntgl.modules.wheel;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -128,20 +128,20 @@ public class ActionWheel {
     }
 
     public static class WheelAction {
-        private ResourceLocation icon;
+        private Identifier icon;
         private Component title = Component.literal("");
         private Runnable action = () -> {};
         private int color = 0xC6C6C6FF;
 
         public WheelAction() {}
 
-        public ResourceLocation getIcon() { return icon; }
+        public Identifier getIcon() { return icon; }
         public Component getTitle() { return title; }
         public Runnable getAction() { return action; }
         public int getColor() { return color; }
 
 
-        public WheelAction setIcon(ResourceLocation icon) {
+        public WheelAction setIcon(Identifier icon) {
             this.icon = icon;
             return this;
         }

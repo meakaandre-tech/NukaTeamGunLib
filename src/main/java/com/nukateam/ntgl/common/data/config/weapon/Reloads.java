@@ -3,7 +3,7 @@
 //import com.nukateam.ntgl.common.util.annotation.Optional;
 //import net.minecraft.nbt.CompoundTag;
 //import net.minecraft.nbt.Tag;
-//import net.neoforged.neoforge.common.util.INBTSerializable;
+//import com.nukateam.ntgl.platform.INBTSerializable;
 //import net.neoforged.neoforge.fml.util.thread.SidedThreadGroups;
 //
 //public class Reloads implements INBTSerializable<CompoundTag> {
@@ -42,32 +42,32 @@
 //
 //    @Override
 //    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-//        if (tag.contains("MaxAmmo", Tag.TAG_ANY_NUMERIC)) {
-//            this.maxAmmo = tag.getInt("MaxAmmo");
+//        if (tag.contains("MaxAmmo")) {
+//            this.maxAmmo = tag.getIntOr("MaxAmmo", 0);
 //        }
-//        if (tag.contains("MagFed", Tag.TAG_ANY_NUMERIC)) {
-//            this.magFed = tag.getBoolean("MagFed");
+//        if (tag.contains("MagFed")) {
+//            this.magFed = tag.getBooleanOr("MagFed", false);
 //        }
-//        if (tag.contains("ReloadSpeed", Tag.TAG_ANY_NUMERIC)) {
-//            this.reloadAmount = tag.getInt("ReloadSpeed");
+//        if (tag.contains("ReloadSpeed")) {
+//            this.reloadAmount = tag.getIntOr("ReloadSpeed", 0);
 //        }
-//        if (tag.contains("ReloadMagTimer", Tag.TAG_ANY_NUMERIC)) {
-//            this.reloadMagTimer = tag.getInt("ReloadMagTimer");
+//        if (tag.contains("ReloadMagTimer")) {
+//            this.reloadMagTimer = tag.getIntOr("ReloadMagTimer", 0);
 //        }
-//        if (tag.contains("AdditionalReloadEmptyMagTimer", Tag.TAG_ANY_NUMERIC)) {
-//            this.additionalReloadEmptyMagTimer = tag.getInt("AdditionalReloadEmptyMagTimer");
+//        if (tag.contains("AdditionalReloadEmptyMagTimer")) {
+//            this.additionalReloadEmptyMagTimer = tag.getIntOr("AdditionalReloadEmptyMagTimer", 0);
 //        }
-//        if (tag.contains("MaxAmmunitionPerOverCap", Tag.TAG_INT_ARRAY)) {
+//        if (tag.contains("MaxAmmunitionPerOverCap")) {
 //            this.maxAdditionalAmmoPerOC = tag.getIntArray("MaxAmmunitionPerOverCap");
 //        }
-//        if (tag.contains("ReloadPauseTicks", Tag.TAG_ANY_NUMERIC)) {
-//            this.preReloadPauseTicks = tag.getInt("ReloadPauseTicks");
+//        if (tag.contains("ReloadPauseTicks")) {
+//            this.preReloadPauseTicks = tag.getIntOr("ReloadPauseTicks", 0);
 //        }
-//        if (tag.contains("InterReloadPauseTicks", Tag.TAG_ANY_NUMERIC)) {
-//            this.interReloadPauseTicks = tag.getInt("InterReloadPauseTicks");
+//        if (tag.contains("InterReloadPauseTicks")) {
+//            this.interReloadPauseTicks = tag.getIntOr("InterReloadPauseTicks", 0);
 //        }
-//        if (tag.contains("OpenBolt", Tag.TAG_ANY_NUMERIC)) {
-//            this.openBolt = tag.getBoolean("OpenBolt");
+//        if (tag.contains("OpenBolt")) {
+//            this.openBolt = tag.getBooleanOr("OpenBolt", false);
 //        }
 //    }
 //

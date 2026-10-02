@@ -4,16 +4,14 @@ import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.common.foundation.goals.GunAttackGoal;
 import com.nukateam.ntgl.common.foundation.item.interfaces.IWeapon;
 import net.minecraft.world.entity.PathfinderMob;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
+import com.nukateam.ntgl.platform.event.LivingDeathEvent;
+import com.nukateam.ntgl.platform.event.EntityTickEvent;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-@EventBusSubscriber(modid = Ntgl.MOD_ID)
 public class GunBehaviorManager {
     private static final Map<UUID, GunAttackGoal> activeGoals = new HashMap<>();
     private static final int CHECK_INTERVAL = 20;

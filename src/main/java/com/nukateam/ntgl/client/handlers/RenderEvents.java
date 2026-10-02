@@ -3,16 +3,11 @@ package com.nukateam.ntgl.client.handlers;
 import com.nukateam.ntgl.ClientProxy;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.common.data.enums.DeathType;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import com.nukateam.ntgl.platform.EventPriority;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 
-@EventBusSubscriber(modid = Ntgl.MOD_ID, value = Dist.CLIENT)
 public class RenderEvents {
-    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public static void onRenderLivingEventPre(RenderLivingEvent.Pre event) {
         var dt = ClientProxy.getDamageType(event.getEntity());

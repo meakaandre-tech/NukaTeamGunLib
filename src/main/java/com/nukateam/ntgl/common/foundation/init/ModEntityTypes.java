@@ -4,13 +4,13 @@ import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.common.foundation.entity.*;
 import com.nukateam.ntgl.common.foundation.entity.misc.AshPile;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.minecraft.resources.ResourceKey;
+import com.nukateam.ntgl.platform.DeferredHolder;
+import com.nukateam.ntgl.platform.DeferredRegister;
 
 /**
  * Author: MrCrayfish
@@ -30,10 +30,9 @@ public class ModEntityTypes {
                     .sized(0.5f, 0.5f));
 
     private static <T extends Entity> DeferredHolder<EntityType<?>, EntityType<T>> registerEntity(String entityName, EntityType.Builder<T> builder) {
-        return ENTITY_TYPES.register(entityName, () -> builder.build(ResourceLocation.tryBuild(Ntgl.MOD_ID, entityName).toString()));
+        return ENTITY_TYPES.register(entityName, (ResourceKey<EntityType<?>> key) -> builder.build(key));
     }
 
-    public static void register(IEventBus eventBus) {
-        ENTITY_TYPES.register(eventBus);
+    public static void register() {
     }
 }

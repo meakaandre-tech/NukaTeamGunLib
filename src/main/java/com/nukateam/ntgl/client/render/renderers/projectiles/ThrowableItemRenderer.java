@@ -9,17 +9,12 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
-@OnlyIn(Dist.CLIENT)
 public class ThrowableItemRenderer extends EntityRenderer<ThrowableItemEntity> {
     public static final int MAX_SIZE_TICK = 5;
 
@@ -29,7 +24,7 @@ public class ThrowableItemRenderer extends EntityRenderer<ThrowableItemEntity> {
 
     @Nullable
     @Override
-    public ResourceLocation getTextureLocation(@NotNull ThrowableItemEntity entity) {
+    public Identifier getTextureLocation(@NotNull ThrowableItemEntity entity) {
         return null;
     }
 

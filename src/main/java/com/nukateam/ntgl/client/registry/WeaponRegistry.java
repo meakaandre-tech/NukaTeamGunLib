@@ -7,7 +7,7 @@ import com.nukateam.ntgl.client.render.renderers.weapon.*;
 import com.nukateam.ntgl.common.foundation.item.WeaponItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.neoforged.neoforge.registries.DeferredHolder;
+import com.nukateam.ntgl.platform.DeferredHolder;
 
 import java.util.HashMap;
 import java.util.Map;

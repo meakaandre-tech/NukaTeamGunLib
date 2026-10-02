@@ -4,7 +4,7 @@ import com.nukateam.ntgl.Config;
 import com.nukateam.ntgl.common.foundation.init.ModEffects;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractorExtractor;
 import net.minecraft.client.renderer.GameRenderer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,7 +26,7 @@ public class GameRendererMixin {
             // When below threshold, fade to full transparency as duration approaches 0
             float percent = Math.min((effect.getDuration() / (float) Config.SERVER.alphaFadeThreshold.get()), 1);
             var window = minecraft.getWindow();
-            var pGuiGraphics = new GuiGraphics(minecraft, minecraft.renderBuffers().bufferSource());
+            var pGuiGraphics = new GuiGraphicsExtractor(minecraft, minecraft.renderBuffers().bufferSource());
             pGuiGraphics.fill(0, 0, window.getScreenWidth(), window.getScreenHeight(),
                     ((int) (percent * Config.SERVER.alphaOverlay.get() + 0.5) << 24) | 16777215);
         }

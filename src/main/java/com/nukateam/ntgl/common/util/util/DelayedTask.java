@@ -4,11 +4,10 @@ import com.nukateam.ntgl.Ntgl;
 import net.minecraft.server.MinecraftServer;
 import net.neoforged.fml.LogicalSide;
 import net.neoforged.neoforge.common.util.LogicalSidedProvider;
-import net.neoforged.neoforge.event.server.ServerStartedEvent;
-import net.neoforged.neoforge.event.server.ServerStoppingEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import com.nukateam.ntgl.platform.event.ServerStartedEvent;
+import com.nukateam.ntgl.platform.event.ServerStoppingEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
+import com.nukateam.ntgl.platform.event.ServerTickEvent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -20,7 +19,6 @@ import java.util.List;
  * <p>
  * Author: MrCrayfish
  */
-@EventBusSubscriber(modid = Ntgl.MOD_ID)
 public class DelayedTask {
     public static List<Impl> tasks = new ArrayList<>();
 

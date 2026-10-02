@@ -10,13 +10,15 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.minecraft.server.packs.PackType;
+import com.nukateam.ntgl.Ntgl;
 import org.apache.commons.lang3.Validate;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,16 +29,16 @@ public class NetworkWeaponManager extends SimplePreparableReloadListener<Map<IWe
     private static final List<IWeapon> clientRegisteredWeapons = new ArrayList<>();
     private static NetworkWeaponManager instance;
 
-    private Map<ResourceLocation, WeaponConfig> registeredWeapons = new HashMap<>();
+    private Map<Identifier, WeaponConfig> registeredWeapons = new HashMap<>();
 
     public static void onServerStopped() {
-        NetworkWeaponManager.instance = null;
+        // the reload listener is registered once on Fabric and lives for the whole game session
     }
 
-    public static void register(AddReloadListenerEvent event) {
-        NetworkWeaponManager networkWeaponManager = new NetworkWeaponManager();
-        event.addListener(networkWeaponManager);
-        NetworkWeaponManager.instance = networkWeaponManager;
+    public static void register() {
+        NetworkWeaponManager manager = new NetworkWeaponManager();
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(Ntgl.ntglResource("weapons"), manager);
+        NetworkWeaponManager.instance = manager;
     }
 
     @Override
@@ -46,7 +48,7 @@ public class NetworkWeaponManager extends SimplePreparableReloadListener<Map<IWe
 
     @Override
     protected void apply(Map<IWeapon, WeaponConfig> objects, ResourceManager resourceManager, ProfilerFiller profiler) {
-        ImmutableMap.Builder<ResourceLocation, WeaponConfig> builder = ImmutableMap.builder();
+        ImmutableMap.Builder<Identifier, WeaponConfig> builder = ImmutableMap.builder();
 
         objects.forEach((abstractItem, gun) -> {
             if(abstractItem instanceof Item item) {
@@ -78,11 +80,11 @@ public class NetworkWeaponManager extends SimplePreparableReloadListener<Map<IWe
      * @param buffer a packet buffer get
      * @return a map of registered weapons from the server
      */
-    public static ImmutableMap<ResourceLocation, WeaponConfig> readRegisteredWeapons(FriendlyByteBuf buffer) {
+    public static ImmutableMap<Identifier, WeaponConfig> readRegisteredWeapons(FriendlyByteBuf buffer) {
         var size = buffer.readVarInt();
 
         if (size > 0) {
-            ImmutableMap.Builder<ResourceLocation, WeaponConfig> builder = ImmutableMap.builder();
+            ImmutableMap.Builder<Identifier, WeaponConfig> builder = ImmutableMap.builder();
 
             for (int i = 0; i < size; i++) {
                 var id = buffer.readResourceLocation();
@@ -101,10 +103,10 @@ public class NetworkWeaponManager extends SimplePreparableReloadListener<Map<IWe
     /**
      * Updates registered weapons from data provided by the server
      */
-    private static void updateRegisteredWeapons(Map<ResourceLocation, WeaponConfig> registeredConfigs) {
+    private static void updateRegisteredWeapons(Map<Identifier, WeaponConfig> registeredConfigs) {
         clientRegisteredWeapons.clear();
         if (registeredConfigs != null) {
-            for (Map.Entry<ResourceLocation, WeaponConfig> entry : registeredConfigs.entrySet()) {
+            for (Map.Entry<Identifier, WeaponConfig> entry : registeredConfigs.entrySet()) {
                 var item = BuiltInRegistries.ITEM.get(entry.getKey());
                 if (!(item instanceof IWeapon)) {
                     return;
@@ -120,7 +122,7 @@ public class NetworkWeaponManager extends SimplePreparableReloadListener<Map<IWe
      *
      * @return a map of registered weapon objects
      */
-    public Map<ResourceLocation, WeaponConfig> getRegisteredWeapons() {
+    public Map<Identifier, WeaponConfig> getRegisteredWeapons() {
         return this.registeredWeapons;
     }
 

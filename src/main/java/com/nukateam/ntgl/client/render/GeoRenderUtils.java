@@ -9,9 +9,9 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -19,9 +19,9 @@ import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.ClientHooks;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
-import software.bernie.geckolib.cache.object.GeoBone;
+import com.geckolib.cache.model.GeoBone;
 import net.minecraft.client.Minecraft;
-import software.bernie.geckolib.util.ClientUtil;
+import com.geckolib.util.ClientUtil;
 
 public class GeoRenderUtils {
     public static void renderArm(PoseStack poseStack, GeoBone bone, int packedLight,
@@ -90,7 +90,7 @@ public class GeoRenderUtils {
         return ClientHooks.getArmorModel(entity, itemStack, slot, model);
     }
 
-    private static void renderModel(PoseStack p_289664_, MultiBufferSource p_289689_, int p_289681_, net.minecraft.client.model.Model p_289658_, int p_350798_, ResourceLocation p_324344_) {
+    private static void renderModel(PoseStack p_289664_, MultiBufferSource p_289689_, int p_289681_, net.minecraft.client.model.Model p_289658_, int p_350798_, Identifier p_324344_) {
         VertexConsumer vertexconsumer = p_289689_.getBuffer(RenderType.armorCutoutNoCull(p_324344_));
         p_289658_.renderToBuffer(p_289664_, vertexconsumer, p_289681_, OverlayTexture.NO_OVERLAY, p_350798_);
     }
@@ -110,7 +110,7 @@ public class GeoRenderUtils {
     }
 
     private static void renderHand(ModelPart handPart,
-                                   ResourceLocation texture, PoseStack poseStack,
+                                   Identifier texture, PoseStack poseStack,
                                    MultiBufferSource bufferSource, int packedLight) {
 
         handPart.resetPose();

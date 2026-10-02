@@ -1,19 +1,19 @@
 package com.nukateam.ntgl.client.event;
 
 import com.nukateam.ntgl.client.render.hud.cache.GunHudCache;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.InteractionHand;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.ICancellableEvent;
+import com.nukateam.ntgl.platform.Event;
+import com.nukateam.ntgl.platform.ICancellableEvent;
 
 public class GunHudEvent extends Event implements ICancellableEvent {
     private final InteractionHand hand;
-    private final GuiGraphics graphics;
+    private final GuiGraphicsExtractor graphics;
     private final GunHudCache cache;
     private final GunHudEvent.Phase phase;
 
 
-    public GunHudEvent(InteractionHand hand, GuiGraphics graphics, GunHudCache cache, Phase phase) {
+    public GunHudEvent(InteractionHand hand, GuiGraphicsExtractor graphics, GunHudCache cache, Phase phase) {
         this.hand = hand;
         this.graphics = graphics;
         this.cache = cache;
@@ -28,7 +28,7 @@ public class GunHudEvent extends Event implements ICancellableEvent {
         return cache;
     }
 
-    public GuiGraphics getGraphics() {
+    public GuiGraphicsExtractor getGraphics() {
         return graphics;
     }
 

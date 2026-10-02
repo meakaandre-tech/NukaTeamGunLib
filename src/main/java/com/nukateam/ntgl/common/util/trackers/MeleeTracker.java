@@ -26,26 +26,24 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import com.nukateam.ntgl.Ntgl;
+import com.nukateam.ntgl.platform.event.PlayerEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
+import com.nukateam.ntgl.platform.event.PlayerTickEvent;
 
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import com.nukateam.ntgl.platform.event.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.openjdk.nashorn.internal.runtime.regexp.joni.constants.TargetInfo;
 
 import java.util.*;
 
-@EventBusSubscriber(modid = Ntgl.MOD_ID)
 public class MeleeTracker {
     private static final Map<Pair<InteractionHand, LivingEntity>, Tracker> TRACKER_MAP = new HashMap<>();
 
     @SubscribeEvent
     public static void onPlayerTick(PlayerTickEvent.Pre event) {
         try {
-            if (!event.getEntity().level().isClientSide) {
+            if (!event.getEntity().level().isClientSide()) {
                 var player = event.getEntity();
                 handTick(player, InteractionHand.MAIN_HAND);
                 handTick(player, InteractionHand.OFF_HAND);
@@ -175,7 +173,7 @@ public class MeleeTracker {
                 }
             }
 
-            if (!NeoForge.EVENT_BUS.post(new MeleeAttackEvent.Pre(wielder, weaponData, hand, targetsToAttack)).isCanceled()) {
+            if (!Ntgl.EVENT_BUS.post(new MeleeAttackEvent.Pre(wielder, weaponData, hand, targetsToAttack)).isCanceled()) {
                 if (!targetsToAttack.isEmpty()) {
                     for (var target : targetsToAttack) {
                         if(wielder.getVehicle() != target) {
@@ -185,7 +183,7 @@ public class MeleeTracker {
 
                     playAttackSound(wielder);
                     spawnAttackEffects(wielder, targetsToAttack);
-                    NeoForge.EVENT_BUS.post(new MeleeAttackEvent.Post(wielder, weaponData, hand, targetsToAttack));
+                    Ntgl.EVENT_BUS.post(new MeleeAttackEvent.Post(wielder, weaponData, hand, targetsToAttack));
                 }
             }
         }

@@ -11,15 +11,14 @@ import com.nukateam.ntgl.modules.gunpack.GunPackModule;
 import com.nukateam.ntgl.modules.gunpack.regestry.ModBlocks;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.CreativeModeTab;
+import net.fabricmc.fabric.api.creativetab.v1.FabricCreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-import net.neoforged.bus.api.IEventBus;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import net.fabricmc.loader.api.FabricLoader;
+import com.nukateam.ntgl.platform.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
@@ -33,7 +32,6 @@ import java.util.regex.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import static net.minecraft.world.item.CreativeModeTab.builder;
 import net.minecraft.core.registries.BuiltInRegistries;
 
 
@@ -47,15 +45,10 @@ public class GunRegisterer {
     private static final Map<String, Set<String>> MOD_CONFIGS = new HashMap<>();
     private static boolean hasValidRecipe = false;
 
-    public static void init(IEventBus eventBus) {
+    public static void init() {
         processArchives();
 //        registerWeapons();
         registerGunTab();
-
-        ITEMS.forEach((k, gunRegister)-> {
-            gunRegister.register(eventBus);
-        });
-        CREATIVE_MODE_TABS.register(eventBus);
     }
 
     private static void registerGunTab() {
@@ -70,7 +63,7 @@ public class GunRegisterer {
     @Nullable
     private static void createBlockTab(DeferredRegister<CreativeModeTab> creativeModeTabs) {
         creativeModeTabs.register("ntgl_blocks",
-                () -> builder().icon(() -> new ItemStack(ModBlocks.WORKBENCH.get()))
+                () -> FabricCreativeModeTab.builder().icon(() -> new ItemStack(ModBlocks.WORKBENCH.get()))
                         .title(Component.translatable("itemGroup." + GunPackModule.MOD_ID + ".blocks"))
                         .displayItems((params, output) -> {
                             output.accept(ModBlocks.WORKBENCH.get());
@@ -82,7 +75,7 @@ public class GunRegisterer {
         var items = gunRegister.getEntries();
         if(!items.isEmpty()) {
             creativeModeTabs.register(namespace,
-                    () -> builder().icon(() -> new ItemStack(items.stream().findFirst().get().get()))
+                    () -> FabricCreativeModeTab.builder().icon(() -> new ItemStack(items.stream().findFirst().get().get()))
                             .title(Component.translatable("itemGroup." + namespace))
                             .displayItems((params, output) -> {
                                 for (var entry : gunRegister.getEntries()) {
@@ -93,7 +86,7 @@ public class GunRegisterer {
     }
 
     public static void processArchives() {
-        Path ntglPath = FMLPaths.GAMEDIR.get().resolve("ntgl");
+        Path ntglPath = FabricLoader.getInstance().getGameDir().resolve("ntgl");
 
         try {
             Files.createDirectories(ntglPath);
@@ -151,10 +144,10 @@ public class GunRegisterer {
         }
     }
 
-    private static void registerItems(JsonObject manifestJson, String name, Consumer<ResourceLocation> consumer) {
+    private static void registerItems(JsonObject manifestJson, String name, Consumer<Identifier> consumer) {
         var guns = manifestJson.getAsJsonArray(name);
         guns.forEach(item -> {
-            var id = ResourceLocation.tryParse(item.getAsString());
+            var id = Identifier.tryParse(item.getAsString());
             if (id != null && !BuiltInRegistries.ITEM.containsKey(id)) {
                 consumer.accept(id);
             }
@@ -174,7 +167,7 @@ public class GunRegisterer {
 //        MOD_CONFIGS.forEach((modId, configs) -> {
 //            configs.forEach(configName -> {
 //                var weaponName = configName.replace(".json", "");
-//                var weaponId = ResourceLocation.tryBuild(modId, weaponName);
+//                var weaponId = Identifier.tryBuild(modId, weaponName);
 //
 //                if(!Registries.ITEM.containsKey(weaponId)) {
 //                    registerGun(modId, weaponName);
@@ -204,23 +197,19 @@ public class GunRegisterer {
         return false;
     }
 
-    private static @NotNull DeferredRegister<Item> getItemRegister(ResourceLocation itemId) {
+    private static @NotNull DeferredRegister<Item> getItemRegister(Identifier itemId) {
         return ITEMS.computeIfAbsent(itemId.getNamespace(), id -> DeferredRegister.create(Registries.ITEM, id));
     }
 
-    private static void registerGun(ResourceLocation itemId) {
-        getItemRegister(itemId).register(itemId.getPath(), () -> new WeaponItem(
-                new Item.Properties().stacksTo(1)
-        ));
+    private static void registerGun(Identifier itemId) {
+        getItemRegister(itemId).registerItem(itemId.getPath(), props -> new WeaponItem(props.stacksTo(1)));
     }
 
-    private static void registerAttachment(ResourceLocation itemId) {
-        getItemRegister(itemId).register(itemId.getPath(), () -> new GenericAttachmentItem(
-                new Item.Properties().stacksTo(1)
-        ));
+    private static void registerAttachment(Identifier itemId) {
+        getItemRegister(itemId).registerItem(itemId.getPath(), props -> new GenericAttachmentItem(props.stacksTo(1)));
     }
 
-    private static void registerAmmo(ResourceLocation itemId) {
-        getItemRegister(itemId).register(itemId.getPath(), () -> new AmmoItem(new Item.Properties()));
+    private static void registerAmmo(Identifier itemId) {
+        getItemRegister(itemId).registerItem(itemId.getPath(), props -> new AmmoItem(props));
     }
 }

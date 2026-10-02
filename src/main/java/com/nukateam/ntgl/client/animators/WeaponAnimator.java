@@ -19,27 +19,23 @@ import com.nukateam.ntgl.common.foundation.init.ModSyncedDataKeys;
 import com.nukateam.ntgl.common.util.interfaces.IConfigProvider;
 import com.nukateam.ntgl.common.util.util.*;
 import com.nukateam.ntgl.common.util.helpers.PlayerHelper;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import software.bernie.geckolib.animation.*;
-import software.bernie.geckolib.animation.AnimationController.*;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
+import com.geckolib.animation.*;
+import com.geckolib.animation.AnimationController.*;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.animation.object.PlayState;
 import net.minecraft.client.*;
 import net.minecraft.sounds.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.item.*;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.animation.keyframe.event.SoundKeyframeEvent;
+import com.geckolib.animation.keyframe.event.SoundKeyframeEvent;
 
 import static com.nukateam.ntgl.client.util.helpers.TransformUtils.*;
 import static com.nukateam.ntgl.common.data.constants.Animations.*;
-import static software.bernie.geckolib.animation.RawAnimation.begin;
-import static software.bernie.geckolib.animation.Animation.*;
-import static software.bernie.geckolib.animation.Animation.LoopType.*;
-
-@OnlyIn(Dist.CLIENT)
+import static com.geckolib.animation.RawAnimation.begin;
+import static com.geckolib.animation.Animation.*;
+import static com.geckolib.animation.Animation.LoopType.*;
 public class WeaponAnimator extends ItemAnimator implements IConfigProvider<WeaponConfig> {
     public static final String STATIC = "static";
     public static final String PREPARE = "prepare";
@@ -284,7 +280,7 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
         return ModSyncedDataKeys.getThrowingDataKey(getArm()).getValue(getEntity());
     }
 
-    protected PlayState getCycledAnimation(AnimationState<WeaponAnimator> event, String animationName, Cycler cycler) {
+    protected PlayState getCycledAnimation(AnimationTest<WeaponAnimator> event, String animationName, Cycler cycler) {
         event.getController().setAnimationSpeed(1.0);
 
         if (TransformUtils.isHandTransform(this.transformType) && cycler != null) {
@@ -303,26 +299,26 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
         return PlayState.STOP;
     }
 
-    protected RawAnimation getHoldAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getHoldAnimation(AnimationTest<WeaponAnimator> event) {
         return playGunAnim(HOLD, LOOP);
     }
 
-    protected RawAnimation getStaticAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getStaticAnimation(AnimationTest<WeaponAnimator> event) {
         return playGunAnim(STATIC, LOOP);
     }
 
-    protected RawAnimation getHideAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getHideAnimation(AnimationTest<WeaponAnimator> event) {
         return begin().then(Animations.HIDE, HOLD_ON_LAST_FRAME);
     }
 
-    protected RawAnimation getInspectionAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getInspectionAnimation(AnimationTest<WeaponAnimator> event) {
             RawAnimation animation;
             animation = playGunAnim(Animations.INSPECT, PLAY_ONCE);
             animationHelper.syncAnimation(event, ClientHandler.getMaxInspectionTicks(), Animations.INSPECT);
             return animation;
     }
 
-    protected RawAnimation getChargingAnimation(AnimationState<WeaponAnimator> event, ShootingData shootingData) {
+    protected RawAnimation getChargingAnimation(AnimationTest<WeaponAnimator> event, ShootingData shootingData) {
             var animation = begin();
             if (animationHelper.hasAnimation(Animations.CHARGE)) {
                 BARREL_CONTROLLER.stop();
@@ -333,17 +329,17 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
             return animation;
     }
 
-    protected RawAnimation getTickingAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getTickingAnimation(AnimationTest<WeaponAnimator> event) {
         return playGunAnim(TICKING, LOOP);
     }
 
-    protected RawAnimation getMeleeDelayAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getMeleeDelayAnimation(AnimationTest<WeaponAnimator> event) {
             var animation = playGunAnim(MELEE, LOOP);
             animationHelper.syncAnimation(event, meleeDelay, MELEE);
             return animation;
     }
 
-    protected RawAnimation getMeleeCooldownAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getMeleeCooldownAnimation(AnimationTest<WeaponAnimator> event) {
             if (!animationHelper.hasAnimation(MELEE_END))
                 return getHoldAnimation(event);
 
@@ -352,19 +348,19 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
             return animation;
     }
 
-    protected RawAnimation getEquipAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getEquipAnimation(AnimationTest<WeaponAnimator> event) {
             var animation = playGunAnim(EQUIP, LOOP);
             animationHelper.syncAnimation(event, equipTime, EQUIP);
             return animation;
     }
 
-    protected RawAnimation getShootingAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getShootingAnimation(AnimationTest<WeaponAnimator> event) {
             var animation = playGunAnim(SHOT, LOOP);
             animationHelper.syncAnimation(event, rate, SHOT);
             return animation;
     }
 
-    protected RawAnimation getReloadingAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getReloadingAnimation(AnimationTest<WeaponAnimator> event) {
             var animation = begin();
 
             if (ModSyncedDataKeys.RELOAD_START.getValue(getEntity())) {
@@ -378,25 +374,25 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
             return animation;
     }
 
-    protected RawAnimation getDefaultReloadAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getDefaultReloadAnimation(AnimationTest<WeaponAnimator> event) {
         var animation = playGunAnim(RELOAD, LOOP);
         animationHelper.syncAnimation(event, reloadTime, RELOAD);
         return animation;
     }
 
-    protected RawAnimation getEndReloadAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getEndReloadAnimation(AnimationTest<WeaponAnimator> event) {
         var animation = playGunAnim(Animations.RELOAD_END, PLAY_ONCE);
         animationHelper.syncAnimation(event, reloadEndTime, Animations.RELOAD_END);
         return animation;
     }
 
-    protected RawAnimation getStartReloadAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getStartReloadAnimation(AnimationTest<WeaponAnimator> event) {
         var animation = playGunAnim(Animations.RELOAD_START, PLAY_ONCE);
         animationHelper.syncAnimation(event, reloadStartTime, Animations.RELOAD_START);
         return animation;
     }
 
-    protected RawAnimation getPrepareAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getPrepareAnimation(AnimationTest<WeaponAnimator> event) {
         var name = PREPARE;
         if(throwMode == ThrowMode.SAFE && animationHelper.hasAnimation(PREPARE_SAFE)){
             name = PREPARE_SAFE;
@@ -407,7 +403,7 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
         return animation;
     }
 
-    protected RawAnimation getThrowingAnimation(AnimationState<WeaponAnimator> event) {
+    protected RawAnimation getThrowingAnimation(AnimationTest<WeaponAnimator> event) {
         var name = THROW;
         if(throwMode == ThrowMode.SAFE && animationHelper.hasAnimation(THROW_SAFE)){
             name = THROW_SAFE;

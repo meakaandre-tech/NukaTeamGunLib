@@ -10,10 +10,10 @@ import com.nukateam.ntgl.common.util.util.GunJsonUtil;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.damagesource.DamageType;
 
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.nukateam.ntgl.platform.INBTSerializable;
 import net.minecraft.core.HolderLookup;
 
 import javax.annotation.Nullable;
@@ -44,7 +44,7 @@ public class ProjectileConfig implements INBTSerializable<CompoundTag> {
     @Optional int burnSeconds = 0;
     @Optional ExplosionConfig explosion = new ExplosionConfig();
     @Optional @Nullable
-    ResourceLocation hitSound;
+    Identifier hitSound;
 
     @Override
     public CompoundTag serializeNBT(HolderLookup.Provider provider) {
@@ -76,68 +76,68 @@ public class ProjectileConfig implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains("Visible", Tag.TAG_ANY_NUMERIC)) {
-            this.visible = tag.getBoolean("Visible");
+        if (tag.contains("Visible")) {
+            this.visible = tag.getBooleanOr("Visible", false);
         }
-        if (tag.contains("DamageType", Tag.TAG_STRING)) {
-            this.damageType = getDamageTypeResourceKey(tag.getString("DamageType"));
+        if (tag.contains("DamageType")) {
+            this.damageType = getDamageTypeResourceKey(tag.getStringOr("DamageType", ""));
         }
-        if (tag.contains("Damage", Tag.TAG_ANY_NUMERIC)) {
-            this.damage = tag.getFloat("Damage");
+        if (tag.contains("Damage")) {
+            this.damage = tag.getFloatOr("Damage", 0F);
         }
-        if (tag.contains("Size", Tag.TAG_ANY_NUMERIC)) {
-            this.size = tag.getFloat("Size");
+        if (tag.contains("Size")) {
+            this.size = tag.getFloatOr("Size", 0F);
         }
-        if (tag.contains("Speed", Tag.TAG_ANY_NUMERIC)) {
-            this.speed = tag.getFloat("Speed");
+        if (tag.contains("Speed")) {
+            this.speed = tag.getFloatOr("Speed", 0F);
         }
-        if (tag.contains("Life", Tag.TAG_ANY_NUMERIC)) {
-            this.life = tag.getInt("Life");
+        if (tag.contains("Life")) {
+            this.life = tag.getIntOr("Life", 0);
         }
-        if (tag.contains("pierceLevel", Tag.TAG_ANY_NUMERIC)) {
-            this.pierceLevel = tag.getInt("pierceLevel");
+        if (tag.contains("pierceLevel")) {
+            this.pierceLevel = tag.getIntOr("pierceLevel", 0);
         }
-        if (tag.contains("burnSeconds", Tag.TAG_ANY_NUMERIC)) {
-            this.burnSeconds = tag.getInt("burnSeconds");
+        if (tag.contains("burnSeconds")) {
+            this.burnSeconds = tag.getIntOr("burnSeconds", 0);
         }
-        if (tag.contains("Gravity", Tag.TAG_ANY_NUMERIC)) {
-            this.gravity = tag.getBoolean("Gravity");
+        if (tag.contains("Gravity")) {
+            this.gravity = tag.getBooleanOr("Gravity", false);
         }
-        if (tag.contains("affectedByFluid", Tag.TAG_ANY_NUMERIC)) {
-            this.affectedByFluid = tag.getBoolean("affectedByFluid");
+        if (tag.contains("affectedByFluid")) {
+            this.affectedByFluid = tag.getBooleanOr("affectedByFluid", false);
         }
-        if (tag.contains("DamageReduceOverLife", Tag.TAG_ANY_NUMERIC)) {
-            this.damageReduceOverLife = tag.getBoolean("DamageReduceOverLife");
+        if (tag.contains("DamageReduceOverLife")) {
+            this.damageReduceOverLife = tag.getBooleanOr("DamageReduceOverLife", false);
         }
-        if (tag.contains("MagazineMode", Tag.TAG_ANY_NUMERIC)) {
-            this.magazineMode = tag.getBoolean("MagazineMode");
+        if (tag.contains("MagazineMode")) {
+            this.magazineMode = tag.getBooleanOr("MagazineMode", false);
         }
-        if (tag.contains("TrailColor", Tag.TAG_ANY_NUMERIC)) {
-            this.trailColor = tag.getInt("TrailColor");
+        if (tag.contains("TrailColor")) {
+            this.trailColor = tag.getIntOr("TrailColor", 0);
         }
-        if (tag.contains("Color", Tag.TAG_ANY_NUMERIC)) {
-            this.color = tag.getInt("Color");
+        if (tag.contains("Color")) {
+            this.color = tag.getIntOr("Color", 0);
         }
-        if (tag.contains("TrailLengthMultiplier", Tag.TAG_ANY_NUMERIC)) {
-            this.trailLengthMultiplier = tag.getDouble("TrailLengthMultiplier");
+        if (tag.contains("TrailLengthMultiplier")) {
+            this.trailLengthMultiplier = tag.getDoubleOr("TrailLengthMultiplier", 0D);
         }
-        if (tag.contains("Projectile", Tag.TAG_STRING)) {
-            this.projectile = ProjectileType.getType(tag.getString("Projectile"));
+        if (tag.contains("Projectile")) {
+            this.projectile = ProjectileType.getType(tag.getStringOr("Projectile", ""));
         }
-        if (tag.contains("Variant", Tag.TAG_STRING)) {
-            this.variant = ProjectileVariant.getType(tag.getString("Variant"));
+        if (tag.contains("Variant")) {
+            this.variant = ProjectileVariant.getType(tag.getStringOr("Variant", ""));
         }
-        if (tag.contains(PROJECTILE_AMOUNT, Tag.TAG_ANY_NUMERIC)) {
-            this.projectileAmount = tag.getInt(PROJECTILE_AMOUNT);
+        if (tag.contains(PROJECTILE_AMOUNT)) {
+            this.projectileAmount = tag.getIntOr(PROJECTILE_AMOUNT, 0);
         }
-        if (tag.contains(SPREAD, Tag.TAG_ANY_NUMERIC)) {
-            this.spread = tag.getFloat(SPREAD);
+        if (tag.contains(SPREAD)) {
+            this.spread = tag.getFloatOr(SPREAD, 0F);
         }
-        if (tag.contains("explosion", Tag.TAG_COMPOUND)) {
-            this.explosion = ExplosionConfig.create(tag.getCompound("explosion"));
+        if (tag.contains("explosion")) {
+            this.explosion = ExplosionConfig.create(tag.getCompoundOrEmpty("explosion"));
         }
-        if (tag.contains("hitSound", Tag.TAG_STRING)) {
-            this.hitSound = ResourceLocation.tryParse(tag.getString("hitSound"));
+        if (tag.contains("hitSound")) {
+            this.hitSound = Identifier.tryParse(tag.getStringOr("hitSound", ""));
         }
     }
 
@@ -207,7 +207,7 @@ public class ProjectileConfig implements INBTSerializable<CompoundTag> {
         return explosion;
     }
 
-    public @Nullable ResourceLocation getHitSound() {
+    public @Nullable Identifier getHitSound() {
         return hitSound;
     }
 
@@ -446,7 +446,7 @@ public class ProjectileConfig implements INBTSerializable<CompoundTag> {
             return this;
         }
 
-        public ProjectileConfig.Builder setHitSound(@Nullable ResourceLocation hitSound) {
+        public ProjectileConfig.Builder setHitSound(@Nullable Identifier hitSound) {
             this.projectile.hitSound = hitSound;
             return this;
         }

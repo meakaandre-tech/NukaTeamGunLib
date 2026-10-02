@@ -1,7 +1,7 @@
 package com.nukateam.ntgl.common.network.message.weapon;
 
 import com.google.common.collect.ImmutableMap;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
+import com.nukateam.ntgl.platform.IPayloadContext;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.client.handlers.ClientPlayHandler;
 import com.nukateam.ntgl.modules.datapack.managers.NetworkAttachmentManager;
@@ -10,18 +10,18 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.Validate;
 
 public class S2CMessageUpdateAttachments implements CustomPacketPayload {
     public static final Type<S2CMessageUpdateAttachments> TYPE =
-            new Type<>(ResourceLocation.fromNamespaceAndPath(Ntgl.MOD_ID, "s2c_message_update_attachments"));
+            new Type<>(Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "s2c_message_update_attachments"));
 
     public static final StreamCodec<RegistryFriendlyByteBuf, S2CMessageUpdateAttachments> CODEC = StreamCodec.of(
             (buffer, message) -> encode(message, buffer),
             buffer -> decode(buffer));
 
-    private ImmutableMap<ResourceLocation, AttachmentConfig> registered;
+    private ImmutableMap<Identifier, AttachmentConfig> registered;
 
     public S2CMessageUpdateAttachments() {}
 
@@ -40,7 +40,7 @@ public class S2CMessageUpdateAttachments implements CustomPacketPayload {
         supplier.enqueueWork((() -> ClientPlayHandler.handleUpdateAttachments(message)));
     }
 
-    public ImmutableMap<ResourceLocation, AttachmentConfig> getRegistered() {
+    public ImmutableMap<Identifier, AttachmentConfig> getRegistered() {
         return this.registered;
     }
 

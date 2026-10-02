@@ -58,11 +58,11 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.*;
-import net.neoforged.neoforge.common.NeoForge;
+import com.nukateam.ntgl.Ntgl;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
+import com.geckolib.animatable.GeoEntity;
+import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.geckolib.animatable.manager.AnimatableManager;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
-import static software.bernie.geckolib.util.GeckoLibUtil.createInstanceCache;
+import static com.geckolib.util.GeckoLibUtil.createInstanceCache;
 
 public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
     private static final EntityDataAccessor<ItemStack> AMMO = getDataAccessor(EntityDataSerializers.ITEM_STACK);
@@ -175,21 +175,21 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
     @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
         var provider = getProvider();
-        this.weapon = ItemStack.parseOptional(provider, compound.getCompound("Weapon"));
-        this.weaponAction = WeaponMode.getType(compound.getString("WeaponAction"));
-        this.ammoHolder = AmmoHolder.getType(compound.getString("AmmoHolder"));
-        this.modifiedGravity = compound.getDouble("ModifiedGravity");
-        this.life = compound.getInt("MaxLife");
-        this.isRightHand = compound.getBoolean("IsRightHand");
-        this.shooterId = compound.getInt("ShooterId");
+        this.weapon = ItemStack.parseOptional(provider, compound.getCompoundOrEmpty("Weapon"));
+        this.weaponAction = WeaponMode.getType(compound.getStringOr("WeaponAction", ""));
+        this.ammoHolder = AmmoHolder.getType(compound.getStringOr("AmmoHolder", ""));
+        this.modifiedGravity = compound.getDoubleOr("ModifiedGravity", 0D);
+        this.life = compound.getIntOr("MaxLife", 0);
+        this.isRightHand = compound.getBooleanOr("IsRightHand", false);
+        this.shooterId = compound.getIntOr("ShooterId", 0);
         this.entitySize = EntityDimensions.fixed(this.getProjectile().getSize(), this.getProjectile().getSize());
 
         setBoundingBox(new AABB(
                 getProjectile().getSize(), getProjectile().getSize(), getProjectile().getSize(),
                 -getProjectile().getSize(), -getProjectile().getSize(), -getProjectile().getSize()));
 
-        setItem(ItemStack.parseOptional(provider, compound.getCompound("Ammo")));
-        setProjectile(ProjectileConfig.create(compound.getCompound("Projectile")));
+        setItem(ItemStack.parseOptional(provider, compound.getCompoundOrEmpty("Ammo")));
+        setProjectile(ProjectileConfig.create(compound.getCompoundOrEmpty("Projectile")));
     }
 
     @Override
@@ -454,7 +454,7 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
     }
 
     protected void onHit(HitResult result, Vec3 startVec, Vec3 endVec) {
-        if (NeoForge.EVENT_BUS.post(new GunProjectileHitEvent(result, this)).isCanceled()) {
+        if (Ntgl.EVENT_BUS.post(new GunProjectileHitEvent(result, this)).isCanceled()) {
             return;
         }
 

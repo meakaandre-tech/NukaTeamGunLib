@@ -14,7 +14,7 @@ public class AmmoHolders {
     public static final AmmoHolder BURNABLE = AmmoHolder.Builder
             .create(ntglResource("burnable"))
             .isAcceptable(AmmoHolders::isBurnable)
-            .value((stack -> stack.getBurnTime(null)))
+            .value((stack -> com.nukateam.ntgl.platform.PlatformHelper.getBurnTime(stack)))
             .onConsume(AmmoHolders::consumeBurnable)
             .build();
 
@@ -31,7 +31,7 @@ public class AmmoHolders {
     }
 
     public static boolean isBurnable(ItemStack ammoStack) {
-        var burnTime = ammoStack.getBurnTime(null);
+        var burnTime = com.nukateam.ntgl.platform.PlatformHelper.getBurnTime(ammoStack);
         return burnTime > 0;
     }
 

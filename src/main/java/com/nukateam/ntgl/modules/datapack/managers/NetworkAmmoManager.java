@@ -9,12 +9,14 @@ import com.nukateam.ntgl.common.foundation.item.interfaces.IAmmo;
 import com.nukateam.ntgl.common.network.message.weapon.S2CMessageUpdateAmmo;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.minecraft.server.packs.PackType;
+import com.nukateam.ntgl.Ntgl;
 import org.apache.commons.lang3.Validate;
 import javax.annotation.Nullable;
 import java.util.*;
@@ -22,17 +24,17 @@ import java.util.*;
 public class NetworkAmmoManager extends SimplePreparableReloadListener<Map<IAmmo, ProjectileConfig>> {
     private static NetworkAmmoManager instance;
 
-    private Map<ResourceLocation, ProjectileConfig> registeredAmmo = new HashMap<>();
+    private Map<Identifier, ProjectileConfig> registeredAmmo = new HashMap<>();
 
 
-    public static void register(AddReloadListenerEvent event) {
-        NetworkAmmoManager networkGunManager = new NetworkAmmoManager();
-        event.addListener(networkGunManager);
-        NetworkAmmoManager.instance = networkGunManager;
+    public static void register() {
+        NetworkAmmoManager manager = new NetworkAmmoManager();
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(Ntgl.ntglResource("ammo"), manager);
+        NetworkAmmoManager.instance = manager;
     }
 
     public static void onServerStopped() {
-        NetworkAmmoManager.instance = null;
+        // the reload listener is registered once on Fabric and lives for the whole game session
     }
 
     @Override
@@ -42,7 +44,7 @@ public class NetworkAmmoManager extends SimplePreparableReloadListener<Map<IAmmo
 
     @Override
     protected void apply(Map<IAmmo, ProjectileConfig> objects, ResourceManager resourceManager, ProfilerFiller profiler) {
-        var builder = ImmutableMap.<ResourceLocation, ProjectileConfig>builder();
+        var builder = ImmutableMap.<Identifier, ProjectileConfig>builder();
 
         objects.forEach((item, ammo) -> {
             Validate.notNull(BuiltInRegistries.ITEM.getKey((Item)item));
@@ -72,11 +74,11 @@ public class NetworkAmmoManager extends SimplePreparableReloadListener<Map<IAmmo
      * @param buffer a packet buffer get
      * @return a map of registered projectile from the server
      */
-    public static ImmutableMap<ResourceLocation, ProjectileConfig> readRegisteredAmmo(FriendlyByteBuf buffer) {
+    public static ImmutableMap<Identifier, ProjectileConfig> readRegisteredAmmo(FriendlyByteBuf buffer) {
         var size = buffer.readVarInt();
 
         if (size > 0) {
-            var builder = ImmutableMap.<ResourceLocation, ProjectileConfig>builder();
+            var builder = ImmutableMap.<Identifier, ProjectileConfig>builder();
 
             for (int i = 0; i < size; i++) {
                 var id = buffer.readResourceLocation();
@@ -97,7 +99,7 @@ public class NetworkAmmoManager extends SimplePreparableReloadListener<Map<IAmmo
      *
      * @return true if all registered projectile were able to update their corresponding projectile item
      */
-    private static boolean updateRegisteredAmmo(Map<ResourceLocation, ProjectileConfig> registeredAmmo) {
+    private static boolean updateRegisteredAmmo(Map<Identifier, ProjectileConfig> registeredAmmo) {
         if (registeredAmmo != null) {
             for (var entry : registeredAmmo.entrySet()) {
                 Item item = BuiltInRegistries.ITEM.get(entry.getKey());

@@ -4,26 +4,26 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.nukateam.ntgl.client.model.IGlowingModel;
 import com.nukateam.ntgl.common.util.util.ResourceUtils;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.renderer.GeoRenderer;
-import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import com.geckolib.cache.model.BakedGeoModel;
+import com.geckolib.animatable.GeoAnimatable;
+import com.geckolib.renderer.GeoRenderer;
+import com.geckolib.renderer.layer.GeoRenderLayer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 
 import static com.nukateam.ntgl.client.util.ClientDebug.*;
 
 public class GlowingLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
-    public static HashMap<ResourceLocation, Boolean> textures = new HashMap<>();
+    public static HashMap<Identifier, Boolean> textures = new HashMap<>();
     public GlowingLayer(GeoRenderer<T> entityRenderer) {
         super(entityRenderer);
     }
 
-    protected boolean resourceExists(ResourceLocation location){
+    protected boolean resourceExists(Identifier location){
         return textures.computeIfAbsent(location, ResourceUtils::resourceExists);
     }
 
@@ -42,7 +42,7 @@ public class GlowingLayer<T extends GeoAnimatable> extends GeoRenderLayer<T> {
     }
 
     protected void renderLayer(PoseStack poseStack, T animatable, BakedGeoModel bakedModel, MultiBufferSource bufferSource,
-                               float partialTick, int packedLight, ResourceLocation texture) {
+                               float partialTick, int packedLight, Identifier texture) {
         var renderTypeNew = RenderType.entityTranslucentEmissive(texture);
 
         poseStack.pushPose();

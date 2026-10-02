@@ -6,16 +6,16 @@ import com.nukateam.ntgl.client.animators.WeaponAnimator;
 import com.nukateam.ntgl.client.registry.WeaponRegistry;
 import com.nukateam.ntgl.common.foundation.item.WeaponItem;
 import net.minecraft.client.Minecraft;
-import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.constant.DataTickets;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.model.data.EntityModelData;
-import software.bernie.geckolib.renderer.GeoObjectRenderer;
+import com.geckolib.cache.model.BakedGeoModel;
+import com.geckolib.cache.model.GeoBone;
+import com.geckolib.constant.DataTickets;
+import com.geckolib.animation.state.AnimationTest;
+import com.geckolib.model.GeoModel;
+import com.geckolib.model.data.EntityModelData;
+import com.geckolib.renderer.GeoObjectRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -125,7 +125,7 @@ public class DynamicGeoItemRenderer<Animator extends ItemAnimator> extends GeoOb
         var motionThreshold = 0;
         var velocity = Vec3.ZERO;//nukateam
         var avgVelocity = (float)(Math.abs(velocity.x) + Math.abs(velocity.z)) / 2.0F;
-        var animationState = new AnimationState(animatable, limbSwing, limbSwingAmount, partialTick,
+        var animationState = new AnimationTest(animatable, limbSwing, limbSwingAmount, partialTick,
                 avgVelocity >= motionThreshold && limbSwingAmount != 0.0F);
         var instanceId = this.getInstanceId(animatable);
 

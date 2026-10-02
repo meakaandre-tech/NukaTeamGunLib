@@ -7,7 +7,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.nukateam.ntgl.platform.INBTSerializable;
 
 public class Zoom implements INBTSerializable<CompoundTag> {
     public static final String FOV_MODIFIER = "FovModifier";
@@ -26,11 +26,11 @@ public class Zoom implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains(FOV_MODIFIER, Tag.TAG_ANY_NUMERIC)) {
-            this.fovModifier = tag.getFloat(FOV_MODIFIER);
+        if (tag.contains(FOV_MODIFIER)) {
+            this.fovModifier = tag.getFloatOr(FOV_MODIFIER, 0F);
         }
-        if (tag.contains(OFFSET, Tag.TAG_COMPOUND)) {
-            this.offset = NbtUtils.readVec3(tag.getCompound(OFFSET));
+        if (tag.contains(OFFSET)) {
+            this.offset = NbtUtils.readVec3(tag.getCompoundOrEmpty(OFFSET));
         }
     }
 

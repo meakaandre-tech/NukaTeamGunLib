@@ -3,12 +3,12 @@ package com.nukateam.ntgl.modules.crafting.recipe;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.ItemLike;
 
-public record WorkbenchRecipeJson(ResourceLocation id, JsonObject json) {
+public record WorkbenchRecipeJson(Identifier id, JsonObject json) {
     public JsonObject toJson() {
         return json;
     }

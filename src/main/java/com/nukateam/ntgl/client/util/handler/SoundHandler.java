@@ -11,13 +11,13 @@ import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.client.sounds.ChannelAccess;
 import net.minecraft.client.sounds.SoundEngine;
 import net.minecraft.client.sounds.WeighedSoundEvents;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.neoforged.bus.api.SubscribeEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 import net.neoforged.fml.util.ObfuscationReflectionHelper;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
+import com.nukateam.ntgl.platform.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
 
 
@@ -125,7 +125,7 @@ public class SoundHandler {
         }
 
         // Exempt initial explosion from muting
-        ResourceLocation loc = event.getSound().getLocation();
+        Identifier loc = event.getSound().getLocation();
         MobEffectInstance effect = Minecraft.getInstance().player.getEffect(ModEffects.DEAFENED);
         int duration = effect != null ? effect.getDuration() : 0;
         boolean isStunGrenade = isStunGrenade(loc);
@@ -137,7 +137,7 @@ public class SoundHandler {
         event.setSound(new SoundMuted(event.getSound(), duration, isStunGrenade));
     }
 
-    private boolean isStunGrenade(ResourceLocation loc) {
+    private boolean isStunGrenade(Identifier loc) {
         return loc.toString().equals(Ntgl.MOD_ID + ":grenade_stun_explosion");
     }
 
@@ -170,7 +170,7 @@ public class SoundHandler {
         }
 
         @Override
-        public ResourceLocation getLocation() {
+        public Identifier getLocation() {
             return this.parent.getLocation();
         }
 

@@ -7,8 +7,8 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import com.nukateam.ntgl.platform.DeferredHolder;
+import com.nukateam.ntgl.platform.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -27,6 +27,6 @@ public class ModTileEntities {
             String id,
             BlockEntityType.BlockEntitySupplier<T> factoryIn,
             Supplier<Block[]> validBlocksSupplier) {
-        return REGISTER.register(id, () -> BlockEntityType.Builder.of(factoryIn, validBlocksSupplier.get()).build(null));
+        return REGISTER.register(id, () -> new BlockEntityType<>(factoryIn, java.util.Set.of(validBlocksSupplier.get())));
     }
 }

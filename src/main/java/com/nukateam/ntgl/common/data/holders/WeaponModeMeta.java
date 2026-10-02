@@ -1,7 +1,7 @@
 package com.nukateam.ntgl.common.data.holders;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +9,7 @@ import java.util.Map;
 public class WeaponModeMeta extends ResourceHolder {
     public static WeaponModeMeta DEFAULT = new WeaponModeMeta("default", Component.translatable("title.ntgl.default"));
 
-    private static final Map<ResourceLocation, WeaponModeMeta> typeMap = new HashMap<>();
+    private static final Map<Identifier, WeaponModeMeta> typeMap = new HashMap<>();
 
     static {
         registerType(DEFAULT);
@@ -17,7 +17,7 @@ public class WeaponModeMeta extends ResourceHolder {
 
     private final Component title;
 
-    public WeaponModeMeta(ResourceLocation id, Component title) {
+    public WeaponModeMeta(Identifier id, Component title) {
         super(id);
         this.title = title;
     }
@@ -27,8 +27,8 @@ public class WeaponModeMeta extends ResourceHolder {
         this.title = title;
     }
 
-    public ResourceLocation getIcon() {
-        return ResourceLocation.tryBuild(id.getNamespace(), "textures/hud/weapon_mode/" + id.getPath() + ".png");
+    public Identifier getIcon() {
+        return Identifier.tryBuild(id.getNamespace(), "textures/hud/weapon_mode/" + id.getPath() + ".png");
     }
 
     public Component getTitle() {
@@ -39,16 +39,16 @@ public class WeaponModeMeta extends ResourceHolder {
         typeMap.putIfAbsent(mode.getId(), mode);
     }
 
-    public static WeaponModeMeta getType(ResourceLocation id) {
+    public static WeaponModeMeta getType(Identifier id) {
         return typeMap.getOrDefault(id, createDefault(id));
     }
 
     public static WeaponModeMeta getType(String path) {
-        var id = ResourceLocation.tryParse(path);
+        var id = Identifier.tryParse(path);
         return getType(id);
     }
 
-    private static WeaponModeMeta createDefault(ResourceLocation id){
+    private static WeaponModeMeta createDefault(Identifier id){
         var type = new WeaponModeMeta(id, Component.translatable("title." + id.getNamespace() + "." + id.getPath()));
         registerType(type);
         return type;

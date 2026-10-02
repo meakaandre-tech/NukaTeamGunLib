@@ -5,15 +5,12 @@ import com.nukateam.ntgl.client.render.particle.BloodParticle;
 import com.nukateam.ntgl.client.render.particle.BulletHoleParticle;
 import com.nukateam.ntgl.client.render.particle.TrailParticle;
 import com.nukateam.ntgl.common.foundation.init.ModParticleTypes;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.neoforge.client.event.*;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 
 /**
  * Author: MrCrayfish
  */
-@EventBusSubscriber(modid = Ntgl.MOD_ID, value = Dist.CLIENT)
 public class ParticleFactoryRegistry {
     @SubscribeEvent
     public static void onRegisterParticleFactory(RegisterParticleProvidersEvent event) {

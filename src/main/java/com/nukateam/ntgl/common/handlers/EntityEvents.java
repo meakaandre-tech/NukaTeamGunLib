@@ -4,11 +4,10 @@ import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.common.foundation.entity.projectile.DeathEffect;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
-import net.neoforged.bus.api.EventPriority;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import net.minecraft.resources.Identifier;
+import com.nukateam.ntgl.platform.event.LivingDeathEvent;
+import com.nukateam.ntgl.platform.EventPriority;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Locale;
@@ -24,9 +23,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import com.nukateam.ntgl.platform.event.EntityTickEvent;
 
-@EventBusSubscriber(modid = Ntgl.MOD_ID)
 public class EntityEvents {
     public static Map<UUID, HashMultimap<Holder<Attribute>, AttributeModifier>> PLAYER_MODIFIERS = new HashMap<>();
 
@@ -34,7 +32,7 @@ public class EntityEvents {
     public static void onLivingDeathEvent(LivingDeathEvent event) {
         var entity = event.getEntity();
 
-        if (!entity.level().isClientSide){
+        if (!entity.level().isClientSide()){
             DeathEffect.createDeathEffect(entity, event.getSource());
         }
     }
@@ -64,7 +62,7 @@ public class EntityEvents {
                     var attributeInstance = player.getAttribute(attribute);
                     if (attributeInstance != null) {
                         var name = modifier.getAttribute().toString().replace(".", "_") + "_" + hand.toString().toLowerCase(Locale.ROOT);
-                        var id = ResourceLocation.parse(name);
+                        var id = Identifier.parse(name);
                         var newModifier = new AttributeModifier(id, modifier.getValue(), modifier.getOperation());
 
                         if (!attributeInstance.hasModifier(id)) {

@@ -9,7 +9,7 @@ import com.nukateam.ntgl.common.data.holders.*;
 import net.minecraft.Util;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -18,14 +18,14 @@ import java.lang.reflect.Modifier;
 
 public class JsonDeserializers {
     public static final JsonDeserializer<Easings> EASING = (json, typeOfT, context) -> Easings.byName(json.getAsString());
-    public static final JsonDeserializer<FireMode>  FIRE_MODE = (json, typeOfT, context) -> FireMode.getType(ResourceLocation.tryParse(json.getAsString()));
-    public static final JsonDeserializer<AttachmentType> ATTACHMENT_TYPE = (json, typeOfT, context) -> AttachmentType.getType(ResourceLocation.tryParse(json.getAsString()));
-    public static final JsonDeserializer<AmmoType> AMMO_TYPE = (json, typeOfT, context) -> AmmoType.getType(ResourceLocation.tryParse(json.getAsString()));
-    public static final JsonDeserializer<ProjectileVariant> PROJECTILE_VARIANT = (json, typeOfT, context) -> ProjectileVariant.getType(ResourceLocation.tryParse(json.getAsString()));
-    public static final JsonDeserializer<WeaponModeMeta> WEAPON_MODE_META = (json, typeOfT, context) -> WeaponModeMeta.getType(ResourceLocation.tryParse(json.getAsString()));
+    public static final JsonDeserializer<FireMode>  FIRE_MODE = (json, typeOfT, context) -> FireMode.getType(Identifier.tryParse(json.getAsString()));
+    public static final JsonDeserializer<AttachmentType> ATTACHMENT_TYPE = (json, typeOfT, context) -> AttachmentType.getType(Identifier.tryParse(json.getAsString()));
+    public static final JsonDeserializer<AmmoType> AMMO_TYPE = (json, typeOfT, context) -> AmmoType.getType(Identifier.tryParse(json.getAsString()));
+    public static final JsonDeserializer<ProjectileVariant> PROJECTILE_VARIANT = (json, typeOfT, context) -> ProjectileVariant.getType(Identifier.tryParse(json.getAsString()));
+    public static final JsonDeserializer<WeaponModeMeta> WEAPON_MODE_META = (json, typeOfT, context) -> WeaponModeMeta.getType(Identifier.tryParse(json.getAsString()));
     public static final JsonDeserializer<ProjectileType> PROJECTILE_TYPE = (json, typeOfT, context) -> ProjectileType.getType(json.getAsString());
-    public static final JsonDeserializer<ResourceLocation> RESOURCE_LOCATION = (json, typeOfT, context) -> ResourceLocation.tryParse(json.getAsString());
-    public static final JsonDeserializer<GripType> GRIP_TYPE = (json, typeOfT, context) -> GripType.getType(ResourceLocation.tryParse(json.getAsString()));
+    public static final JsonDeserializer<Identifier> RESOURCE_LOCATION = (json, typeOfT, context) -> Identifier.tryParse(json.getAsString());
+    public static final JsonDeserializer<GripType> GRIP_TYPE = (json, typeOfT, context) -> GripType.getType(Identifier.tryParse(json.getAsString()));
     public static final JsonDeserializer<LoadingType> LOADING_TYPE = (json, typeOfT, context) -> LoadingType.getType(json.getAsString());
     public static final JsonDeserializer<WeaponAction> WEAPON_TYPE = (json, typeOfT, context) -> WeaponAction.getType(json.getAsString());
     public static final JsonDeserializer<WeaponMode> WEAPON_MODE = (json, typeOfT, context) -> WeaponMode.getType(json.getAsString());
@@ -53,7 +53,7 @@ public class JsonDeserializers {
 
     public static final Gson GSON_INSTANCE = Util.make(() -> {
         var builder = new GsonBuilder();
-        builder.registerTypeAdapter(ResourceLocation.class, RESOURCE_LOCATION);
+        builder.registerTypeAdapter(Identifier.class, RESOURCE_LOCATION);
         builder.registerTypeAdapter(GripType.class, GRIP_TYPE);
         builder.registerTypeAdapter(LoadingType.class, LOADING_TYPE);
         builder.registerTypeAdapter(WeaponAction.class, WEAPON_TYPE);
@@ -79,6 +79,6 @@ public class JsonDeserializers {
     });
 
     public static @NotNull ResourceKey<DamageType> getDamageTypeResourceKey(String id) {
-        return ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.tryParse(id));
+        return ResourceKey.create(Registries.DAMAGE_TYPE, Identifier.tryParse(id));
     }
 }

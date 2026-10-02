@@ -4,7 +4,7 @@ import com.nukateam.ntgl.Config;
 import com.nukateam.ntgl.common.data.holders.GripType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.nukateam.ntgl.common.util.helpers.PlayerHelper;
-import software.bernie.geckolib.cache.object.GeoBone;
+import com.geckolib.cache.model.GeoBone;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
@@ -13,8 +13,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Vector3f;
 
 /**
@@ -64,7 +62,6 @@ public class BazookaPose extends WeaponPose {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void applyHumanoidModelRotation(LivingEntity entity, ModelPart rightArm, ModelPart leftArm, ModelPart head, InteractionHand hand, float aimProgress) {
         if(hand == InteractionHand.OFF_HAND) return;
         if (Config.CLIENT.display.oldAnimations.get()) {
@@ -104,7 +101,6 @@ public class BazookaPose extends WeaponPose {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack, MultiBufferSource buffer) {
         if (!Config.CLIENT.display.oldAnimations.get()) {
             super.applyHeldItemTransforms(entity, hand, aimProgress, poseStack, buffer);

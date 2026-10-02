@@ -1,7 +1,7 @@
 package com.nukateam.ntgl.modules.crafting.recipe;
 
 import com.nukateam.ntgl.modules.crafting.registry.ModRecipeTypes;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.level.Level;
 
@@ -32,7 +32,7 @@ public class WorkbenchRecipes {
     }
 
     @Nullable
-    public static RecipeHolder<WorkbenchRecipe> getRecipeById(Level level, ResourceLocation id) {
+    public static RecipeHolder<WorkbenchRecipe> getRecipeById(Level level, Identifier id) {
         return level.getRecipeManager()
                 .getAllRecipesFor(ModRecipeTypes.WORKBENCH.get())
                 .stream()

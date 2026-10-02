@@ -2,18 +2,18 @@ package com.nukateam.ntgl.client.render.screen.widget;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class MiniButton extends Button {
     private final int u, v;
-    private final ResourceLocation texture;
+    private final Identifier texture;
 
-    public MiniButton(int x, int y, int u, int v, ResourceLocation texture, OnPress onPress) {
+    public MiniButton(int x, int y, int u, int v, Identifier texture, OnPress onPress) {
         super(x, y, 10, 10, CommonComponents.EMPTY, onPress, DEFAULT_NARRATION);
         this.u = u;
         this.v = v;
@@ -21,7 +21,7 @@ public class MiniButton extends Button {
     }
 
     @Override
-    public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+    public void renderWidget(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
         RenderSystem.enableBlend();

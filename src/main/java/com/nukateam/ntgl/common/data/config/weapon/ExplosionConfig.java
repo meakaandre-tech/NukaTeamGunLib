@@ -8,8 +8,7 @@ import com.nukateam.ntgl.common.util.annotation.Optional;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.nukateam.ntgl.platform.INBTSerializable;
 import net.minecraft.core.HolderLookup;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -48,26 +47,26 @@ public class ExplosionConfig implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-        if (tag.contains(DAMAGE, Tag.TAG_ANY_NUMERIC)) {
-            this.damage = tag.getFloat(DAMAGE);
+        if (tag.contains(DAMAGE)) {
+            this.damage = tag.getFloatOr(DAMAGE, 0F);
         }
-        if (tag.contains(EXPLOSION_RADIUS, Tag.TAG_ANY_NUMERIC)) {
-            this.radius = tag.getFloat(EXPLOSION_RADIUS);
+        if (tag.contains(EXPLOSION_RADIUS)) {
+            this.radius = tag.getFloatOr(EXPLOSION_RADIUS, 0F);
         }
-        if (tag.contains(KNOCKBACK, Tag.TAG_ANY_NUMERIC)) {
-            this.knockback = tag.getFloat(KNOCKBACK);
+        if (tag.contains(KNOCKBACK)) {
+            this.knockback = tag.getFloatOr(KNOCKBACK, 0F);
         }
-        if (tag.contains(DISTANCE, Tag.TAG_ANY_NUMERIC)) {
-            this.damageReduceOverDistance = tag.getBoolean(DISTANCE);
+        if (tag.contains(DISTANCE)) {
+            this.damageReduceOverDistance = tag.getBooleanOr(DISTANCE, false);
         }
-        if (tag.contains(CAUSE_FIRE, Tag.TAG_ANY_NUMERIC)) {
-            this.causeFire = tag.getBoolean(CAUSE_FIRE);
+        if (tag.contains(CAUSE_FIRE)) {
+            this.causeFire = tag.getBooleanOr(CAUSE_FIRE, false);
         }
-        if (tag.contains(DESTROY_BLOCKS, Tag.TAG_ANY_NUMERIC)) {
-            this.destroyBlocks = tag.getBoolean(DESTROY_BLOCKS);
+        if (tag.contains(DESTROY_BLOCKS)) {
+            this.destroyBlocks = tag.getBooleanOr(DESTROY_BLOCKS, false);
         }
-        if (tag.contains(EXPLODE_ON_CONTACT, Tag.TAG_ANY_NUMERIC)) {
-            this.explodeOnContact = tag.getBoolean(EXPLODE_ON_CONTACT);
+        if (tag.contains(EXPLODE_ON_CONTACT)) {
+            this.explodeOnContact = tag.getBooleanOr(EXPLODE_ON_CONTACT, false);
         }
     }
 

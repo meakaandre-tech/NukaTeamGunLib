@@ -11,7 +11,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.neoforge.client.event.RenderLivingEvent;
-import net.neoforged.bus.api.SubscribeEvent;
+import com.nukateam.ntgl.platform.SubscribeEvent;
 
 /**
  * Author: MrCrayfish

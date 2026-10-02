@@ -4,7 +4,7 @@ import com.nukateam.example.common.registery.ExampleWeapons;
 import net.minecraft.data.CachedOutput;
 import net.minecraft.data.DataProvider;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.neoforge.common.Tags;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class WorkbenchRecipeProvider implements DataProvider {
         addRecipes(recipe -> {
             var json = recipe.toJson();
             var originalId = recipe.id();
-            var minecraftId = ResourceLocation.fromNamespaceAndPath(
+            var minecraftId = Identifier.fromNamespaceAndPath(
                     "minecraft",
                     originalId.getPath()
             );

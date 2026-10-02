@@ -6,13 +6,15 @@ import com.nukateam.ntgl.common.data.config.weapon.ProjectileConfig;
 import com.nukateam.ntgl.common.data.json.JsonDeserializers;
 import com.nukateam.ntgl.modules.constants.Paths;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.minecraft.server.packs.PackType;
+import com.nukateam.ntgl.Ntgl;
 import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.io.BufferedReader;
@@ -24,33 +26,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NetworkProjectileManager extends SimplePreparableReloadListener<Map<ResourceLocation, ProjectileConfig>> {
+public class NetworkProjectileManager extends SimplePreparableReloadListener<Map<Identifier, ProjectileConfig>> {
     private static NetworkProjectileManager instance;
-    private Map<ResourceLocation, ProjectileConfig> PROGECTILE_CONFIGS = new HashMap<>();
+    private Map<Identifier, ProjectileConfig> PROGECTILE_CONFIGS = new HashMap<>();
 
     @Nullable
     public static NetworkProjectileManager get() {
         return instance;
     }
 
-    public static void register(AddReloadListenerEvent event) {
-        NetworkProjectileManager networkGunManager = new NetworkProjectileManager();
-        event.addListener(networkGunManager);
-        NetworkProjectileManager.instance = networkGunManager;
+    public static void register() {
+        NetworkProjectileManager manager = new NetworkProjectileManager();
+        ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(Ntgl.ntglResource("projectiles"), manager);
+        NetworkProjectileManager.instance = manager;
     }
 
     public static void onServerStopped() {
-        NetworkProjectileManager.instance = null;
+        // the reload listener is registered once on Fabric and lives for the whole game session
     }
 
     @NotNull
-    private static Map<ResourceLocation, Resource> getJsonResources(ResourceManager manager, String path) {
+    private static Map<Identifier, Resource> getJsonResources(ResourceManager manager, String path) {
         return manager.listResources(path, (fileName) -> fileName.getPath().endsWith(".json"));
     }
 
     @Override
-    protected Map<ResourceLocation, ProjectileConfig> prepare(ResourceManager manager, ProfilerFiller profiler) {
-        var map = new HashMap<ResourceLocation, ProjectileConfig>();
+    protected Map<Identifier, ProjectileConfig> prepare(ResourceManager manager, ProfilerFiller profiler) {
+        var map = new HashMap<Identifier, ProjectileConfig>();
         var resources = new ArrayList<>(getJsonResources(manager, Paths.PROJECTILES).keySet());
 
         resources.sort((r1, r2) -> {
@@ -81,8 +83,8 @@ public class NetworkProjectileManager extends SimplePreparableReloadListener<Map
     }
 
     @Override
-    protected void apply(Map<ResourceLocation, ProjectileConfig> objects, ResourceManager resourceManager, ProfilerFiller profiler) {
-        var builder = ImmutableMap.<ResourceLocation, ProjectileConfig>builder();
+    protected void apply(Map<Identifier, ProjectileConfig> objects, ResourceManager resourceManager, ProfilerFiller profiler) {
+        var builder = ImmutableMap.<Identifier, ProjectileConfig>builder();
         builder.putAll(objects);
         PROGECTILE_CONFIGS = builder.build();
     }
@@ -95,15 +97,15 @@ public class NetworkProjectileManager extends SimplePreparableReloadListener<Map
         });
     }
 
-    public ProjectileConfig getConfig(ResourceLocation id) {
+    public ProjectileConfig getConfig(Identifier id) {
         return PROGECTILE_CONFIGS.get(id);
     }
 
-    public static ImmutableMap<ResourceLocation, ProjectileConfig> read(FriendlyByteBuf buffer) {
+    public static ImmutableMap<Identifier, ProjectileConfig> read(FriendlyByteBuf buffer) {
         var size = buffer.readVarInt();
 
         if (size > 0) {
-            var builder = ImmutableMap.<ResourceLocation, ProjectileConfig>builder();
+            var builder = ImmutableMap.<Identifier, ProjectileConfig>builder();
 
             for (int i = 0; i < size; i++) {
                 var id = buffer.readResourceLocation();
@@ -118,7 +120,7 @@ public class NetworkProjectileManager extends SimplePreparableReloadListener<Map
     /**
      * Updates registered projectile from data provided by the server
      */
-    public void update(Map<ResourceLocation, ProjectileConfig> registeredAmmo) {
+    public void update(Map<Identifier, ProjectileConfig> registeredAmmo) {
         if (registeredAmmo != null) {
             PROGECTILE_CONFIGS = registeredAmmo;
         }

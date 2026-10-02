@@ -88,7 +88,7 @@ public abstract class AbstractBeamProjectile extends ProjectileEntity {
 
 
 	public void trace() {
-		if (owner == null || level().isClientSide)
+		if (owner == null || level().isClientSide())
 			return;
 
 		var startVec = new Vec3(this.getX(), this.getY(), this.getZ());
@@ -157,12 +157,12 @@ public abstract class AbstractBeamProjectile extends ProjectileEntity {
 	@Override
 	public void readAdditionalSaveData(CompoundTag compound) {
 		super.readAdditionalSaveData(compound);
-        this.startVec 	= readVec(compound.getCompound("StartVec"));
-        this.endVec 	= readVec(compound.getCompound("EndVec"));
-		this.distance 	= compound.getFloat("distance"	);
-		this.laserPitch = compound.getFloat("laserPitch");
-		this.laserYaw 	= compound.getFloat("laserYaw"	);
-		this.maxTicks 	= compound.getShort("maxTicks"	);
+        this.startVec 	= readVec(compound.getCompoundOrEmpty("StartVec"));
+        this.endVec 	= readVec(compound.getCompoundOrEmpty("EndVec"));
+		this.distance 	= compound.getFloatOr("distance"	, 0F);
+		this.laserPitch = compound.getFloatOr("laserPitch", 0F);
+		this.laserYaw 	= compound.getFloatOr("laserYaw"	, 0F);
+		this.maxTicks 	= compound.getShortOr("maxTicks"	, (short)0);
 	}
 
 	private CompoundTag saveVec(Vec3 vec) {
@@ -174,9 +174,9 @@ public abstract class AbstractBeamProjectile extends ProjectileEntity {
 	}
 
 	private Vec3 readVec(CompoundTag tag) {
-		var x = tag.getDouble("x");
-		var y = tag.getDouble("y");
-		var z = tag.getDouble("z");
+		var x = tag.getDoubleOr("x", 0D);
+		var y = tag.getDoubleOr("y", 0D);
+		var z = tag.getDoubleOr("z", 0D);
 		return new Vec3(x, y, z);
 	}
 }

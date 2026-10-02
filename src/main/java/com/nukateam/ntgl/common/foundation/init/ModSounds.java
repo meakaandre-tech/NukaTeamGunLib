@@ -2,10 +2,10 @@ package com.nukateam.ntgl.common.foundation.init;
 
 import com.nukateam.ntgl.Ntgl;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundEvent;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import com.nukateam.ntgl.platform.DeferredHolder;
+import com.nukateam.ntgl.platform.DeferredRegister;
 
 import static com.nukateam.ntgl.Ntgl.MOD_ID;
 
@@ -73,6 +73,6 @@ public class  ModSounds {
 //   public static DeferredHolder<SoundEvent, SoundEvent> DEATH_FIRE = register("effects.disintegrate");
 
     private static DeferredHolder<SoundEvent, SoundEvent> register(String key) {
-        return REGISTER.register(key, () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MOD_ID, key)));
+        return REGISTER.register(key, () -> SoundEvent.createVariableRangeEvent(Identifier.fromNamespaceAndPath(MOD_ID, key)));
     }
 }

@@ -152,7 +152,7 @@ public class ProjectileExplosion extends Explosion {
     @Override
     public void finalizeExplosion(boolean spawnParticles) {
 
-        if (this.level.isClientSide) {
+        if (this.level.isClientSide()) {
             this.level.playLocalSound(pos.x, pos.y, pos.z,
                     SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4.0F,
                     (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F,

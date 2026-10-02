@@ -7,9 +7,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.common.util.INBTSerializable;
+import com.nukateam.ntgl.platform.INBTSerializable;
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -27,9 +27,9 @@ public class NbtUtils {
     public static Vec3 readVec3(@Nullable CompoundTag tag) {
         if(tag != null) {
             return new Vec3(
-                    tag.getDouble("x"),
-                    tag.getDouble("y"),
-                    tag.getDouble("z")
+                    tag.getDoubleOr("x", 0D),
+                    tag.getDoubleOr("y", 0D),
+                    tag.getDoubleOr("z", 0D)
             );
         }
         return Vec3.ZERO;
@@ -68,9 +68,9 @@ public class NbtUtils {
     public static <R> LinkedHashSet<R> deserializeSet(CompoundTag tag, Function<String, R> deserializer){
         var set = new LinkedHashSet<R>();
 
-        for (var key: tag.getAllKeys()) {
-            if(tag.contains(key, Tag.TAG_STRING)) {
-                set.add(deserializer.apply(tag.getString(key)));
+        for (var key: tag.keySet()) {
+            if(tag.contains(key)) {
+                set.add(deserializer.apply(tag.getStringOr(key, "")));
             }
         }
 
@@ -81,8 +81,8 @@ public class NbtUtils {
         return deserializeSet(tag, (FireMode::getType));
     }
 
-    public static LinkedHashSet<ResourceLocation> deserializeResourceLocationSet(CompoundTag tag){
-        return deserializeSet(tag, ResourceLocation::tryParse);
+    public static LinkedHashSet<Identifier> deserializeResourceLocationSet(CompoundTag tag){
+        return deserializeSet(tag, Identifier::tryParse);
     }
 
     public static <T extends INBTSerializable> CompoundTag serializeArray(ArrayList<T> array, HolderLookup.Provider provider){
@@ -124,7 +124,7 @@ public class NbtUtils {
                                                    BiFunction<CompoundTag, String, V> valueDeserializer){
         var map = new HashMap<K, V>();
 
-        for (var nbtKey : tag.getAllKeys()) {
+        for (var nbtKey : tag.keySet()) {
             if(tag.contains(nbtKey)) {
                 var key = keyDeserializer.apply(nbtKey);
                 var value = valueDeserializer.apply(tag, nbtKey);
@@ -135,13 +135,13 @@ public class NbtUtils {
         return map;
     }
 
-    public static <V> LinkedHashMap<ResourceLocation, V> deserializeLinkedMap(CompoundTag tag, Function<CompoundTag, V> deserializer){
-        var map = new LinkedHashMap<ResourceLocation, V>();
+    public static <V> LinkedHashMap<Identifier, V> deserializeLinkedMap(CompoundTag tag, Function<CompoundTag, V> deserializer){
+        var map = new LinkedHashMap<Identifier, V>();
 
-        for (var nbtKey : tag.getAllKeys()) {
-            if(tag.contains(nbtKey, Tag.TAG_COMPOUND)) {
-                var resource = ResourceLocation.tryParse(nbtKey);
-                var value = deserializer.apply(tag.getCompound(nbtKey));
+        for (var nbtKey : tag.keySet()) {
+            if(tag.contains(nbtKey)) {
+                var resource = Identifier.tryParse(nbtKey);
+                var value = deserializer.apply(tag.getCompoundOrEmpty(nbtKey));
                 map.put(resource, value);
             }
         }
@@ -151,9 +151,9 @@ public class NbtUtils {
 
     public static <T> ArrayList<T> deserializeArray(CompoundTag tag, Function<CompoundTag, T> deserializer){
         var array = new ArrayList<T>();
-        for (var key: tag.getAllKeys()) {
-            if(tag.contains(key, Tag.TAG_COMPOUND)) {
-                var value = deserializer.apply(tag.getCompound(key));
+        for (var key: tag.keySet()) {
+            if(tag.contains(key)) {
+                var value = deserializer.apply(tag.getCompoundOrEmpty(key));
                 array.add(value);
             }
         }
@@ -163,10 +163,10 @@ public class NbtUtils {
 
     public static ArrayList<Modules.Attachment> deserializeArray(CompoundTag tag, HolderLookup.Provider provider){
         var array = new ArrayList<Modules.Attachment>();
-        for (var key: tag.getAllKeys()) {
-            if(tag.contains(key, Tag.TAG_COMPOUND)) {
+        for (var key: tag.keySet()) {
+            if(tag.contains(key)) {
                 var val = new Modules.Attachment();
-                val.deserializeNBT(provider, tag.getCompound(key));
+                val.deserializeNBT(provider, tag.getCompoundOrEmpty(key));
                 array.add(val);
             }
         }
@@ -184,12 +184,12 @@ public class NbtUtils {
         return tag;
     }
 
-    public static HashMap<String, ResourceLocation> deserializeRLMap(CompoundTag tag){
-        var map = new HashMap<String, ResourceLocation>();
+    public static HashMap<String, Identifier> deserializeRLMap(CompoundTag tag){
+        var map = new HashMap<String, Identifier>();
 
-        for (var key: tag.getAllKeys()) {
-            if(tag.contains(key, Tag.TAG_STRING)) {
-                map.put(key, ResourceLocation.tryParse(tag.getString(key)));
+        for (var key: tag.keySet()) {
+            if(tag.contains(key)) {
+                map.put(key, Identifier.tryParse(tag.getStringOr(key, "")));
             }
         }
 
@@ -209,9 +209,9 @@ public class NbtUtils {
     public static LinkedHashMap<AttachmentType, ArrayList<Modules.Attachment>> deserializeAttachmentMap(CompoundTag tag, HolderLookup.Provider provider){
         var array = new LinkedHashMap<AttachmentType, ArrayList<Modules.Attachment>>();
 
-        for (var key: tag.getAllKeys()) {
-            if(tag.contains(key, Tag.TAG_COMPOUND)) {
-                array.put(AttachmentType.getType(key), deserializeArray(tag.getCompound(key), provider));
+        for (var key: tag.keySet()) {
+            if(tag.contains(key)) {
+                array.put(AttachmentType.getType(key), deserializeArray(tag.getCompoundOrEmpty(key), provider));
             }
         }
 
@@ -220,9 +220,9 @@ public class NbtUtils {
 
     public static ArrayList<String> deserializeStringArrayList(CompoundTag tag){
         var array = new ArrayList<String>();
-        for (var key: tag.getAllKeys()) {
-            if(tag.contains(key, Tag.TAG_STRING))
-                array.add(tag.getString(key));
+        for (var key: tag.keySet()) {
+            if(tag.contains(key))
+                array.add(tag.getStringOr(key, ""));
         }
 
         return array;

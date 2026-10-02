@@ -3,7 +3,7 @@ package com.nukateam.ntgl.common.event;
 import com.nukateam.ntgl.common.data.WeaponData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.bus.api.ICancellableEvent;
+import com.nukateam.ntgl.platform.ICancellableEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 
 import java.util.ArrayList;

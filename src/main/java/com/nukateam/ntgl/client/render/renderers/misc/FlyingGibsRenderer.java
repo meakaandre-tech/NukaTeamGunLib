@@ -5,31 +5,24 @@ import com.mojang.math.Axis;
 import com.nukateam.ntgl.ClientProxy;
 import com.nukateam.ntgl.common.util.data.Rgba;
 import com.nukateam.ntgl.common.foundation.entity.FlyingGib;
-import software.bernie.geckolib.animatable.GeoAnimatable;
-import software.bernie.geckolib.renderer.GeoRenderer;
+import com.geckolib.animatable.GeoAnimatable;
+import com.geckolib.renderer.GeoRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import static com.nukateam.ntgl.client.render.renderers.misc.DeathFxRenderer.setupGoreData;
 import static com.nukateam.ntgl.common.foundation.entity.projectile.DeathEffect.getGoreData;
-
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-
-@OnlyIn(Dist.CLIENT)
 public class FlyingGibsRenderer extends EntityRenderer<FlyingGib> {
     public static final int MAX_DEATH_TIME = 20;
 
     public FlyingGibsRenderer(EntityRendererProvider.Context pContext) {
         super(pContext);
     }
-
-    @OnlyIn(Dist.CLIENT)
     @Override
     public void render(FlyingGib flyingGib, float pEntityYaw, float pPartialTick, PoseStack poseStack,
                        MultiBufferSource buffer, int packedLight) {
@@ -133,7 +126,7 @@ public class FlyingGibsRenderer extends EntityRenderer<FlyingGib> {
     }
 
     @Override
-    public ResourceLocation getTextureLocation(FlyingGib entity) {
+    public Identifier getTextureLocation(FlyingGib entity) {
         var render = ClientProxy.getEntityRenderer(entity.getLocalEntity());
         return render.getTextureLocation(entity.getLocalEntity());
 //        return getGoreData(entity.entity).texture;

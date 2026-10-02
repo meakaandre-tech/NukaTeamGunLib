@@ -3,7 +3,7 @@ package com.nukateam.ntgl.common.foundation.event;
 import com.nukateam.ntgl.common.data.WeaponData;
 import com.nukateam.ntgl.common.foundation.entity.ProjectileEntity;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.bus.api.Event;
+import com.nukateam.ntgl.platform.Event;
 
 public class GunProjectileSpawnEvent extends Event {
     private final ProjectileEntity projectile;

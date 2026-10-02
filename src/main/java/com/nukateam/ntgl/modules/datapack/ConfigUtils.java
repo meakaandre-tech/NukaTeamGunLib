@@ -1,11 +1,11 @@
 package com.nukateam.ntgl.modules.datapack;
 
 import com.google.gson.JsonSyntaxException;
-import com.nukateam.chassis_core.ChassisCore;
+
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.common.data.json.JsonDeserializers;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
@@ -40,7 +40,7 @@ public class ConfigUtils {
 
                     resources.sort((r1, r2) -> {
                         if (r1.getNamespace().equals(r2.getNamespace())) return 0;
-                        return r2.getNamespace().equals(ChassisCore.MOD_ID) ? 1 : -1;
+                        return r2.getNamespace().equals(Ntgl.MOD_ID) ? 1 : -1;
                     });
 
                     resources.forEach(resourceLocation ->
@@ -96,7 +96,7 @@ public class ConfigUtils {
     }
 
     @NotNull
-    private static Map<ResourceLocation, Resource> getJsonResources(ResourceManager manager, String path, ResourceLocation id) {
+    private static Map<Identifier, Resource> getJsonResources(ResourceManager manager, String path, Identifier id) {
         return manager.listResources(path, (fileName) -> fileName.getPath().endsWith(id.getPath() + ".json"));
     }
 }

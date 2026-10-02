@@ -5,12 +5,12 @@ import com.google.gson.JsonObject;
 import com.nukateam.chassis_core.common.foundation.item.StackUtils;
 import com.nukateam.ntgl.Ntgl;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.block.model.ItemOverrides;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.*;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
@@ -50,7 +50,7 @@ public class GunIconModels implements IUnbakedGeometry<GunIconModels> {
 //    @Override
 //    public BakedModel bake(IGeometryBakingContext context, ModelBaker modelBaker,
 //                           Function<Material, TextureAtlasSprite> function,
-//                           ModelState modelState, ItemOverrides itemOverrides, ResourceLocation resourceLocation)
+//                           ModelState modelState, ItemOverrides itemOverrides, Identifier resourceLocation)
 //    {
 //        var particleLocation = getMaterial(context, "particle");
 //        var particleSprite = particleLocation != null ? function.apply(particleLocation) : null;
@@ -83,8 +83,8 @@ public class GunIconModels implements IUnbakedGeometry<GunIconModels> {
         return BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath();
     }
 
-    private static ResourceLocation getTexture(String namespace, String nameItem, String skin) {
-        return ResourceLocation.tryBuild(namespace, "item/dynamic/" + nameItem + "/" + nameItem + "_" + skin);
+    private static Identifier getTexture(String namespace, String nameItem, String skin) {
+        return Identifier.tryBuild(namespace, "item/dynamic/" + nameItem + "/" + nameItem + "_" + skin);
     }
 
     public static RenderTypeGroup getLayerRenderTypes() {
@@ -126,7 +126,7 @@ public class GunIconModels implements IUnbakedGeometry<GunIconModels> {
             if (!StackUtils.getVariant(stack).equals("default")) {
                 var unbaked = this.parent.withStack(stack);
                 var bakedModel = unbaked.bake(owner, baker, Material::sprite, BlockModelRotation.X0_Y0, this
-//                        ,ResourceLocation.tryBuild(Ntgl.MOD_ID, "gun_icon_override")
+//                        ,Identifier.tryBuild(Ntgl.MOD_ID, "gun_icon_override")
                 );
                 return bakedModel;
             }

@@ -1,6 +1,6 @@
 package com.nukateam.ntgl.common.data.holders;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +16,7 @@ public class ProjectileType extends ResourceHolder {
     public static ProjectileType CONTINUOUS_LASER = new ProjectileType("continuous_laser");
     public static ProjectileType ARROW_LIKE = new ProjectileType("arrow_like");
 
-    private static final Map<ResourceLocation, ProjectileType> typeMap = new HashMap<>();
+    private static final Map<Identifier, ProjectileType> typeMap = new HashMap<>();
 
     static {
         registerType(BULLET);
@@ -30,7 +30,7 @@ public class ProjectileType extends ResourceHolder {
         registerType(ARROW_LIKE);
     }
 
-    public ProjectileType(ResourceLocation id) {
+    public ProjectileType(Identifier id) {
         super(id);
     }
 
@@ -42,12 +42,12 @@ public class ProjectileType extends ResourceHolder {
         typeMap.putIfAbsent(mode.getId(), mode);
     }
 
-    public static ProjectileType getType(ResourceLocation id) {
+    public static ProjectileType getType(Identifier id) {
         return typeMap.getOrDefault(id, BULLET);
     }
 
     public static ProjectileType getType(String path) {
-        var id = ResourceLocation.tryParse(path);
+        var id = Identifier.tryParse(path);
         return getType(id);
     }
 }

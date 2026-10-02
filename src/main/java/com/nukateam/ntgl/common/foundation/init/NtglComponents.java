@@ -7,17 +7,21 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.registries.DeferredHolder;
-import net.neoforged.neoforge.registries.DeferredRegister;
+import com.nukateam.ntgl.platform.DeferredHolder;
+import com.nukateam.ntgl.platform.DeferredRegister;
 
 import javax.annotation.Nullable;
 
 public class NtglComponents {
-    public static final DeferredRegister.DataComponents REGISTER =
-            DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, Ntgl.MOD_ID);
+    public static final DeferredRegister<DataComponentType<?>> REGISTER =
+            DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, Ntgl.MOD_ID);
+
+    private static <T> DeferredHolder<DataComponentType<?>, DataComponentType<T>> registerComponentType(String name, java.util.function.UnaryOperator<DataComponentType.Builder<T>> builder) {
+        return REGISTER.register(name, () -> builder.apply(DataComponentType.builder()).build());
+    }
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> CHASSIS_COMPONENT =
-            REGISTER.registerComponentType(
+            registerComponentType(
                     "chassis_component",
                     builder -> builder
                             .persistent(CompoundTag.CODEC)
@@ -25,7 +29,7 @@ public class NtglComponents {
             );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> WEAPON_COMPONENT =
-            REGISTER.registerComponentType(
+            registerComponentType(
                     "weapon_component",
                     builder -> builder
                             .persistent(CompoundTag.CODEC)
@@ -33,7 +37,7 @@ public class NtglComponents {
             );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> FUEL =
-            REGISTER.registerComponentType(
+            registerComponentType(
                     "fuel",
                     builder -> builder
                             .persistent(CompoundTag.CODEC)
@@ -41,7 +45,7 @@ public class NtglComponents {
             );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<CompoundTag>> ATTACHMENTS =
-            REGISTER.registerComponentType(
+            registerComponentType(
                     "attachments",
                     builder -> builder
                             .persistent(CompoundTag.CODEC)
@@ -49,7 +53,7 @@ public class NtglComponents {
             );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> AMMO_COUNT =
-            REGISTER.registerComponentType(
+            registerComponentType(
                     "ammo_count",
                     builder -> builder
                             .persistent(Codec.INT)
@@ -57,7 +61,7 @@ public class NtglComponents {
             );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Boolean>> IGNORE_AMMO =
-            REGISTER.registerComponentType(
+            registerComponentType(
                     "ignore_ammo",
                     builder -> builder
                             .persistent(Codec.BOOL)
@@ -65,7 +69,7 @@ public class NtglComponents {
             );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> AMMO =
-            REGISTER.registerComponentType(
+            registerComponentType(
                     "ammo",
                     builder -> builder
                             .persistent(Codec.STRING)
@@ -73,7 +77,7 @@ public class NtglComponents {
             );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> FIRE_MODE =
-            REGISTER.registerComponentType(
+            registerComponentType(
                     "fire_mode",
                     builder -> builder
                             .persistent(Codec.STRING)
@@ -81,7 +85,7 @@ public class NtglComponents {
             );
 
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<String>> THROW_MODE =
-            REGISTER.registerComponentType(
+            registerComponentType(
                     "throw_mode",
                     builder -> builder
                             .persistent(Codec.STRING)
