@@ -71,7 +71,7 @@ public class ClientShootingHandler {
 
     public static boolean isInGame() {
         var mc = Minecraft.getInstance();
-        if (mc.getOverlay() != null)
+        if (mc.gui.overlay() != null)
             return false;
         if (mc.gui.screen() != null)
             return false;

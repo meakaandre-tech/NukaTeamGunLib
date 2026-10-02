@@ -16,7 +16,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import com.nukateam.ntgl.platform.SubscribeEvent;
-import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import com.nukateam.ntgl.platform.event.ClientTickEvent;
 import com.nukateam.ntgl.platform.event.client.PlaySoundEvent;
 
@@ -40,16 +39,10 @@ public class SoundHandler {
 
     private final Map<SoundInstance, Float> soundVolumes = new ConcurrentHashMap<>();
     private boolean isDeafened;
-    private Field playingSounds;
     private SoundEngine soundEngine;
     private StunRingingSound ringing;
 
     private SoundHandler() {
-        this.initReflection();
-    }
-
-    private void initReflection() {
-        this.playingSounds = ObfuscationReflectionHelper.findField(SoundEngine.class, "instanceToChannel");
     }
 
     @SubscribeEvent
@@ -73,12 +66,7 @@ public class SoundHandler {
         }
 
         // Access the sound manager's sound system and list of playing sounds
-        Map<SoundInstance, ChannelAccess.ChannelHandle> playingSounds;
-        try {
-            playingSounds = (Map<SoundInstance, ChannelAccess.ChannelHandle>) this.playingSounds.get(this.soundEngine);
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            return;
-        }
+        Map<SoundInstance, ChannelAccess.ChannelHandle> playingSounds = this.soundEngine.instanceToChannel;
 
         if (effect != null) {
             try {
@@ -125,7 +113,7 @@ public class SoundHandler {
         }
 
         // Exempt initial explosion from muting
-        Identifier loc = event.getSound().getLocation();
+        Identifier loc = event.getSound().getIdentifier();
         MobEffectInstance effect = Minecraft.getInstance().player.getEffect(ModEffects.DEAFENED.getHolder());
         int duration = effect != null ? effect.getDuration() : 0;
         boolean isStunGrenade = isStunGrenade(loc);
@@ -170,8 +158,8 @@ public class SoundHandler {
         }
 
         @Override
-        public Identifier getLocation() {
-            return this.parent.getLocation();
+        public Identifier getIdentifier() {
+            return this.parent.getIdentifier();
         }
 
         @Override

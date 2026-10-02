@@ -1,12 +1,11 @@
 package com.nukateam.ntgl.client.render.screen;
 
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.math.Axis;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.input.MouseButtonEvent;
 import com.nukateam.ntgl.*;
 import com.nukateam.ntgl.client.render.screen.widget.*;
 import com.nukateam.ntgl.client.util.ClientDebug;
-import com.nukateam.ntgl.client.util.helpers.render.ModelRenderUtil;
 import com.nukateam.ntgl.common.data.holders.AttachmentType;
 import com.nukateam.ntgl.common.data.attachment.IAttachment;
 import com.nukateam.ntgl.common.foundation.container.AttachmentContainer;
@@ -20,7 +19,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.*;
 import net.minecraft.resources.*;
@@ -63,10 +61,9 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
     private int clickedSlot = -1;
 
     public AttachmentScreen(AttachmentContainer screenContainer, Inventory playerInventory, Component titleIn) {
-        super(screenContainer, playerInventory, titleIn);
+        super(screenContainer, playerInventory, titleIn, DEFAULT_IMAGE_WIDTH, IMAGE_HEIGHT);
         this.playerInventory = playerInventory;
         this.weaponInventory = screenContainer.getWeaponInventory();
-        this.imageHeight = IMAGE_HEIGHT;
     }
 
     @Override
@@ -94,16 +91,15 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
         super.containerTick();
         if (this.minecraft != null && this.minecraft.player != null) {
             if (!(this.minecraft.player.getMainHandItem().getItem() instanceof IWeapon)) {
-                Minecraft.getInstance().setScreen(null);
+                Minecraft.getInstance().gui.setScreen(null);
             }
         }
     }
 
     @Override
-    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(graphics, mouseX, mouseY, partialTicks);
-        super.render(graphics, mouseX, mouseY, partialTicks);
-        this.renderTooltip(graphics, mouseX, mouseY); //Render tool tips
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+        this.extractTooltip(graphics, mouseX, mouseY); //Render tool tips
 
         int left = (this.width - this.imageWidth) / 2;
         int top = (this.height - this.imageHeight) / 2;
@@ -131,14 +127,14 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
     }
 
     @Override
-    protected void renderBg(GuiGraphicsExtractor graphics, float partialTicks, int mouseX, int mouseY) {
-        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         int left = (this.width - this.imageWidth) / 2;
         int top = (this.height - this.imageHeight) / 2;
 
 //        renderWeapon(graphics, left, top, 1);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_TEXTURES, left, top, 0, 0, this.imageWidth, this.imageHeight, 256, 256);
         renderGun(graphics, left, top, mouseX, mouseY, getGun());
-        graphics.blit(GUI_TEXTURES, left, top, 0, 0, this.imageWidth, this.imageHeight);
 
 //        var attachments = getGunAttachments(getGun());
 
@@ -153,7 +149,7 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
 //        for (var att : attachments.keySet()) {
 //            var slotPos = getAttachmentBgPos(id);
 //
-//            graphics.blit(SLOT, slotPos.x, slotPos.y, 0, 0, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE);
+//            graphics.blit(RenderPipelines.GUI_TEXTURED, SLOT, slotPos.x, slotPos.y, 0, 0, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE);
 //            var slot = this.menu.getSlot(id);
 //            if(slot instanceof AttachmentSlot attachmentSlot) {
 //                if (!attachmentSlot.hasItem()) {
@@ -182,9 +178,9 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
     }
 
     private static void renderAttachmentSlot(GuiGraphicsExtractor graphics, AttachmentSlot attachmentSlot, Pos2I slotPos) {
-        graphics.blit(SLOT, slotPos.x, slotPos.y, 0, 0, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, SLOT, slotPos.x, slotPos.y, 0, 0, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE, SLOT_SIZE);
         if (!attachmentSlot.hasItem()) {
-            graphics.blit(
+            graphics.blit(RenderPipelines.GUI_TEXTURED,
                     attachmentSlot.getType().getIcon(),
                     slotPos.x + 1, slotPos.y + 1,
                     0, 0,
@@ -242,50 +238,41 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
 
     protected void renderAttachmentTooltip(GuiGraphicsExtractor graphics, int mouseX, int mouseY, AttachmentSlot attachmentSlot) {
         if (!attachmentSlot.isActive()) {
-            graphics.renderComponentTooltip(this.font,
+            graphics.setComponentTooltipForNextFrame(this.font,
                     List.of((translatable(attachmentSlot.getType().getTranslationKey())),
                             translatable(ATTACHMENT_NOT_APPLICABLE)), mouseX, mouseY);
         }
         else if (attachmentSlot.getItem().isEmpty() && !this.isCompatible(this.menu.getCarried(), attachmentSlot)) {
-            graphics.renderComponentTooltip(this.font,
+            graphics.setComponentTooltipForNextFrame(this.font,
                     List.of(translatable(ATTACHMENT_INCOMPATIBLE)
                             .withStyle(ChatFormatting.YELLOW)), mouseX, mouseY);
         }
         else if (attachmentSlot.getItem().isEmpty()) {
-            graphics.renderComponentTooltip(this.font,
+            graphics.setComponentTooltipForNextFrame(this.font,
                     List.of(translatable(attachmentSlot.getType().getTranslationKey())),
                     mouseX, mouseY);
         }
     }
 
+    /**
+     * Preview of the held weapon. Fabric 26.2 port: GUI code can no longer draw 3D models directly,
+     * so the item icon is drawn enlarged instead of the tilted model.
+     */
     protected void renderGun(GuiGraphicsExtractor graphics, int startX, int startY, int mouseX, int mouseY, ItemStack currentItem) {
+        if (currentItem.isEmpty()) return;
+
         var poseStack = graphics.pose();
-        poseStack.pushPose();
+        poseStack.pushMatrix();
         {
-            poseStack.translate(startX + 88, startY + 60, 100);
-            poseStack.scale(50F, -50F, 50F);
-            poseStack.pushPose();
-            {
-                poseStack.mulPose(Axis.XP.rotation(0 + ClientDebug.X / 10f));
-                poseStack.mulPose(Axis.YP.rotation(3.7f + ClientDebug.Y / 10f));
-                poseStack.mulPose(Axis.ZP.rotation(-0.3f + ClientDebug.Z / 10f));
-                RenderSystem.applyModelViewMatrix();
-
-                var buffer = minecraft.renderBuffers().bufferSource();
-
-                minecraft.getItemRenderer().render(currentItem, ItemDisplayContext.FIXED,
-                        false, graphics.pose(), buffer, 15728880,
-                        OverlayTexture.NO_OVERLAY, ModelRenderUtil.getModel(currentItem));
-                buffer.endBatch();
-            }
-            poseStack.popPose();
+            poseStack.translate(startX + 88, startY + 60);
+            poseStack.scale(3F, 3F);
+            graphics.item(currentItem, -8, -8);
         }
-        poseStack.popPose();
-        RenderSystem.applyModelViewMatrix();
+        poseStack.popMatrix();
     }
 
     @Override
-    protected void renderLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
 //        renderHelp(graphics);
         int left = (this.width - this.imageWidth) / 2;
         int top = (this.height - this.imageHeight) / 2;
@@ -295,7 +282,10 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
         int startX = (this.width - this.imageWidth) / 2;
         int startY = (this.height - this.imageHeight) / 2;
 
@@ -309,11 +299,14 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
                 return true;
             }
         }
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.mouseClicked(event, doubleClick);
     }
 
     @Override
-    public boolean mouseReleased(double mouseX, double mouseY, int button) {
+    public boolean mouseReleased(MouseButtonEvent event) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        int button = event.button();
         if (this.mouseGrabbed) {
             if (this.mouseGrabbedButton == 0 && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
                 this.mouseGrabbed = false;
@@ -325,7 +318,7 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
                 this.windowRotationY -= (mouseY - this.mouseClickedY);
             }
         }
-        return super.mouseReleased(mouseX, mouseY, button);
+        return super.mouseReleased(event);
     }
 
     protected ItemStack getGun() {

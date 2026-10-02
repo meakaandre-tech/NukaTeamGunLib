@@ -1,8 +1,8 @@
 package com.nukateam.ntgl.client.render.hud;
 
+import net.minecraft.client.renderer.RenderPipelines;
+import org.joml.Matrix3x2fStack;
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.nukateam.ntgl.client.event.*;
 import com.nukateam.ntgl.client.input.NtglKeyBinds;
 import com.nukateam.ntgl.client.input.WeaponModeBindings;
@@ -24,7 +24,6 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
@@ -96,12 +95,8 @@ public class WeaponHud{
         if(!WeaponModifierHelper.shouldRenderHud(new WeaponData(stack, minecraft.player))) return;
 
         var poseStack = graphics.pose();
-        poseStack.pushPose();
+        poseStack.pushMatrix();
         {
-            RenderSystem.enableDepthTest();
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
 
             var fontHeight = minecraft.font.lineHeight;
 
@@ -124,14 +119,14 @@ public class WeaponHud{
             renderWeaponModes(graphics, poseStack, handCache, x - COUNTER_POS_X + 38 , y - INVENTORY_AMMO_POS_Y  - 2);
             drawAltCounters(graphics, handCache, x - COUNTER_POS_X, y - COUNTER_POS_Y - fontHeight + 32, poseStack);
         }
-        poseStack.popPose();
+        poseStack.popMatrix();
     }
 
-    private static void drawAltCounters(GuiGraphicsExtractor graphics, GunHudCache handCache, int x, int y, PoseStack poseStack) {
-        poseStack.pushPose();
+    private static void drawAltCounters(GuiGraphicsExtractor graphics, GunHudCache handCache, int x, int y, Matrix3x2fStack poseStack) {
+        poseStack.pushMatrix();
         {
             var scale = 0.5f;
-            poseStack.scale(scale, scale, scale);
+            poseStack.scale(scale, scale);
 
             var xOffset = x;
             for (var entry : handCache.weaponModes.entrySet()) {
@@ -150,10 +145,10 @@ public class WeaponHud{
                 }
             }
         }
-        poseStack.popPose();
+        poseStack.popMatrix();
     }
 
-    protected static void renderCurrentAmmo(GuiGraphicsExtractor graphics, PoseStack poseStack, GunHudCache.ModeInfo handCache, float x, float y) {
+    protected static void renderCurrentAmmo(GuiGraphicsExtractor graphics, Matrix3x2fStack poseStack, GunHudCache.ModeInfo handCache, float x, float y) {
         var currentAmmoCountText = "";
         if(handCache.ammoConfig.getCounter() == CounterType.NUMBER) {
             currentAmmoCountText = CURRENT_AMMO_FORMAT.format(handCache.ammoCount);
@@ -183,18 +178,15 @@ public class WeaponHud{
         }
     }
 
-    private static void renderCounter(GuiGraphicsExtractor graphics, GunHudCache.ModeInfo handCache, float x, float y, PoseStack poseStack, String currentAmmoCountText) {
+    private static void renderCounter(GuiGraphicsExtractor graphics, GunHudCache.ModeInfo handCache, float x, float y, Matrix3x2fStack poseStack, String currentAmmoCountText) {
         var ammoCountColor = handCache.ammoCount < (handCache.maxAmmoCount * 0.25) ? colors.lowAmmo : colors.currentAmmo;
-        poseStack.pushPose();
+        poseStack.pushMatrix();
         {
             var scale = 1.5f;
-            poseStack.scale(scale, scale, 1);
-            graphics.drawString(minecraft.font, currentAmmoCountText,
-                    x / scale,
-                    y / scale,
-                    ammoCountColor, true);
+            poseStack.scale(scale, scale);
+            graphics.text(minecraft.font, currentAmmoCountText, (int) (x / scale), (int) (y / scale), 0xFF000000 | ammoCountColor, true);
         }
-        poseStack.popPose();
+        poseStack.popMatrix();
     }
 
     protected static void renderBarCounter(GuiGraphicsExtractor graphics, float percent, int x, int y) {
@@ -202,20 +194,17 @@ public class WeaponHud{
         Figures.drawBar(graphics, x, y, BAR_WIDTH, BAR_HEIGHT, percent, RgbHelper.toRgba(color));
     }
 
-    protected static void renderInventoryAmmo(GuiGraphicsExtractor graphics, PoseStack poseStack, GunHudCache.ModeInfo handCache, int x, int y) {
+    protected static void renderInventoryAmmo(GuiGraphicsExtractor graphics, Matrix3x2fStack poseStack, GunHudCache.ModeInfo handCache, int x, int y) {
         var inventoryAmmoCountText = INVENTORY_AMMO_FORMAT.format(handCache.inventoryAmmoCount);
-        poseStack.pushPose();
+        poseStack.pushMatrix();
         {
-            poseStack.scale(COUNTER_SCALE, COUNTER_SCALE, 1);
-            graphics.drawString(minecraft.font, inventoryAmmoCountText,
-                    x / COUNTER_SCALE,
-                    y / COUNTER_SCALE,
-                    colors.inventoryAmmo, true);
+            poseStack.scale(COUNTER_SCALE, COUNTER_SCALE);
+            graphics.text(minecraft.font, inventoryAmmoCountText, (int) (x / COUNTER_SCALE), (int) (y / COUNTER_SCALE), 0xFF000000 | colors.inventoryAmmo, true);
         }
-        poseStack.popPose();
+        poseStack.popMatrix();
     }
 
-    protected static void renderWeaponModes(GuiGraphicsExtractor graphics, PoseStack poseStack, GunHudCache handCache, int x, int y) {
+    protected static void renderWeaponModes(GuiGraphicsExtractor graphics, Matrix3x2fStack poseStack, GunHudCache handCache, int x, int y) {
         var iconPosY = y;
         for (var entry : handCache.weaponModes.entrySet()) {
             var mode = entry.getKey();
@@ -228,13 +217,13 @@ public class WeaponHud{
         }
     }
 
-    protected static void renderAmmoTypeIcon(GuiGraphicsExtractor graphics, PoseStack poseStack, GunHudCache.ModeInfo handCache, WeaponMode mode, int x, int y) {
+    protected static void renderAmmoTypeIcon(GuiGraphicsExtractor graphics, Matrix3x2fStack poseStack, GunHudCache.ModeInfo handCache, WeaponMode mode, int x, int y) {
         var ammoType = handCache.ammoConfig.getAmmoType();
         var icon = ammoType.getIcon();
         renderIcon(graphics, icon, x, y);
     }
 
-    protected static void renderThrowModeIcon(GuiGraphicsExtractor graphics, PoseStack poseStack, GunHudCache handCache, int x, int y) {
+    protected static void renderThrowModeIcon(GuiGraphicsExtractor graphics, Matrix3x2fStack poseStack, GunHudCache handCache, int x, int y) {
         var mode = handCache.throwMode;
         var icon = mode.getIcon();
 
@@ -244,7 +233,7 @@ public class WeaponHud{
         }
     }
 
-    protected static void renderFireModeIcon(GuiGraphicsExtractor graphics, PoseStack poseStack, GunHudCache handCache, int x, int y) {
+    protected static void renderFireModeIcon(GuiGraphicsExtractor graphics, Matrix3x2fStack poseStack, GunHudCache handCache, int x, int y) {
         var fireMode = handCache.fireMode;
         var icon = fireMode.getIcon();
 
@@ -254,11 +243,11 @@ public class WeaponHud{
         }
     }
 
-    protected static void renderKey(GuiGraphicsExtractor graphics, PoseStack poseStack, InputConstants.Key key, int x, int y) {
+    protected static void renderKey(GuiGraphicsExtractor graphics, Matrix3x2fStack poseStack, InputConstants.Key key, int x, int y) {
         renderKey(graphics, poseStack, key, x, y, true);
     }
 
-    protected static void renderKey(GuiGraphicsExtractor graphics, PoseStack poseStack, InputConstants.Key key, int x, int y, boolean isLeft) {
+    protected static void renderKey(GuiGraphicsExtractor graphics, Matrix3x2fStack poseStack, InputConstants.Key key, int x, int y, boolean isLeft) {
         if(!NtglOptions.getInstance().isShowTips()) return;
         var icon = KeyIcons.getIcon(key.getValue());
 
@@ -270,21 +259,17 @@ public class WeaponHud{
         }
     }
 
-    protected static void renderIcon(GuiGraphicsExtractor graphics, PoseStack poseStack, Identifier icon, int x, int y, float scale) {
-        poseStack.pushPose();
+    protected static void renderIcon(GuiGraphicsExtractor graphics, Matrix3x2fStack poseStack, Identifier icon, int x, int y, float scale) {
+        poseStack.pushMatrix();
         {
-            poseStack.scale(scale, scale, 1);
+            poseStack.scale(scale, scale);
             renderIcon(graphics, icon, (int) (x / scale), (int) (y / scale));
         }
-        poseStack.popPose();
+        poseStack.popMatrix();
     }
 
     protected static void renderIcon(GuiGraphicsExtractor graphics, Identifier icon, int x, int y) {
-        var iconColor = RgbHelper.rgbToFloatRgba(colors.hud);
-        RenderSystem.setShaderTexture(0, icon);
-        RenderSystem.setShaderColor(iconColor[0], iconColor[1], iconColor[2], iconColor[3]);
-        graphics.blit(icon, x, y, 0F, 0F, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE);
-        RenderSystem.setShaderColor(1, 1, 1, 1);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, icon, x, y, 0F, 0F, ICON_SIZE, ICON_SIZE, ICON_SIZE, ICON_SIZE, 0xFF000000 | colors.hud);
     }
 
     protected static WeaponConfig getConfig(ItemStack stack){
@@ -386,19 +371,16 @@ public class WeaponHud{
     }
 
 
-    private static void renderKeyName(GuiGraphicsExtractor graphics, PoseStack poseStack, InputConstants.Key key, int x, int y, float scale, boolean isLeft) {
+    private static void renderKeyName(GuiGraphicsExtractor graphics, Matrix3x2fStack poseStack, InputConstants.Key key, int x, int y, float scale, boolean isLeft) {
         var name = key.getDisplayName().getVisualOrderText();
-        poseStack.pushPose();
+        poseStack.pushMatrix();
         {
             var side = isLeft ? -1 : 0;
             var textOffset = minecraft.font.width(name) / 2 * side;
-            poseStack.scale(scale, scale, 1);
-            graphics.drawString(minecraft.font, name,
-                    (x + textOffset) / scale,
-                    y / scale,
-                    colors.inventoryAmmo, true);
+            poseStack.scale(scale, scale);
+            graphics.text(minecraft.font, name, (int) ((x + textOffset) / scale), (int) (y / scale), 0xFF000000 | colors.inventoryAmmo, true);
         }
-        poseStack.popPose();
+        poseStack.popMatrix();
     }
 
     private static boolean shouldRender(InteractionHand hand, LocalPlayer player) {

@@ -54,8 +54,8 @@ public class ProjectileRenderer extends LegacyEntityRenderer<ProjectileEntity> {
 
         var item = entity.getItem();
 
-        if (!ModelRenderUtil.getModel(entity.getItem()).isGui3d()) {
-            poseStack.mulPose(this.entityRenderDispatcher.cameraOrientation());
+        if (!resolveItem(item, ItemDisplayContext.GROUND, entity).usesBlockLight()) {
+            poseStack.mulPose(cameraState.orientation);
             poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
             renderItem(item, ItemDisplayContext.GROUND, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, entity);
         } else {

@@ -1,9 +1,8 @@
 package com.nukateam.ntgl.client.render.screen;
 
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.input.MouseButtonEvent;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.math.Axis;
 import com.nukateam.example.common.registery.ExampleWeapons;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.client.util.helpers.render.ModelRenderUtil;
@@ -27,9 +26,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -40,7 +36,6 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -70,29 +65,12 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
     private ItemStack displayStack = ItemStack.EMPTY;
 
     public WorkbenchScreen(WorkbenchContainer container, Inventory playerInventory, Component title) {
-        super(container, playerInventory, title);
+        super(container, playerInventory, title, 275,
+                184 + (WorkbenchRecipes.getAllHolders(playerInventory.player.level()).isEmpty() ? 0 : 28));
         this.playerInventory = playerInventory;
         this.workbench = container.getWorkbench();
-        this.imageWidth = 275;
-        this.imageHeight = 184;
         this.materials = new ArrayList<>();
-        var level = playerInventory.player.level();
-        var s = level.getRecipeManager().getRecipes().size();
-        var d = level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.WORKBENCH.get()).size();
-
-        level.getRecipeManager().getRecipes().forEach(holder -> {
-            if (holder.id().getNamespace().equals("ntgl")) {
-                System.out.println(holder.id() + " -> " + holder.value().getClass());
-            }
-        });
-
-        s = d;
-        d = s;
-
         this.createTabs(WorkbenchRecipes.getAllHolders(playerInventory.player.level()));
-        if (!this.tabs.isEmpty()) {
-            this.imageHeight += 28;
-        }
     }
 
     @Override
@@ -103,6 +81,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
         }
 
         this.addRenderableWidget(Button.builder(Component.literal("<"), button -> {
+            if (this.currentTab == null) return;
             int index = this.currentTab.getCurrentIndex();
             if (index - 1 < 0) {
                 this.loadItem(this.currentTab.getRecipes().size() - 1);
@@ -111,6 +90,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
             }
         }).pos(this.leftPos + 9, this.topPos + 18).size(15, 20).build());
         this.addRenderableWidget(Button.builder(Component.literal(">"), button -> {
+            if (this.currentTab == null) return;
             int index = this.currentTab.getCurrentIndex();
             if (index + 1 >= this.currentTab.getRecipes().size()) {
                 this.loadItem(0);
@@ -119,6 +99,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
             }
         }).pos(this.leftPos + 153, this.topPos + 18).size(15, 20).build());
         this.btnCraft = this.addRenderableWidget(Button.builder(Component.translatable("gui.ntgl.workbench.assemble"), button -> {
+            if (this.currentTab == null) return;
             int index = this.currentTab.getCurrentIndex();
             var holder = this.currentTab.getRecipes().get(index);
             PacketHandler.getPlayChannel().sendToServer(new C2SMessageCraft(holder.id(), this.workbench.getBlockPos()));
@@ -126,7 +107,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
         this.btnCraft.active = false;
         this.checkBoxMaterials = this.addRenderableWidget(new CheckBox(this.leftPos + 172, this.topPos + 51, Component.translatable("gui.ntgl.workbench.show_remaining")));
         this.checkBoxMaterials.setToggled(WorkbenchScreen.showRemaining);
-        this.loadItem(this.currentTab.getCurrentIndex());
+        if (this.currentTab != null)
+            this.loadItem(this.currentTab.getCurrentIndex());
     }
 
     @Override
@@ -149,8 +131,10 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        boolean result = super.mouseClicked(mouseX, mouseY, mouseButton);
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        double mouseX = event.x();
+        double mouseY = event.y();
+        boolean result = super.mouseClicked(event, doubleClick);
         WorkbenchScreen.showRemaining = this.checkBoxMaterials.isToggled();
 
         for (int i = 0; i < this.tabs.size(); i++) {
@@ -166,25 +150,23 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
     }
 
     @Override
-    protected void renderLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
+    protected void extractLabels(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
         int offset = this.tabs.isEmpty() ? 0 : 28;
-        graphics.drawString(this.font, this.title, this.titleLabelX, this.titleLabelY - 28 + offset, 4210752, false);
-        graphics.drawString(this.font, this.playerInventory.getDisplayName(), this.inventoryLabelX, this.inventoryLabelY - 9 + offset, 4210752, false);
+        graphics.text(this.font, this.title, this.titleLabelX, this.titleLabelY - 28 + offset, 0xFF404040, false);
+        graphics.text(this.font, this.playerInventory.getDisplayName(), this.inventoryLabelX, this.inventoryLabelY - 9 + offset, 0xFF404040, false);
     }
 
     @Override
-    public void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(graphics, mouseX, mouseY, partialTicks);
-        super.render(graphics, mouseX, mouseY, partialTicks);
-        this.renderTooltip(graphics, mouseX, mouseY);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractRenderState(graphics, mouseX, mouseY, partialTicks);
+        this.extractTooltip(graphics, mouseX, mouseY);
 
         int startX = this.leftPos;
         int startY = this.topPos;
 
         for (int i = 0; i < this.tabs.size(); i++) {
             if (ModelRenderUtil.isMouseWithin(mouseX, mouseY, startX + 28 * i, startY - 28, 28, 28)) {
-                this.setTooltipForNextRenderPass(Component.translatable(this.tabs.get(i).getTabKey()));
-                this.renderTooltip(graphics, mouseX, mouseY);
+                graphics.setTooltipForNextFrame(this.font, Component.translatable(this.tabs.get(i).getTabKey()), mouseX, mouseY);
                 return;
             }
         }
@@ -197,19 +179,21 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
             if (ModelRenderUtil.isMouseWithin(mouseX, mouseY, itemX, itemY, 80, 19)) {
                 MaterialItem materialItem = this.filteredMaterials.get(i);
                 if (materialItem != MaterialItem.EMPTY) {
-                    graphics.renderTooltip(this.font, materialItem.getDisplayStack(), mouseX, mouseY);
+                    graphics.setTooltipForNextFrame(this.font, materialItem.getDisplayStack(), mouseX, mouseY);
                     return;
                 }
             }
         }
 
         if (ModelRenderUtil.isMouseWithin(mouseX, mouseY, startX + 8, startY + 38, 160, 48)) {
-            graphics.renderTooltip(this.font, this.displayStack, mouseX, mouseY);
+            if (!this.displayStack.isEmpty())
+                graphics.setTooltipForNextFrame(this.font, this.displayStack, mouseX, mouseY);
         }
     }
 
     @Override
-    protected void renderBg(GuiGraphicsExtractor graphics, float partialTicks, int mouseX, int mouseY) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        super.extractBackground(graphics, mouseX, mouseY, partialTicks);
         try {
             /* Fixes partial ticks to use percentage from 0 to 1 */
             partialTicks = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
@@ -217,26 +201,21 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
             int startX = this.leftPos;
             int startY = this.topPos;
 
-            RenderSystem.enableBlend();
 
             /* Draw unselected tabs */
             drawUnselectedTabs(graphics, startX, startY);
 
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            graphics.blit(GUI_BASE, startX, startY, 0, 0, 173, 184);
-            graphics.blit(GUI_BASE, startX + 173, startY, 78, 184, 173, 0, 1, 184, 256, 256);
-            graphics.blit(GUI_BASE, startX + 251, startY, 174, 0, 24, 184);
-            graphics.blit(GUI_BASE, startX + 172, startY + 16, 198, 0, 20, 20);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BASE, startX, startY, 0, 0, 173, 184, 256, 256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BASE, startX + 173, startY, 173, 0, 78, 184, 1, 184, 256, 256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BASE, startX + 251, startY, 174, 0, 24, 184, 256, 256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BASE, startX + 172, startY + 16, 198, 0, 20, 20, 256, 256);
 
             /* Draw selected tab */
             drawSelectedTab(graphics, startX, startY);
 
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
             if (this.workbench.getItem(0).isEmpty()) {
-                graphics.blit(GUI_BASE, startX + 174, startY + 18, 165, 199, 16, 16);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BASE, startX + 174, startY + 18, 165, 199, 16, 16, 256, 256);
             }
 
             var currentItem = this.displayStack;
@@ -249,24 +228,22 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
                 builder.append(currentItem.getCount());
             }
 
-            graphics.drawCenteredString(this.font, builder.toString(), startX + 88, startY + 22, Color.WHITE.getRGB());
+            graphics.centeredText(this.font, builder.toString(), startX + 88, startY + 22, Color.WHITE.getRGB());
 
             renderGun(graphics, partialTicks, startX, startY, currentItem);
 
             this.filteredMaterials = this.getMaterials();
 
             for (int i = 0; i < this.filteredMaterials.size(); i++) {
-                graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
 
                 var materialItem = this.filteredMaterials.get(i);
                 var stack = materialItem.getDisplayStack();
 
                 if (!stack.isEmpty()) {
-                    Lighting.setupForFlatItems();
                     if (materialItem.isEnabled()) {
-                        graphics.blit(GUI_BASE, startX + 172, startY + i * 19 + 63, 0, 184, 80, 19);
+                        graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BASE, startX + 172, startY + i * 19 + 63, 0, 184, 80, 19, 256, 256);
                     } else {
-                        graphics.blit(GUI_BASE, startX + 172, startY + i * 19 + 63, 0, 222, 80, 19);
+                        graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BASE, startX + 172, startY + i * 19 + 63, 0, 222, 80, 19, 256, 256);
                     }
 
                     var name = stack.getHoverName().getString();
@@ -274,8 +251,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
                         name = this.font.plainSubstrByWidth(name, 50).trim() + "...";
                     }
 
-                    graphics.drawString(this.font, name, startX + 172 + 22, startY + i * 19 + 6 + 63, Color.WHITE.getRGB());
-                    graphics.renderItem(stack, startX + 172 + 2, startY + i * 19 + 1 + 63);
+                    graphics.text(this.font, name, startX + 172 + 22, startY + i * 19 + 6 + 63, Color.WHITE.getRGB());
+                    graphics.item(stack, startX + 172 + 2, startY + i * 19 + 1 + 63);
 
                     if (this.checkBoxMaterials.isToggled()) {
                         int count = InventoryUtil.getItemStackAmount(Minecraft.getInstance().player, stack);
@@ -283,7 +260,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
                         stack.setCount(stack.getCount() - count);
                     }
 
-                    graphics.renderItemDecorations(this.font, stack, startX + 172 + 2, startY + i * 19 + 1 + 63);
+                    graphics.itemDecorations(this.font, stack, startX + 172 + 2, startY + i * 19 + 1 + 63);
                 }
             }
         } catch (Exception e) {
@@ -291,27 +268,23 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
         }
     }
 
+    /**
+     * Preview of the selected item. Fabric 26.2 port: GUI code can no longer draw 3D models directly,
+     * so the (static) item icon is drawn enlarged instead of the rotating model.
+     */
     public static void renderGun(GuiGraphicsExtractor graphics, float partialTicks, int startX, int startY, ItemStack currentItem) {
-        var minecraft = Minecraft.getInstance();
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        ModelRenderUtil.scissor(startX + 8, startY + 17, 160, 70);
+        if (currentItem.isEmpty()) return;
 
+        graphics.enableScissor(startX + 8, startY + 17, startX + 168, startY + 87);
         var poseStack = graphics.pose();
-        poseStack.pushPose();
+        poseStack.pushMatrix();
         {
-            poseStack.translate(startX + 88, startY + 60, 100);
-            poseStack.scale(50F, -50F, 50F);
-            poseStack.mulPose(Axis.XP.rotationDegrees(5F));
-            poseStack.mulPose(Axis.YP.rotationDegrees(Minecraft.getInstance().player.tickCount + partialTicks));
-            RenderSystem.applyModelViewMatrix();
-            MultiBufferSource.BufferSource buffer = minecraft.renderBuffers().bufferSource();
-            Minecraft.getInstance().getItemRenderer().render(currentItem, ItemDisplayContext.FIXED, false, graphics.pose(), buffer, 15728880, OverlayTexture.NO_OVERLAY, ModelRenderUtil.getModel(currentItem));
-            buffer.endBatch();
+            poseStack.translate(startX + 88, startY + 60);
+            poseStack.scale(3F, 3F);
+            graphics.item(currentItem, -8, -8);
         }
-        poseStack.popPose();
-        RenderSystem.applyModelViewMatrix();
-
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        poseStack.popMatrix();
+        graphics.disableScissor();
     }
 
     public List<Tab> getTabs() {
@@ -322,10 +295,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
         if (this.currentTab != null) {
             int i = this.tabs.indexOf(this.currentTab);
             int u = i == 0 ? 80 : 108;
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-            graphics.blit(GUI_BASE, startX + 28 * i, startY - 28, u, 214, 28, 32);
-            graphics.renderItem(this.currentTab.getIcon(), startX + 28 * i + 6, startY - 28 + 8);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BASE, startX + 28 * i, startY - 28, u, 214, 28, 32, 256, 256);
+            graphics.item(this.currentTab.getIcon(), startX + 28 * i + 6, startY - 28 + 8);
         }
     }
 
@@ -333,10 +304,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
         for (int i = 0; i < this.tabs.size(); i++) {
             var tab = this.tabs.get(i);
             if (tab != this.currentTab) {
-                RenderSystem.setShader(GameRenderer::getPositionTexShader);
-                graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-                graphics.blit(GUI_BASE, startX + 28 * i, startY - 28, 80, 184, 28, 32);
-                graphics.renderItem(tab.getIcon(), startX + 28 * i + 6, startY - 28 + 8);
+                graphics.blit(RenderPipelines.GUI_TEXTURED, GUI_BASE, startX + 28 * i, startY - 28, 80, 184, 28, 32, 256, 256);
+                graphics.item(tab.getIcon(), startX + 28 * i + 6, startY - 28 + 8);
             }
         }
     }
@@ -389,8 +358,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
 
         private MaterialItem(WorkbenchIngredient ingredient) {
             this.ingredient = ingredient;
-            Stream.of(ingredient.ingredient().getItems()).forEach(stack -> {
-                ItemStack displayStack = stack.copy();
+            ingredient.ingredient().items().forEach(holder -> {
+                ItemStack displayStack = new ItemStack(holder.value());
                 displayStack.setCount(ingredient.count());
                 this.displayStacks.add(displayStack);
             });

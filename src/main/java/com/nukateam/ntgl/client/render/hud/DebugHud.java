@@ -26,10 +26,10 @@ public class DebugHud {
 
     private static void renderAmmoCounter(GuiGraphicsExtractor graphics, String label, float val, int x, int y) {
         var text = label + ":" + val;
-        graphics.drawString(Minecraft.getInstance().font, text, x, y, 0xFFFFFFFF, true);
+        graphics.text(Minecraft.getInstance().font, text, x, y, 0xFFFFFFFF, true);
     }
 
     private static void renderString(GuiGraphicsExtractor graphics, String text, int x, int y) {
-        graphics.drawString(Minecraft.getInstance().font, text, x, y, 0xFFFFFFFF, true);
+        graphics.text(Minecraft.getInstance().font, text, x, y, 0xFFFFFFFF, true);
     }
 }

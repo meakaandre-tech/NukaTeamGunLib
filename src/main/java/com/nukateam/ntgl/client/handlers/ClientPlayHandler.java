@@ -30,7 +30,6 @@ import net.minecraft.world.phys.Vec3;
 import javax.annotation.Nullable;
 
 import static com.nukateam.ntgl.client.render.renderers.misc.DeathFxRenderer.createDeathEffectClient;
-import static com.nukateam.ntgl.common.util.helpers.compatibility.SubtleEffectsHelper.doSplashEffect;
 
 /**
  * Author: MrCrayfish
@@ -63,7 +62,7 @@ public class ClientPlayHandler {
             for (int i = 0; i < 10; i++) {
                 var pos = message.getPos();
                 world.addParticle(
-                        ModParticleTypes.BLOOD.get(), true,
+                        ModParticleTypes.BLOOD.get(), true, true,
                         pos.x(), pos.y(), pos.z(),
                         0.5, 0, 0.5);
             }
@@ -136,17 +135,17 @@ public class ClientPlayHandler {
 
             world.addParticle(
                     new BulletHoleData(message.getFace(), message.getBlockPos()),
-                    false, holeX, holeY, holeZ, 0, 0, 0
+                    false, false, holeX, holeY, holeZ, 0, 0, 0
             );
 
             if (distance < Config.CLIENT.particle.impactParticleDistance.get()) {
                 for (int i = 0; i < 4; i++) {
-                    var normal = message.getFace().getNormal();
+                    var normal = message.getFace().getUnitVec3i();
                     var motion = new Vec3(normal.getX(), normal.getY(), normal.getZ());
                     motion.add(getRandomDir(world.getRandom()), getRandomDir(world.getRandom()), getRandomDir(world.getRandom()));
 
                     world.addParticle(
-                            new BlockParticleOption(ParticleTypes.BLOCK, state), false,
+                            new BlockParticleOption(ParticleTypes.BLOCK, state), false, false,
                             hitPos.x, hitPos.y, hitPos.z,
                             motion.x, motion.y, motion.z
                     );
@@ -195,9 +194,7 @@ public class ClientPlayHandler {
 //            projectileEntity.doSplashEffect(message);
 //        }
 //        else
-        if(Ntgl.subtleEffectsLoaded){
-            EffectHelper.doSplashEffect(message.getPos(), message.getSize(), message.getSpeed(), message.isInLava());
-        }
+        // splash effects were provided by the optional Subtle Effects mod (not available on Fabric 26.2)
     }
 
     @Nullable

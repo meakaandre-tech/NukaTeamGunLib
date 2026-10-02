@@ -1,5 +1,6 @@
 package com.nukateam.ntgl.client.render.screen;
 
+import net.minecraft.client.renderer.RenderPipelines;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.nukateam.ntgl.Ntgl;
@@ -31,17 +32,16 @@ public class CheckBox extends AbstractWidget {
     }
 
     @Override
-    public void renderWidget(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
-        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-        graphics.blit(GUI, this.getX(), this.getY(), 0, 0, 8, 8); // checkbox background
+    protected void extractWidgetRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+        graphics.blit(RenderPipelines.GUI_TEXTURED, GUI, this.getX(), this.getY(), 0, 0, 8, 8, 256, 256); // checkbox background
         if (this.toggled) {
-            graphics.blit(GUI, this.getX(), this.getY() - 1, 8, 0, 9, 8); // the actual checkmark
+            graphics.blit(RenderPipelines.GUI_TEXTURED, GUI, this.getX(), this.getY() - 1, 8, 0, 9, 8, 256, 256); // the actual checkmark
         }
-        graphics.drawString(Minecraft.getInstance().font, this.getMessage(), this.getX() + 12, this.getY(), 0xFFFFFF);
+        graphics.text(Minecraft.getInstance().font, this.getMessage(), this.getX() + 12, this.getY(), 0xFFFFFFFF);
     }
 
     @Override
-    public void onClick(double mouseX, double mouseY) {
+    public void onClick(net.minecraft.client.input.MouseButtonEvent event, boolean doubleClick) {
         this.toggled = !this.toggled;
     }
 

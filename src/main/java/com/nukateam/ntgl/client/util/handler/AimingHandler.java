@@ -119,7 +119,7 @@ public class AimingHandler {
     }
 
     @SubscribeEvent
-    public void onClientTick(ClientTickEvent.Pre event) {
+    public void onClientTick(com.nukateam.ntgl.platform.event.ClientTickEvent.Pre event) {
         if (Minecraft.getInstance().player == null) {
             return;
         }

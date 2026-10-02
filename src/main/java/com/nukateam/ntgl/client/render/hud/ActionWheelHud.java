@@ -1,6 +1,6 @@
 package com.nukateam.ntgl.client.render.hud;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.renderer.RenderPipelines;
 import com.nukateam.ntgl.client.util.helpers.render.Figures;
 import com.nukateam.ntgl.modules.wheel.ActionWheel;
 import com.nukateam.ntgl.modules.wheel.ActionWheelManager;
@@ -39,23 +39,19 @@ public class ActionWheelHud {
         var animationProgress = Math.min((System.currentTimeMillis() - wheel.getOpenTime()) / 200f, 1.0f);
         var scale = 0.5f + animationProgress * 0.5f;
 
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
 
         renderWheel(wheel, guiGraphics, scale, centerX, centerY);
         renderIconsAndText(wheel, guiGraphics, centerX, centerY, scale);
 
-        RenderSystem.disableBlend();
-        guiGraphics.flush();
     }
 
     private static void renderWheel(ActionWheel wheel, GuiGraphicsExtractor guiGraphics, float scale, int centerX, int centerY) {
         var poseStack = guiGraphics.pose();
-        poseStack.pushPose();
+        poseStack.pushMatrix();
         {
-            poseStack.scale(scale, scale, 1.0f);
+            poseStack.scale(scale, scale);
 
-            guiGraphics.drawCenteredString(
+            guiGraphics.centeredText(
                     Minecraft.getInstance().font,
                     wheel.getTitle(),
                     (int) (centerX / scale),
@@ -63,7 +59,7 @@ public class ActionWheelHud {
                     0xFFFFFFFF
             );
 
-            RenderSystem.setShaderColor(1,1,1,0.3f);
+            Figures.alphaMultiplier = 0.3f;
             {
                 var count = wheel.getActions().size();
                 var anglePerSegment = 360.0f / count;
@@ -84,9 +80,9 @@ public class ActionWheelHud {
                 }
                 renderSelectedSegment(wheel, guiGraphics, centerX, centerY, scale);
             }
-            RenderSystem.setShaderColor(1,1,1,1);
+            Figures.alphaMultiplier = 1.0f;
         }
-        poseStack.popPose();
+        poseStack.popMatrix();
     }
 
     private static void renderSelectedSegment(ActionWheel wheel, GuiGraphicsExtractor guiGraphics, int centerX, int centerY, float scale) {
@@ -118,22 +114,22 @@ public class ActionWheelHud {
             var icon = action.getIcon();
 
             if (i == wheel.getSelectedSegment()) {
-                guiGraphics.pose().pushPose();
+                guiGraphics.pose().pushMatrix();
                 float iconScale = 1.2f;
-                guiGraphics.pose().translate(x + 8, y + 8, 100);
-                guiGraphics.pose().scale(iconScale, iconScale, 1.0f);
-                guiGraphics.pose().translate(-8, -8, 0);
+                guiGraphics.pose().translate(x + 8, y + 8);
+                guiGraphics.pose().scale(iconScale, iconScale);
+                guiGraphics.pose().translate(-8, -8);
 
-                guiGraphics.blit(icon,0,0,0,0, 16, 16, 16, 16);
-                guiGraphics.pose().popPose();
+                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, icon, 0, 0, 0, 0, 16, 16, 16, 16);
+                guiGraphics.pose().popMatrix();
             } else {
-                guiGraphics.blit(icon,x, y,0,0, 16, 16, 16, 16);
+                guiGraphics.blit(RenderPipelines.GUI_TEXTURED, icon, x, y, 0, 0, 16, 16, 16, 16);
             }
 
             if (i == wheel.getSelectedSegment()) {
                 Component title = action.getTitle();
 
-                guiGraphics.drawCenteredString(
+                guiGraphics.centeredText(
                         Minecraft.getInstance().font,
                         title,
                         centerX,

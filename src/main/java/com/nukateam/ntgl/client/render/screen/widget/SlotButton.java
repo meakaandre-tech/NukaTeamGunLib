@@ -17,7 +17,7 @@ public class SlotButton extends Button {
     }
 
     @Override
-    public void renderWidget(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {}
+    protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {}
 
     public ItemStack getStack() {
         return stack;

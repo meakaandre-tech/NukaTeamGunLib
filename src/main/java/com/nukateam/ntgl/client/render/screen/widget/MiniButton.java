@@ -1,10 +1,9 @@
 package com.nukateam.ntgl.client.render.screen.widget;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.renderer.RenderPipelines;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -21,15 +20,15 @@ public class MiniButton extends Button {
     }
 
     @Override
-    public void renderWidget(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        graphics.setColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.enableDepthTest();
-        graphics.blit(texture, this.getX(), this.getY(), this.u, this.v, this.width, this.height);
+    protected void extractContents(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTick) {
+        graphics.blit(RenderPipelines.GUI_TEXTURED, texture, this.getX(), this.getY(), this.u, this.v, this.width, this.height, 256, 256);
         if (this.isHovered) {
             graphics.fillGradient(this.getX(), this.getY(), this.getX() + 10, this.getY() + 10, -2130706433, -2130706433);
         }
+    }
+
+    @Override
+    public void onPress(net.minecraft.client.input.InputWithModifiers input) {
+        this.onPress.onPress(this);
     }
 }

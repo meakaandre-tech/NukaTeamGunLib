@@ -115,9 +115,7 @@ public class FlyingGibsRenderer extends LegacyEntityRenderer<FlyingGib> {
                 }
 
                 data.model.render(entity, flyingGib.getPartId(), poseStack, rendertype, buffer,
-                        vertexConsumer, packedLight, 0xFFFFFF, rgba.getIntColor());
-
-                super.render(flyingGib, pEntityYaw, pPartialTick, poseStack, buffer, packedLight);
+                        packedLight, 0xFFFFFF, rgba.getIntColor());
             }
             poseStack.popPose();
         }

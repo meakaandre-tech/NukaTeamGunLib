@@ -1,6 +1,6 @@
 package com.nukateam.ntgl.client.render.hud;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.renderer.RenderPipelines;
 import com.nukateam.ntgl.client.util.handler.AimingHandler;
 import com.nukateam.ntgl.common.data.WeaponData;
 import com.nukateam.ntgl.common.data.holders.AttachmentType;
@@ -8,8 +8,6 @@ import com.nukateam.ntgl.common.util.util.WeaponStateHelper;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 
@@ -36,7 +34,6 @@ public class ScopeHud{
             if (!attachment.isEmpty()) {
                 var scope = WeaponStateHelper.getScopeItem(data);
                 var overlay = scope.getProperties().getOverlay();
-                setupOverlayRenderState(true);
                 renderScope(graphics, width, height, overlay);
             }
         } else {
@@ -53,21 +50,10 @@ public class ScopeHud{
         int l = (height - j) / 2;
         int i1 = k + i;
         int j1 = l + j;
-        graphics.blit(overlay, k, l, -90, 0.0F, 0.0F, i, j, i, j);
-        graphics.fill(RenderType.guiOverlay(), 0, j1, width, height, -90, -16777216);
-        graphics.fill(RenderType.guiOverlay(), 0, 0, width, l, -90, -16777216);
-        graphics.fill(RenderType.guiOverlay(), 0, l, k, j1, -90, -16777216);
-        graphics.fill(RenderType.guiOverlay(), i1, l, width, j1, -90, -16777216);
-    }
-
-    public static void setupOverlayRenderState(boolean blend) {
-        if (blend) {
-            RenderSystem.enableBlend();
-            RenderSystem.defaultBlendFunc();
-        }
-        else RenderSystem.disableBlend();
-
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, overlay, k, l, 0.0F, 0.0F, i, j, i, j);
+        graphics.fill(0, j1, width, height, -16777216);
+        graphics.fill(0, 0, width, l, -16777216);
+        graphics.fill(0, l, k, j1, -16777216);
+        graphics.fill(i1, l, width, j1, -16777216);
     }
 }

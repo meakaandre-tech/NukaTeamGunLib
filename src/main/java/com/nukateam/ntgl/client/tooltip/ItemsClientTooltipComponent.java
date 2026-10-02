@@ -15,7 +15,7 @@ public class ItemsClientTooltipComponent implements ClientTooltipComponent {
     }
 
     @Override
-    public int getHeight() {
+    public int getHeight(Font font) {
         return 20;
     }
 
@@ -25,11 +25,11 @@ public class ItemsClientTooltipComponent implements ClientTooltipComponent {
     }
 
     @Override
-    public void renderImage(Font font, int x, int y, GuiGraphicsExtractor guiGraphics) {
+    public void extractImage(Font font, int x, int y, int width, int height, GuiGraphicsExtractor guiGraphics) {
         for (int i = 0; i < items.size(); i++) {
             ItemStack item = items.get(i);
-            guiGraphics.renderItem(item, x + i * 18, y);
-            guiGraphics.renderItemDecorations(font, item, x + i * 18, y);
+            guiGraphics.item(item, x + i * 18, y);
+            guiGraphics.itemDecorations(font, item, x + i * 18, y);
         }
     }
 }
