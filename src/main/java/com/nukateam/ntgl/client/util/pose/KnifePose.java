@@ -9,11 +9,9 @@ import com.nukateam.ntgl.common.data.WeaponData;
 
 import com.nukateam.ntgl.common.foundation.item.interfaces.IWeapon;
 import com.nukateam.ntgl.common.util.util.WeaponModifierHelper;
-import com.geckolib.cache.model.GeoBone;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
@@ -47,32 +45,17 @@ public class KnifePose implements IHeldAnimation {
     }
 
 //    @Override
-    public void applyGeoModelRotation(LivingEntity entity, GeoBone rightArm, GeoBone leftArm, GeoBone head, InteractionHand interactionHand) {
-        try {
-            var right = interactionHand == InteractionHand.MAIN_HAND;
-            var arm = right ? rightArm : leftArm;
-
-            arm.setRotX(head.getRotX());
-            arm.setRotY(head.getRotY());
-            arm.setRotZ(head.getRotZ());
-            arm.setRotX(head.getRotX() + 70);
-        }
-        catch (Exception e){
-            Ntgl.LOGGER.debug(e.getMessage(), e);
-        }
-
-    }
 
 
     @Override
-    public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack, MultiBufferSource buffer) {
+    public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack) {
         var side = hand == InteractionHand.OFF_HAND ? 1 : -1;
 //        poseStack.translate(0.45 * side, -0.5, -1.2);
         poseStack.translate((0.45 + 20 / 10d / 16d) * side, -0.5 + ClientDebug.Y / 10d / 16d, -1.2 + -10 / 10d / 16d);
     }
 
     @Override
-    public boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<LivingEntity> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
+    public boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<?> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
         poseStack.mulPose(Axis.YP.rotationDegrees(180F));
         poseStack.mulPose(Axis.ZP.rotationDegrees(180F));
 

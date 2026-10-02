@@ -4,10 +4,8 @@ import com.mojang.math.Axis;
 import com.nukateam.ntgl.client.util.IHeldAnimation;
 import com.nukateam.ntgl.client.util.handler.AimingHandler;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.geckolib.cache.model.GeoBone;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
@@ -70,22 +68,7 @@ public abstract class WeaponPose implements IHeldAnimation {
     }
 
     @Override
-    public void applyGeoModelRotation(LivingEntity entity, GeoBone rightArm, GeoBone leftArm, GeoBone head, InteractionHand interactionHand) {
-//        var mc = Minecraft.getInstance();
-//
-//        var rightArm = animationProcessor.getBone("right_arm");
-//        var leftArm = animationProcessor.getBone("left_arm");
-//
-//        float angle = this.getEntityPitch(entity);
-//        float angleAbs = Math.abs(angle);
-//        float zoom = this.hasAimPose() ? AimingHandler.get().getAimProgress(entity, mc.getFrameTime()) : 0F;
-//        var targetPose = angle > 0.0 ? this.downPose : this.upPose;
-//        this.applyAimPose(targetPose, rightArm, leftArm, angleAbs, zoom, 1, entity.isCrouching());
-    }
-
-    @Override
-    public void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress,
-                                     PoseStack poseStack, MultiBufferSource buffer) {
+    public void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress) {
         boolean right = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT ?
                 hand == InteractionHand.MAIN_HAND : hand == InteractionHand.OFF_HAND;
         float angle = this.getEntityPitch(entity);
@@ -100,8 +83,7 @@ public abstract class WeaponPose implements IHeldAnimation {
     }
 
     @Override
-    public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress,
-                                        PoseStack poseStack, MultiBufferSource buffer) {
+    public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack) {
 
 //        var side = hand == InteractionHand.OFF_HAND ? 1 : -1;
 //        poseStack.translate((side * 3) / 16F, 0, -0.625);
@@ -142,38 +124,10 @@ public abstract class WeaponPose implements IHeldAnimation {
      * @return the current pitch of the player
      */
     protected float getEntityPitch(LivingEntity entity) {
-        if (Minecraft.getInstance().getCameraEntity() == entity && Minecraft.getInstance().screen != null) {
+        if (Minecraft.getInstance().getCameraEntity() == entity && Minecraft.getInstance().gui.screen() != null) {
             return 0F;
         }
         return Mth.lerp(Minecraft.getInstance().getDeltaTracker().getRealtimeDeltaTicks(), entity.xRotO, entity.getXRot()) / 90F;
-    }
-
-    private void applyAimPose(AimPose targetPose, GeoBone rightArm, GeoBone leftArm,
-                              float partial, float zoom, float offhand, boolean sneaking) {
-        this.applyLimbPoseToModelRenderer(
-                targetPose.getIdle().getRightArm(),
-                targetPose.getAiming().getRightArm(),
-                this.forwardPose.getIdle().getRightArm(),
-                this.forwardPose.getAiming().getRightArm(),
-                rightArm, partial, zoom, offhand, sneaking);
-        this.applyLimbPoseToModelRenderer(
-                targetPose.getIdle().getLeftArm(),
-                targetPose.getAiming().getLeftArm(),
-                this.forwardPose.getIdle().getLeftArm(),
-                this.forwardPose.getAiming().getLeftArm(),
-                leftArm, partial, zoom, offhand, sneaking);
-    }
-
-    private void applyLimbPoseToModelRenderer(LimbPose targetIdlePose, LimbPose targetAimingPose,
-                                              LimbPose idlePose, LimbPose aimingPose, GeoBone modelPart,
-                                              float partial, float zoom, float leftHanded, boolean sneaking) {
-        var x = (float) Math.toRadians(getValue(targetIdlePose.getRotationAngleX(), targetAimingPose.getRotationAngleX(), idlePose.getRotationAngleX(), aimingPose.getRotationAngleX(), modelPart.getRotX(), partial, zoom, 1F));
-        var y = (float) Math.toRadians(getValue(targetIdlePose.getRotationAngleY(), targetAimingPose.getRotationAngleY(), idlePose.getRotationAngleY(), aimingPose.getRotationAngleY(), modelPart.getRotY(), partial, zoom, leftHanded));
-        var z = (float) Math.toRadians(getValue(targetIdlePose.getRotationAngleZ(), targetAimingPose.getRotationAngleZ(), idlePose.getRotationAngleZ(), aimingPose.getRotationAngleZ(), modelPart.getRotZ(), partial, zoom, leftHanded));
-
-        modelPart.setRotX(x);
-        modelPart.setRotY(y);
-        modelPart.setRotZ(z);
     }
 
     private void applyAimPose(AimPose targetPose, ModelPart rightArm, ModelPart leftArm,

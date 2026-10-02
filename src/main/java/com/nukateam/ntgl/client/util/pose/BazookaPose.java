@@ -4,11 +4,9 @@ import com.nukateam.ntgl.Config;
 import com.nukateam.ntgl.common.data.holders.GripType;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.nukateam.ntgl.common.util.helpers.PlayerHelper;
-import com.geckolib.cache.model.GeoBone;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -79,31 +77,22 @@ public class BazookaPose extends WeaponPose {
         }
     }
 
-    @Override
-    public void applyGeoModelRotation(LivingEntity entity, GeoBone rightArm, GeoBone leftArm, GeoBone head, InteractionHand interactionHand) {
-        rightArm.setRotX((float)Math.toRadians(80F));
-        rightArm.setRotY((float)Math.toRadians(35F));
-        rightArm.setRotZ((float)Math.toRadians(0F));
-        leftArm.setRotX((float)Math.toRadians(75));
-        leftArm.setRotY((float)Math.toRadians(-30F));
-        leftArm.setRotZ((float)Math.toRadians(0F));
-    }
 
     @Override
-    public void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack, MultiBufferSource buffer) {
+    public void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress) {
         if (Config.CLIENT.display.oldAnimations.get()) {
             boolean right = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT ? hand == InteractionHand.MAIN_HAND : hand == InteractionHand.OFF_HAND;
             entity.yBodyRotO = entity.yRotO + 35F * (right ? 1F : -1F);
             entity.yBodyRot = entity.getYRot() + 35F * (right ? 1F : -1F);
         } else {
-            super.applyEntityPreRender(entity, hand, aimProgress, poseStack, buffer);
+            super.applyEntityPreRender(entity, hand, aimProgress);
         }
     }
 
     @Override
-    public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack, MultiBufferSource buffer) {
+    public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack) {
         if (!Config.CLIENT.display.oldAnimations.get()) {
-            super.applyHeldItemTransforms(entity, hand, aimProgress, poseStack, buffer);
+            super.applyHeldItemTransforms(entity, hand, aimProgress, poseStack);
         }
 //        poseStack.translate(-0.5, -0.45, -1);
 //        poseStack.translate(X * 0.0625, Y * 0.0625, Z * 0.0625);
@@ -111,7 +100,7 @@ public class BazookaPose extends WeaponPose {
     }
 
     @Override
-    public boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<LivingEntity> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
+    public boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<?> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
         return GripType.applyBackTransforms(entity, poseStack);
     }
 

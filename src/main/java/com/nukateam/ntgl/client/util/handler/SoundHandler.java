@@ -18,7 +18,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import com.nukateam.ntgl.platform.SubscribeEvent;
 import net.neoforged.fml.util.ObfuscationReflectionHelper;
 import com.nukateam.ntgl.platform.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.sound.PlaySoundEvent;
+import com.nukateam.ntgl.platform.event.client.PlaySoundEvent;
 
 
 import javax.annotation.Nullable;

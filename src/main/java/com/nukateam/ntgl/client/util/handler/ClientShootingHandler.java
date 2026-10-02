@@ -23,8 +23,8 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
 import com.nukateam.ntgl.platform.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.InputEvent;
-import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
+import com.nukateam.ntgl.platform.event.client.InputEvent;
+import com.nukateam.ntgl.platform.event.client.RenderLevelStageEvent;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.platform.EventPriority;
 import com.nukateam.ntgl.platform.SubscribeEvent;
@@ -73,7 +73,7 @@ public class ClientShootingHandler {
         var mc = Minecraft.getInstance();
         if (mc.getOverlay() != null)
             return false;
-        if (mc.screen != null)
+        if (mc.gui.screen() != null)
             return false;
         if (!mc.mouseHandler.isMouseGrabbed())
             return false;
@@ -87,8 +87,8 @@ public class ClientShootingHandler {
         if (player == null)
             return;
 
-        var isRightHand = event.getButton() == mc.options.keyAttack.getKey().getValue();
-        var isLeftHand = event.getButton() == mc.options.keyUse.getKey().getValue();
+        var isRightHand = event.getButton() == net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper.getBoundKeyOf(mc.options.keyAttack).getValue();
+        var isLeftHand = event.getButton() == net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper.getBoundKeyOf(mc.options.keyUse).getValue();
 
         var heldItem = isRightHand ?
                 player.getMainHandItem() :

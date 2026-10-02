@@ -32,8 +32,7 @@ import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.common.Tags;
+import com.nukateam.ntgl.platform.event.client.*;
 import com.nukateam.ntgl.platform.SubscribeEvent;
 import com.nukateam.ntgl.platform.event.PlayerTickEvent;
 
@@ -115,9 +114,6 @@ public class AimingHandler {
 
             if (tracker != null)
                 return (float) tracker.getNormalProgress(partialTicks);
-        }
-        if (entity instanceof com.nukateam.chassis_core.common.foundation.entity.WearableChassis chassis && chassis.getFirstPassenger() instanceof LivingEntity passenger) {
-            return getAimProgress(passenger, partialTicks);
         }
         return 1.0F;
     }
@@ -202,9 +198,8 @@ public class AimingHandler {
     /**
      * Prevents the crosshair from rendering when aiming down sight
      */
-    @SubscribeEvent(receiveCanceled = true)
-    public void onRenderOverlay(RenderGuiLayerEvent.Pre event) {
-        this.normalisedAdsProgress = this.localTracker.getNormalProgress(event.getPartialTick().getGameTimeDeltaPartialTick(true));
+    public void onRenderOverlay(net.minecraft.client.DeltaTracker deltaTracker) {
+        this.normalisedAdsProgress = this.localTracker.getNormalProgress(deltaTracker.getGameTimeDeltaPartialTick(true));
     }
 
     public boolean isZooming() {
@@ -219,7 +214,7 @@ public class AimingHandler {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null || mc.player.isSpectator()) return false;
         if (Debug.isForceAim()) return true;
-        if (mc.screen != null || PlayerReviveHelper.isBleeding(mc.player)) return false;
+        if (mc.gui.screen() != null || PlayerReviveHelper.isBleeding(mc.player)) return false;
 
         var mainHandItem = mc.player.getMainHandItem();
         var offhandItem = mc.player.getOffhandItem();
@@ -297,7 +292,7 @@ public class AimingHandler {
             }
         }
 
-        return Ntgl.controllableLoaded && ControllerHandler.isAiming();
+        return false;
     }
 
     private static boolean isScopeAction(WeaponData data) {
@@ -311,7 +306,7 @@ public class AimingHandler {
                 BlockState state = mc.level.getBlockState(result.getBlockPos());
                 Block block = state.getBlock();
                 // Forge should add a tag for intractable blocks so modders can know which blocks can be interacted with :)
-                return block instanceof EntityBlock || block == Blocks.CRAFTING_TABLE || state.is(BlockTags.DOORS) || state.is(BlockTags.TRAPDOORS) || state.is(Tags.Blocks.CHESTS) || state.is(Tags.Blocks.FENCE_GATES);
+                return block instanceof EntityBlock || block == Blocks.CRAFTING_TABLE || state.is(BlockTags.DOORS) || state.is(BlockTags.TRAPDOORS) || state.is(net.fabricmc.fabric.api.tag.convention.v2.ConventionalBlockTags.CHESTS) || state.is(BlockTags.FENCE_GATES);
             } else if (mc.hitResult instanceof EntityHitResult result) {
                 return result.getEntity() instanceof ItemFrame;
             }

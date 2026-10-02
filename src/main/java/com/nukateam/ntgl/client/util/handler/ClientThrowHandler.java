@@ -16,7 +16,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import com.nukateam.ntgl.platform.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.InputEvent;
+import com.nukateam.ntgl.platform.event.client.InputEvent;
 import com.nukateam.ntgl.platform.EventPriority;
 import com.nukateam.ntgl.platform.SubscribeEvent;
 

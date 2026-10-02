@@ -10,10 +10,10 @@ import com.nukateam.ntgl.common.event.GunFireEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.InteractionHand;
 import com.nukateam.ntgl.platform.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RenderHandEvent;
+import com.nukateam.ntgl.platform.event.client.RenderHandEvent;
 import com.nukateam.ntgl.platform.EventPriority;
 import com.nukateam.ntgl.platform.SubscribeEvent;
-import net.neoforged.neoforge.client.event.ViewportEvent;
+import com.nukateam.ntgl.platform.event.client.ViewportEvent;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -5,11 +5,9 @@ import com.nukateam.ntgl.client.util.ClientDebug;
 import com.nukateam.ntgl.client.util.handler.AimingHandler;
 import com.nukateam.ntgl.common.data.holders.GripType;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.geckolib.cache.model.GeoBone;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.*;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -120,39 +118,20 @@ public class TwoHandedPose extends WeaponPose {
         }
     }
 
-    @Override
-    public void applyGeoModelRotation(LivingEntity entity, GeoBone rightArm, GeoBone leftArm, GeoBone head, InteractionHand interactionHand) {
-        var aimProgress = AimingHandler.get().getAimProgress(entity, Minecraft.getInstance().getDeltaTracker().getRealtimeDeltaTicks());
-        var right = interactionHand == InteractionHand.MAIN_HAND;
-
-        rightArm.setRotX((float)Math.toRadians(head.getRotX()));
-        rightArm.setRotY((float)Math.toRadians(head.getRotY()));
-        rightArm.setRotZ((float)Math.toRadians(head.getRotZ()));
-
-        leftArm.setRotX((float)Math.toRadians(head.getRotX()));
-        leftArm.setRotY((float)Math.toRadians(head.getRotY()));
-        leftArm.setRotZ((float)Math.toRadians(head.getRotZ()));
-
-        rightArm.setRotX((float)Math.toRadians(55F + aimProgress * 30F));
-        rightArm.setRotY((float)Math.toRadians((45F + aimProgress * 20F) * (right ? 1F : -1F)));
-
-        leftArm.setRotX((float)Math.toRadians(42F + aimProgress * 48F));
-        leftArm.setRotY((float)Math.toRadians((15F + aimProgress * 5F) * (right ? 1F : -1F)));
-    }
 
     @Override
-    public void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack, MultiBufferSource buffer) {
+    public void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress) {
         if (Config.CLIENT.display.oldAnimations.get()) {
             boolean right = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT ? hand == InteractionHand.MAIN_HAND : hand == InteractionHand.OFF_HAND;
             entity.yBodyRotO = entity.yRotO + (right ? 25F : -25F) + aimProgress * (right ? 20F : -20F);
             entity.yBodyRot = entity.getYRot() + (right ? 25F : -25F) + aimProgress * (right ? 20F : -20F);
         } else {
-            super.applyEntityPreRender(entity, hand, aimProgress, poseStack, buffer);
+            super.applyEntityPreRender(entity, hand, aimProgress);
         }
     }
 
     @Override
-    public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack, MultiBufferSource buffer) {
+    public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack) {
 //        if (Config.CLIENT.display.oldAnimations.get()) {
 //            if (hand == InteractionHand.MAIN_HAND) {
 //                boolean right = Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT ?
@@ -164,7 +143,7 @@ public class TwoHandedPose extends WeaponPose {
 //                poseStack.mulPose(Axis.XP.rotationDegrees(25F * invertRealProgress + aimProgress * 5F));
 //            }
 //        } else {
-            super.applyHeldItemTransforms(entity, hand, aimProgress, poseStack, buffer);
+            super.applyHeldItemTransforms(entity, hand, aimProgress, poseStack);
 //        }
 //        poseStack.translate(-0.41, -0.35, -1);
 //        poseStack.translate(X * 0.0625 , Y * 0.0625, Z * 0.0625);
@@ -176,7 +155,7 @@ public class TwoHandedPose extends WeaponPose {
     }
 
     @Override
-    public boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<LivingEntity> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
+    public boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<?> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
         return GripType.applyBackTransforms(entity, poseStack);
     }
 }

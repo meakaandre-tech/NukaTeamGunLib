@@ -8,7 +8,7 @@ import com.nukateam.ntgl.client.render.hud.*;
 import com.nukateam.ntgl.client.tooltip.ItemsTooltipData;
 import net.minecraft.resources.Identifier;
 import net.neoforged.bus.api.*;
-import net.neoforged.neoforge.client.event.*;
+import com.nukateam.ntgl.platform.event.client.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 public class ClientEvents {

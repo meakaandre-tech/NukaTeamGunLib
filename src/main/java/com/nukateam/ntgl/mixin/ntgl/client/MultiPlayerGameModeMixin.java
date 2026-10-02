@@ -19,7 +19,7 @@ public class MultiPlayerGameModeMixin {
     @Shadow
     private int carriedIndex;
 
-    @Inject(method = "ensureHasSentCarriedItem()V", at = @At(value = "HEAD"), remap=false)
+    @Inject(method = "ensureHasSentCarriedItem()V", at = @At(value = "HEAD"))
     private void onEnsureHasSentCarriedItem(CallbackInfo ci) {
         var player = Minecraft.getInstance().player;
         int selected = player.getInventory().getSelectedSlot();

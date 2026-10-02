@@ -4,11 +4,9 @@ import com.mojang.math.Axis;
 import com.nukateam.ntgl.Config;
 import com.nukateam.ntgl.common.data.holders.GripType;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.geckolib.cache.model.GeoBone;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -90,15 +88,6 @@ public class MiniGunPose extends WeaponPose {
         }
     }
 
-    @Override
-    public void applyGeoModelRotation(LivingEntity entity, GeoBone rightArm, GeoBone leftArm, GeoBone head, InteractionHand interactionHand) {
-        rightArm.setRotX((float)Math.toRadians(15F));
-        rightArm.setRotY((float)Math.toRadians(45F));
-        rightArm.setRotZ((float)Math.toRadians(0F));
-        leftArm.setRotX((float)Math.toRadians(45F));
-        leftArm.setRotY((float)Math.toRadians(-30F));
-        leftArm.setRotZ((float)Math.toRadians(0F));
-    }
 
     public static boolean rightHandIsMain(InteractionHand hand){
         return Minecraft.getInstance().options.mainHand().get() == HumanoidArm.RIGHT ?
@@ -106,25 +95,25 @@ public class MiniGunPose extends WeaponPose {
     }
 
     @Override
-    public void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack, MultiBufferSource buffer) {
+    public void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress) {
         if (Config.CLIENT.display.oldAnimations.get()) {
             var right = rightHandIsMain(hand);
             entity.yBodyRotO = entity.yRotO + 45F * (right ? 1F : -1F);
             entity.yBodyRot = entity.getYRot() + 45F * (right ? 1F : -1F);
         } else {
-            super.applyEntityPreRender(entity, hand, aimProgress, poseStack, buffer);
+            super.applyEntityPreRender(entity, hand, aimProgress);
         }
     }
 
     @Override
-    public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack, MultiBufferSource buffer) {
+    public void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack) {
 //        if (Config.CLIENT.display.oldAnimations.get()) {
 //            if (hand == InteractionHand.OFF_HAND) {
 //                poseStack.translate(0, -10 * 0.0625F, 0);
 //                poseStack.translate(0, 0, -2 * 0.0625F);
 //            }
 //        } else {
-//            super.applyHeldItemTransforms(entity, hand, aimProgress, poseStack, buffer);
+//            super.applyHeldItemTransforms(entity, hand, aimProgress, poseStack);
 //        }
 //
         // z = y; y = z; x = x
@@ -134,14 +123,14 @@ public class MiniGunPose extends WeaponPose {
         poseStack.translate(-7 * 0.0625 , 3 * 0.0625, -20 * 0.0625);
         poseStack.mulPose(Axis.XP.rotationDegrees(67));
 
-        super.applyHeldItemTransforms(entity, hand, aimProgress, poseStack, buffer);
+        super.applyHeldItemTransforms(entity, hand, aimProgress, poseStack);
 //        poseStack.mulPose(Axis.YP.rotationDegrees(Y));
 //        poseStack.mulPose(Axis.ZP.rotationDegrees(Z));
 
     }
 
     @Override
-    public boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<LivingEntity> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
+    public boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<?> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
         return GripType.applyBackTransforms(entity, poseStack);
     }
 

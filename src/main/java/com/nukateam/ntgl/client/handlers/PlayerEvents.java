@@ -5,7 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
-import net.neoforged.neoforge.client.event.RenderHandEvent;
+import com.nukateam.ntgl.platform.event.client.RenderHandEvent;
 import com.nukateam.ntgl.platform.SubscribeEvent;
 
 import java.lang.reflect.InvocationTargetException;

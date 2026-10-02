@@ -5,7 +5,7 @@ import com.nukateam.ntgl.client.render.particle.BloodParticle;
 import com.nukateam.ntgl.client.render.particle.BulletHoleParticle;
 import com.nukateam.ntgl.client.render.particle.TrailParticle;
 import com.nukateam.ntgl.common.foundation.init.ModParticleTypes;
-import net.neoforged.neoforge.client.event.*;
+import com.nukateam.ntgl.platform.event.client.*;
 import com.nukateam.ntgl.platform.SubscribeEvent;
 
 /**

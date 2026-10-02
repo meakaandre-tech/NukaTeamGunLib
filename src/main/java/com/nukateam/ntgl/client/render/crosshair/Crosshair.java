@@ -2,7 +2,7 @@ package com.nukateam.ntgl.client.render.crosshair;
 
 import com.nukateam.ntgl.client.util.handler.CrosshairHandler;
 import com.nukateam.ntgl.common.util.interfaces.IResourceLocation;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 
@@ -34,12 +34,12 @@ public abstract class Crosshair implements IResourceLocation {
      * should be considered that the player may not be in a world.
      *
      * @param mc           a minecraft instance
-     * @param stack        the current matrix stack
+     * @param graphics     the gui graphics of the frame (26.x: replaces the matrix stack)
      * @param windowWidth  the scaled width of the window
      * @param windowHeight the scaled height of the window
      * @param partialTicks
      */
-    public void render(Minecraft mc, PoseStack stack, int windowWidth, int windowHeight, float partialTicks) {
+    public void render(Minecraft mc, GuiGraphicsExtractor graphics, int windowWidth, int windowHeight, float partialTicks) {
     }
 
     /**

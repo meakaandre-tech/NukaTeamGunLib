@@ -1,10 +1,8 @@
 package com.nukateam.ntgl.client.util;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.geckolib.cache.model.GeoBone;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelPart;
-import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,7 +25,6 @@ public interface IHeldAnimation {
                                             InteractionHand hand, float aimProgress) {
     }
 
-    default void applyGeoModelRotation(LivingEntity entity, GeoBone rightArm, GeoBone leftArm, GeoBone head, InteractionHand interactionHand){}
 
     /**
      * Allows for transformations of the entity model. This is where the entire entity model can
@@ -39,7 +36,7 @@ public interface IHeldAnimation {
      * @param poseStack   the current matrix stack
      * @param buffer      a render type buffer get
      */
-    default void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack, MultiBufferSource buffer) {
+    default void applyEntityPreRender(LivingEntity entity, InteractionHand hand, float aimProgress) {
     }
 
     /**
@@ -51,7 +48,7 @@ public interface IHeldAnimation {
      * @param poseStack   the current matrix stack
      * @param buffer      a render type buffer get
      */
-    default void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack, MultiBufferSource buffer) {
+    default void applyHeldItemTransforms(LivingEntity entity, InteractionHand hand, float aimProgress, PoseStack poseStack) {
     }
 
     /**
@@ -60,7 +57,7 @@ public interface IHeldAnimation {
      * @param stack
      * @param partialTicks
      */
-    default boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<LivingEntity> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
+    default boolean applyOffhandTransforms(LivingEntity entity, HumanoidModel<?> model, ItemStack stack, PoseStack poseStack, float partialTicks) {
         return false;
     }
 

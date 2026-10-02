@@ -2,24 +2,18 @@ package com.nukateam.ntgl.client.util.handler;
 
 import com.nukateam.ntgl.common.data.WeaponData;
 import com.nukateam.ntgl.common.foundation.item.interfaces.IWeapon;
-
-import com.nukateam.ntgl.common.foundation.item.interfaces.IWeapon;
 import com.nukateam.ntgl.common.util.util.WeaponModifierHelper;
-import net.minecraft.client.model.EntityModel;
-import net.minecraft.client.model.HumanoidModel;
-import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
-import net.neoforged.neoforge.client.event.RenderLivingEvent;
-import com.nukateam.ntgl.platform.SubscribeEvent;
 
 /**
  * Author: MrCrayfish
+ * <p>
+ * Fabric port: called from LivingEntityRendererMixin before the render state of a living entity is
+ * extracted (was a RenderLivingEvent.Pre handler).
  */
 public class EntityModelHandler {
-    @SubscribeEvent
-    public void onRenderEntityPre(RenderLivingEvent.Pre<LivingEntity, EntityModel<LivingEntity>> event) {
-        var entity = event.getEntity();
+    public static void onRenderEntityPre(LivingEntity entity, float partialTick) {
         var heldItem = entity.getMainHandItem();
 
         if (heldItem.getItem() instanceof IWeapon) {
@@ -27,35 +21,12 @@ public class EntityModelHandler {
                     .getHeldAnimation();
 
             var aimProgress = AimingHandler.get()
-                    .getAimProgress(event.getEntity(), event.getPartialTick());
+                    .getAimProgress(entity, partialTick);
 
             heldAnimation.applyEntityPreRender(
                     entity,
                     InteractionHand.MAIN_HAND,
-                    aimProgress,
-                    event.getPoseStack(),
-                    event.getMultiBufferSource());
+                    aimProgress);
         }
-    }
-
-    @SubscribeEvent
-    public void onRenderEntityPost(RenderLivingEvent.Post<LivingEntity, EntityModel<LivingEntity>> event) {
-        /* Makes sure the model part positions reset back to original definitions */
-//        var model = event.getRenderer().getModel();
-//        boolean slim = event.getEntity() instanceof AbstractClientPlayer player
-//                && player.getModelName().equals("slim");
-
-//        if(model instanceof HumanoidModel<LivingEntity> humanoidModel) {
-//            humanoidModel.rightArm.x = -5.0F;
-//            humanoidModel.rightArm.y = slim ? 2.5F : 2.0F;
-//            humanoidModel.rightArm.z = 0.0F;
-//            humanoidModel.leftArm.x = 5.0F;
-//            humanoidModel.leftArm.y = slim ? 2.5F : 2.0F;
-//            humanoidModel.leftArm.z = 0.0F;
-//        }
-
-        /*model.head.x = 5.0F;
-        model.leftArm.y = slim ? 2.5F : 2.0F;
-        model.leftArm.z = 0.0F;*/
     }
 }

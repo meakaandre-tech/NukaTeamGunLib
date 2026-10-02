@@ -23,7 +23,7 @@ public abstract class SoundOptionsScreenMixin extends OptionsSubScreen {
         super(lastScreen, options, title);
     }
 
-    @Inject(method = "getAllSoundOptionsExceptMaster", at = @At("RETURN"), cancellable = true, remap=false)
+    @Inject(method = "getAllSoundOptionsExceptMaster()[Lnet/minecraft/client/OptionInstance;", at = @At("RETURN"), cancellable = true)
     private void getAllSoundOptionsExceptMaster(CallbackInfoReturnable<OptionInstance<?>[]> cir) {
         var result = cir.getReturnValue();
         result = Arrays.copyOf(result, result.length + 1);

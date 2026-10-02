@@ -13,11 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.neoforged.fml.config.ModConfig;
-import net.neoforged.fml.event.config.ModConfigEvent;
 import com.nukateam.ntgl.platform.event.ClientTickEvent;
-import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
-import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import com.nukateam.ntgl.platform.SubscribeEvent;
 
 import javax.annotation.Nullable;
@@ -98,45 +94,40 @@ public class CrosshairHandler {
         return ImmutableList.copyOf(this.registeredCrosshairs);
     }
 
-    @SubscribeEvent
-    public void onRenderOverlay(RenderGuiLayerEvent.Pre event) {
-        if (!event.getName().equals(VanillaGuiLayers.CROSSHAIR))
-            return;
-
+    /**
+     * Draws the NTGL crosshair in place of the vanilla one (NeoForge: RenderGuiLayerEvent.Pre for the crosshair layer).
+     *
+     * @return true when the vanilla crosshair must not be drawn
+     */
+    public boolean onRenderOverlay(net.minecraft.client.gui.GuiGraphicsExtractor graphics, net.minecraft.client.DeltaTracker deltaTracker) {
         var crosshair = this.getCurrentCrosshair();
 
         if (AimingHandler.get().getNormalisedAdsProgress() > 0.5) {
-            event.setCanceled(true);
-            return;
+            return true;
         }
 
         if (crosshair == null || crosshair.isDefault()) {
-            return;
+            return false;
         }
 
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null)
-            return;
+            return false;
 
         ItemStack heldItem = mc.player.getMainHandItem();
         if (!(heldItem.getItem() instanceof IWeapon))
-            return;
-
-        event.setCanceled(true);
+            return false;
 
         if (!mc.options.getCameraType().isFirstPerson())
-            return;
+            return true;
 
         if (mc.player.getUseItem().getItem() == Items.SHIELD)
-            return;
+            return true;
 
-        var stack = event.getGuiGraphics().pose();
-        stack.pushPose();
-
-        int scaledWidth = mc.getWindow().getGuiScaledWidth();
-        int scaledHeight = mc.getWindow().getGuiScaledHeight();
-        crosshair.render(mc, stack, scaledWidth, scaledHeight, event.getPartialTick().getGameTimeDeltaPartialTick(true));
-        stack.popPose();
+        graphics.pose().pushMatrix();
+        crosshair.render(mc, graphics, graphics.guiWidth(), graphics.guiHeight(), deltaTracker.getGameTimeDeltaPartialTick(true));
+        graphics.pose().popMatrix();
+        return true;
     }
 
     @SubscribeEvent
@@ -157,14 +148,11 @@ public class CrosshairHandler {
         crosshair.onGunFired();
     }
 
-    /* Updates the crosshair if the config is reloaded. */
-    public static void onConfigReload(ModConfigEvent.Reloading event) {
-        ModConfig config = event.getConfig();
-        if (config.getType() == ModConfig.Type.CLIENT && config.getModId().equals(Ntgl.MOD_ID)) {
-            Identifier id = Identifier.tryParse(Config.CLIENT.display.crosshair.get());
-            if (id != null) {
-                CrosshairHandler.get().setCrosshair(id);
-            }
+    /* Updates the crosshair from the config (called after the config was loaded). */
+    public static void onConfigReload() {
+        Identifier id = Identifier.tryParse(Config.CLIENT.display.crosshair.get());
+        if (id != null) {
+            CrosshairHandler.get().setCrosshair(id);
         }
     }
 }
