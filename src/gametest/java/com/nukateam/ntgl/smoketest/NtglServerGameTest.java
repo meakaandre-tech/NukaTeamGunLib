@@ -13,7 +13,7 @@ import com.nukateam.ntgl.common.util.util.WeaponStateHelper;
 import net.fabricmc.fabric.api.gametest.v1.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EntityTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
@@ -38,7 +38,7 @@ public class NtglServerGameTest {
         player.setItemInHand(InteractionHand.MAIN_HAND, pistol);
         WeaponStateHelper.setAmmoCount(new WeaponData(pistol, player), 20);
 
-        var zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new Vec3(1.5, 2.0, 5.5));
+        var zombie = helper.spawnWithNoFreeWill(EntityTypes.ZOMBIE, new Vec3(1.5, 2.0, 5.5));
         var startHealth = zombie.getHealth();
         var seen = new TreeSet<String>();
 
