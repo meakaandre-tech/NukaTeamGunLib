@@ -16,6 +16,14 @@ import org.lwjgl.glfw.GLFW;
 public class NtglSmokeTest implements FabricClientGameTest {
     @Override
     public void runTest(ClientGameTestContext context) {
+        step("sound options screen", () -> {
+            context.setScreen(() -> new net.minecraft.client.gui.screens.options.SoundOptionsScreen(null, net.minecraft.client.Minecraft.getInstance().options));
+            context.waitTicks(5);
+            context.takeScreenshot("00_sound_options");
+            context.setScreen(() -> null);
+            context.waitTicks(2);
+        });
+
         try (var singleplayer = context.worldBuilder().create()) {
             var connection = singleplayer.getConnection();
             var server = singleplayer.getServer();
