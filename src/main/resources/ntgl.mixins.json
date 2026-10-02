@@ -1,7 +1,7 @@
 {
-  "required": false,
+  "required": true,
   "package": "com.nukateam.ntgl.mixin",
-  "compatibilityLevel": "JAVA_21",
+  "compatibilityLevel": "JAVA_25",
   "mixins": [
     "ntgl.common.LivingEntityMixin",
     "ntgl.common.ServerGamePacketListenerImplMixin",
@@ -37,6 +37,5 @@
   "injectors": {
     "defaultRequire": 1
   },
-  "refmap": "ntgl.mixin-refmap.json",
   "minVersion": "0.8"
 }

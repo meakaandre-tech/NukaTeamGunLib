@@ -1,195 +1,51 @@
 plugins {
-    id 'java-library'
-    id 'maven-publish'
-    id 'net.neoforged.gradle.userdev' version '7.0.192'
+    id "net.fabricmc.fabric-loom" version "${loom_version}"
 }
 
-tasks.named('wrapper', Wrapper).configure {
-    distributionType = Wrapper.DistributionType.BIN
-}
-
-version = "${minecraft_version}-${mod_version}"
-group = mod_group_id
+version = "${project.mod_version}+${project.minecraft_version}"
+group = project.maven_group
 
 base {
-    archivesName = mod_id
-}
-
-java.toolchain.languageVersion = JavaLanguageVersion.of(21)
-
-
-runs {
-    configureEach {
-        systemProperty 'forge.logging.markers', 'REGISTRIES'
-        systemProperty 'forge.logging.console.level', 'debug'
-
-        modSource project.sourceSets.main
-    }
-
-    client {
-        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-    }
-
-    server {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-    }
-
-    gameTestServer {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-    }
-
-    data {
-        arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
-    }
-}
-
-minecraft.accessTransformers.file rootProject.file('src/main/resources/META-INF/accesstransformer.cfg')
-
-sourceSets.main.resources { srcDir 'src/generated/resources' }
-
-configurations {
-    runtimeClasspath.extendsFrom localRuntime
+    archivesName = project.archives_base_name
 }
 
 repositories {
-    mavenLocal()
-    flatDir {
-        dirs 'libs'
-    }
-    maven {url "https://www.cursemaven.com"}
-    maven { url = "https://maven.ryanhcode.dev/releases" } // Sable
-
-    maven {
-        name = "ModMaven"
-        url = "https://modmaven.dev"
-    }
-    exclusiveContent {
-        forRepository {
-            maven {
-                name = "Modrinth"
-                url = "https://api.modrinth.com/maven"
-            }
-        }
-        filter {
-            includeGroup "maven.modrinth"
-        }
-    }
-    maven {
-        name "KosmX's maven"
-        url 'https://maven.kosmx.dev/'
-    }
-    maven {
-        name = 'GeckoLib'
-        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
-        content {
-            includeGroupByRegex("software\\.bernie.*")
-            includeGroup("com.eliotlash.mclib")
-        }
-    }
-    maven {
-        name = "SpongePowered"
-        url = "https://repo.spongepowered.org/maven"
-    }
-    exclusiveContent {
-        forRepository {
-            maven { url = "https://maven.ryanhcode.dev/releases" }
-        }
-        filter {
-            includeGroup("dev.ryanhcode.sable-companion")
-        }
-    }
+    mavenCentral()
 }
 
-jarJar.enable()
+loom {
+    accessWidenerPath = file("src/main/resources/ntgl.classtweaker")
+}
 
 dependencies {
-    implementation "net.neoforged:neoforge:${neo_version}"
+    minecraft "com.mojang:minecraft:${project.minecraft_version}"
+    implementation "net.fabricmc:fabric-loader:${project.loader_version}"
+    implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:4.8.4"
-    implementation("com.eliotlash.mclib:mclib:20")
+    // GeckoLib 5 for Fabric 26.2 (and any jars nested in it), downloaded by CI into libs/
+    compileOnly fileTree(dir: "libs", include: ["*.jar", "nested/*.jar"])
 
-    jarJar(api("dev.ryanhcode.sable-companion:sable-companion-common-${project.minecraft_version}:[${project.sable_companion_version},)")) {
-        version {
-            prefer(project.sable_companion_version)
-        }
-    }
-
-//    api("dev.ryanhcode.sable:sable-neoforge-${project.minecraft_version}:${project.sable_version}")
-
-
-    implementation "curse.maven:framework-549225:6531439"
-    implementation "curse.maven:sophisticated-core-618298:7698330"
-    implementation "curse.maven:sophisticated-backpacks-422301:7700124"
-    implementation "curse.maven:travelers-backpack-321117:7095271"
-    compileOnly 'curse.maven:backpacked-352835:7573687'
-//    implementation "maven.modrinth:YyzsBackpack-neoforge:jiao2sMM" // 21.1.13
-
-    implementation "curse.maven:kotlin-for-forge-351264:6994056"
-    implementation "curse.maven:fzzy-config-1005914:7085021"
-    implementation "maven.modrinth:subtle-effects:s3Fo4cDk" // 1.21.1-1.14.3
-
-    implementation 'curse.maven:controllable-317269:6850105'
-    implementation "curse.maven:playeranimator-658587:7389814"
-
-    implementation "curse.maven:sodium-394468:6382651"
-    implementation "curse.maven:irisshaders-455508:6661598"
-
-    compileOnly "top.theillusivec4.curios:curios-neoforge:9.5.1+1.21.1:api"
-
-    compileOnly "mezz.jei:jei-1.21.1-common-api:19.25.0.322"
-    compileOnly "mezz.jei:jei-1.21.1-neoforge-api:19.25.0.322"
-    localRuntime "mezz.jei:jei-1.21.1-neoforge:19.25.0.322"
+    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
 }
 
-//configurations.all {
-//    resolutionStrategy {
-//        force 'io.github.llamalad7:mixinextras-neoforge:0.5.0'
-//        exclude group: 'io.github.llamalad7', module: 'mixinextras-forge'
-//    }
-//}
-
-tasks.withType(ProcessResources).configureEach {
-    var replaceProperties = [
-            minecraft_version      : minecraft_version,
-            minecraft_version_range: minecraft_version_range,
-            neo_version            : neo_version,
-            loader_version_range   : loader_version_range,
-            mod_id                 : mod_id,
-            mod_name               : mod_name,
-            mod_license            : mod_license,
-            mod_version            : mod_version,
-            mod_authors            : mod_authors,
-            mod_description        : mod_description
-    ]
-    inputs.properties replaceProperties
-
-    filesMatching(['META-INF/neoforge.mods.toml']) {
-        expand replaceProperties
-    }
-}
-
-// Example configuration to allow publishing using the maven-publish plugin
-publishing {
-    publications {
-        register('mavenJava', MavenPublication) {
-            from components.java
-        }
-    }
-    repositories {
-        maven {
-            url "file://${project.projectDir}/repo"
-        }
+processResources {
+    def version = project.version
+    inputs.property "version", version
+    filesMatching("fabric.mod.json") {
+        expand "version": version
     }
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
+    it.options.release = 25
+    it.options.encoding = "UTF-8"
 }
 
-idea {
-    module {
-        downloadSources = true
-        downloadJavadoc = true
-    }
+java {
+    sourceCompatibility = JavaVersion.VERSION_25
+    targetCompatibility = JavaVersion.VERSION_25
+}
+
+jar {
+    from("LICENSE.txt")
 }

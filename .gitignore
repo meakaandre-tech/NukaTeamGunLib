@@ -20,9 +20,11 @@ build
 # other
 eclipse
 run
+runs
+run-data
+.vscode
 
-# Files from Forge MDK
-forge*changelog.txt
-/logs/
-/src/generated/resources/.cache
-/runs/
+repo
+
+.profileconfig.json
+libs/
