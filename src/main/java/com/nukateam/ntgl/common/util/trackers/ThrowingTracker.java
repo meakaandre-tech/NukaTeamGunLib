@@ -53,7 +53,7 @@ public class ThrowingTracker {
 
     @SubscribeEvent
     public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-        MinecraftServer server = event.getEntity().getServer();
+        MinecraftServer server = event.getEntity().level().getServer();
         if (server != null) {
             server.execute(() -> {
                 TRACKER_MAP.remove(Pair.of(InteractionHand.MAIN_HAND, event.getEntity()));

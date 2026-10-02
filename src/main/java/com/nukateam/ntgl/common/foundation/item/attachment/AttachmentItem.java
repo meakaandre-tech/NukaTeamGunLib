@@ -56,11 +56,11 @@ public class AttachmentItem<T extends Attachment> extends Item implements IAttac
 //    }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltipComponents, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, java.util.function.Consumer<Component> tooltipComponents, TooltipFlag tooltipFlag) {
         var perks = getProperties().getPerks(stack);
         if (perks != null && !perks.isEmpty()) {
-            tooltipComponents.add(Component.translatable("perk.ntgl.title").withStyle(ChatFormatting.GRAY, ChatFormatting.BOLD));
-            tooltipComponents.addAll(perks);
+            tooltipComponents.accept(Component.translatable("perk.ntgl.title").withStyle(ChatFormatting.GRAY, ChatFormatting.BOLD));
+            perks.forEach(tooltipComponents);
         }
     }
 

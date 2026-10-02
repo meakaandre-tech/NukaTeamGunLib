@@ -25,7 +25,6 @@ import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.fml.LogicalSide;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.platform.event.PlayerEvent;
 import com.nukateam.ntgl.platform.SubscribeEvent;
@@ -33,7 +32,6 @@ import com.nukateam.ntgl.platform.event.PlayerTickEvent;
 
 import com.nukateam.ntgl.platform.event.ServerTickEvent;
 import org.jetbrains.annotations.NotNull;
-import org.openjdk.nashorn.internal.runtime.regexp.joni.constants.TargetInfo;
 
 import java.util.*;
 
@@ -73,7 +71,7 @@ public class MeleeTracker {
 
     @SubscribeEvent
     public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-        MinecraftServer server = event.getEntity().getServer();
+        MinecraftServer server = event.getEntity().level().getServer();
         if (server != null) {
             TRACKER_MAP.remove(new Pair<InteractionHand, LivingEntity>(InteractionHand.MAIN_HAND, event.getEntity()));
             TRACKER_MAP.remove(new Pair<InteractionHand, LivingEntity>(InteractionHand.OFF_HAND, event.getEntity()));

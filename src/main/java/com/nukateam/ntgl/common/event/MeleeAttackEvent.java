@@ -4,7 +4,7 @@ import com.nukateam.ntgl.common.data.WeaponData;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import com.nukateam.ntgl.platform.ICancellableEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import com.nukateam.ntgl.platform.event.LivingEvent;
 
 import java.util.ArrayList;
 
@@ -36,7 +36,7 @@ public class MeleeAttackEvent extends LivingEvent {
      * @return Whether this event was fired on the client side
      */
     public boolean isClient() {
-        return this.getEntity().getCommandSenderWorld().isClientSide();
+        return this.getEntity().level().isClientSide();
     }
 
     public static class Pre extends MeleeAttackEvent implements ICancellableEvent {

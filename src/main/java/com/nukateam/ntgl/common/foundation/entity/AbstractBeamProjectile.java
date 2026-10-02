@@ -143,8 +143,8 @@ public abstract class AbstractBeamProjectile extends ProjectileEntity {
 	}
 
 	@Override
-	public void addAdditionalSaveData(CompoundTag compound) {
-		super.addAdditionalSaveData(compound);
+    public void saveNbt(CompoundTag compound) {
+		super.saveNbt(compound);
 
 		compound.put	 ("StartVec"	, saveVec(this.startVec));
 		compound.put	 ("EndVec"		, saveVec(this.endVec)	);
@@ -155,8 +155,8 @@ public abstract class AbstractBeamProjectile extends ProjectileEntity {
 	}
 
 	@Override
-	public void readAdditionalSaveData(CompoundTag compound) {
-		super.readAdditionalSaveData(compound);
+    public void loadNbt(CompoundTag compound) {
+		super.loadNbt(compound);
         this.startVec 	= readVec(compound.getCompoundOrEmpty("StartVec"));
         this.endVec 	= readVec(compound.getCompoundOrEmpty("EndVec"));
 		this.distance 	= compound.getFloatOr("distance"	, 0F);

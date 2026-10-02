@@ -5,7 +5,7 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import com.nukateam.ntgl.platform.ICancellableEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import com.nukateam.ntgl.platform.event.LivingEvent;
 
 /**
  * <p>Fired when a player shoots a gun.</p>
@@ -42,7 +42,7 @@ public class GunFireEvent extends LivingEvent {
      * @return Whether or not this event was fired on the client side
      */
     public boolean isClient() {
-        return this.getEntity().getCommandSenderWorld().isClientSide();
+        return this.getEntity().level().isClientSide();
     }
 
     /**

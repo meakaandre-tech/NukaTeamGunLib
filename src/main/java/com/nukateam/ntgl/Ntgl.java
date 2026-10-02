@@ -4,7 +4,6 @@ import com.mojang.logging.LogUtils;
 import com.nukateam.example.common.registery.ExampleWeapons;
 import com.nukateam.ntgl.client.settings.NtglOptions;
 import com.nukateam.ntgl.common.data.holders.AnimationType;
-import com.nukateam.ntgl.common.foundation.entity.StunGrenadeEntity;
 import com.nukateam.ntgl.common.foundation.init.*;
 import com.nukateam.ntgl.common.handlers.*;
 import com.nukateam.ntgl.common.network.PacketHandler;
@@ -94,7 +93,6 @@ public class Ntgl implements ModInitializer {
         EVENT_BUS.register(DelayedTask.class);
         EVENT_BUS.register(DataKeyManager.class);
         NetworkManagerHandler.register();
-        EVENT_BUS.register(StunGrenadeEntity.class);
         // The handler itself checks the improvedHitboxes option every tick
         EVENT_BUS.register(new BoundingBoxManager());
     }

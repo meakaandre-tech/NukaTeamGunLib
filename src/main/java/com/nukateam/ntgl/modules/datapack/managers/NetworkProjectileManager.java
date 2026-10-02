@@ -92,7 +92,7 @@ public class NetworkProjectileManager extends SimplePreparableReloadListener<Map
     public void write(FriendlyByteBuf buffer) {
         buffer.writeVarInt(PROGECTILE_CONFIGS.size());
         PROGECTILE_CONFIGS.forEach((id, ammo) -> {
-            buffer.writeResourceLocation(id);
+            buffer.writeIdentifier(id);
             buffer.writeNbt(ammo.serializeNBT(null));
         });
     }
@@ -108,7 +108,7 @@ public class NetworkProjectileManager extends SimplePreparableReloadListener<Map
             var builder = ImmutableMap.<Identifier, ProjectileConfig>builder();
 
             for (int i = 0; i < size; i++) {
-                var id = buffer.readResourceLocation();
+                var id = buffer.readIdentifier();
                 var ammo = ProjectileConfig.create(buffer.readNbt());
                 builder.put(id, ammo);
             }

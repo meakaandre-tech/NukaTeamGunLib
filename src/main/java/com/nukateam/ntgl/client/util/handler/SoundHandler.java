@@ -59,7 +59,7 @@ public class SoundHandler {
         }
 
         /* If deafened, play ringing sound if not already playing, otherwise return */
-        MobEffectInstance effect = Minecraft.getInstance().player.getEffect(ModEffects.DEAFENED);
+        MobEffectInstance effect = Minecraft.getInstance().player.getEffect(ModEffects.DEAFENED.getHolder());
         if (effect == null) {
             if (!this.isDeafened) {
                 return;
@@ -126,7 +126,7 @@ public class SoundHandler {
 
         // Exempt initial explosion from muting
         Identifier loc = event.getSound().getLocation();
-        MobEffectInstance effect = Minecraft.getInstance().player.getEffect(ModEffects.DEAFENED);
+        MobEffectInstance effect = Minecraft.getInstance().player.getEffect(ModEffects.DEAFENED.getHolder());
         int duration = effect != null ? effect.getDuration() : 0;
         boolean isStunGrenade = isStunGrenade(loc);
         if (duration == 0 && isStunGrenade) return;

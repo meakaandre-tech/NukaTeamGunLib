@@ -6,3 +6,4 @@ accessible field net/minecraft/world/entity/monster/Creeper DATA_IS_POWERED Lnet
 accessible method net/minecraft/world/level/block/TargetBlock updateRedstoneOutput (Lnet/minecraft/world/level/LevelAccessor;Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/phys/BlockHitResult;Lnet/minecraft/world/entity/Entity;)I
 accessible field net/minecraft/client/model/geom/ModelPart cubes Ljava/util/List;
 accessible field net/minecraft/client/model/geom/ModelPart children Ljava/util/Map;
+accessible field net/minecraft/world/entity/Mob goalSelector Lnet/minecraft/world/entity/ai/goal/GoalSelector;

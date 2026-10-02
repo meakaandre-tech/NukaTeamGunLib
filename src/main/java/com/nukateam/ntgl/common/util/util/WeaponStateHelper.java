@@ -52,7 +52,7 @@ public class WeaponStateHelper {
     }
 
     public static int getAmmoCount(WeaponData data) {
-        return data.weapon.getOrDefault(NtglComponents.AMMO_COUNT, 0);
+        return data.weapon.getOrDefault(NtglComponents.AMMO_COUNT.get(), 0);
     }
 
     public static void addAmmo(WeaponData data, int amount) {
@@ -65,7 +65,7 @@ public class WeaponStateHelper {
     }
 
     public static void setAmmoCount(WeaponData data, int amount) {
-        data.weapon.set(NtglComponents.AMMO_COUNT, amount);
+        data.weapon.set(NtglComponents.AMMO_COUNT.get(), amount);
     }
 
     public static void setMaxAmmo(WeaponData data) {
@@ -93,13 +93,13 @@ public class WeaponStateHelper {
 
     //AMMO IGNORED
     public static boolean isAmmoIgnored(WeaponData data) {
-        return data.weapon.getOrDefault(NtglComponents.IGNORE_AMMO, false);
+        return data.weapon.getOrDefault(NtglComponents.IGNORE_AMMO.get(), false);
     }
 
     //AMMO TYPE
     public static void setCurrentAmmo(WeaponData data, Identifier ammo) {
         assert data.weapon != null;
-        data.weapon.set(NtglComponents.AMMO, ammo.toString());
+        data.weapon.set(NtglComponents.AMMO.get(), ammo.toString());
     }
 
     public static AmmoHolder getCurrentAmmo(WeaponData data) {
@@ -125,7 +125,7 @@ public class WeaponStateHelper {
     }
 
     private static String getAmmo(ItemStack stack) {
-        return stack.getOrDefault(NtglComponents.AMMO, "");
+        return stack.getOrDefault(NtglComponents.AMMO.get(), "");
     }
 
     public static @NotNull ProjectileConfig getProjectileConfig(WeaponData data) {
@@ -152,7 +152,7 @@ public class WeaponStateHelper {
 
     public static void setFireMode(WeaponData data, FireMode fireMode) {
         assert data.weapon != null;
-        data.weapon.set(NtglComponents.FIRE_MODE, fireMode.toString());
+        data.weapon.set(NtglComponents.FIRE_MODE.get(), fireMode.toString());
     }
 
     public static void switchFireMode(WeaponData data){
@@ -163,7 +163,7 @@ public class WeaponStateHelper {
     }
 
     private static String getFireMode(ItemStack stack) {
-        return stack.getOrDefault(NtglComponents.FIRE_MODE, "");
+        return stack.getOrDefault(NtglComponents.FIRE_MODE.get(), "");
     }
 
     //ATTACHAEMTS
@@ -177,7 +177,7 @@ public class WeaponStateHelper {
         var attachment = getAttachments(weapon);
         for (var slot: attachment.keySet()){
             if (attachment.contains(slot)) {
-                result.add(ItemStack.parseOptional(lookupProvider, attachment.getCompoundOrEmpty(slot)));
+                result.add(com.nukateam.ntgl.platform.StackNbt.parse(lookupProvider, attachment.getCompoundOrEmpty(slot)));
             }
         }
         return result;
@@ -191,7 +191,7 @@ public class WeaponStateHelper {
                 return ItemStack.EMPTY;
             }
 
-            return ItemStack.parseOptional(registryAccess, attachment.getCompoundOrEmpty(type.toString()));
+            return com.nukateam.ntgl.platform.StackNbt.parse(registryAccess, attachment.getCompoundOrEmpty(type.toString()));
         }
         return ItemStack.EMPTY;
     }
@@ -213,7 +213,7 @@ public class WeaponStateHelper {
         for (var itemStack : attachments) {
             if (itemStack.getItem() instanceof IAttachment attachment) {
                 var tagKey = attachment.getType();
-                tag.put(tagKey.toString(), itemStack.save(registryAccess, new CompoundTag()));
+                tag.put(tagKey.toString(), com.nukateam.ntgl.platform.StackNbt.save(registryAccess, itemStack));
             }
         }
 
@@ -353,10 +353,10 @@ public class WeaponStateHelper {
     }
 
     private static String getThrowMode(ItemStack stack){
-        return stack.getOrDefault(NtglComponents.THROW_MODE, "");
+        return stack.getOrDefault(NtglComponents.THROW_MODE.get(), "");
     }
 
     public static void setThrowMode(ItemStack stack, ThrowMode throwMode) {
-        stack.set(NtglComponents.THROW_MODE, throwMode.toString());
+        stack.set(NtglComponents.THROW_MODE.get(), throwMode.toString());
     }
 }

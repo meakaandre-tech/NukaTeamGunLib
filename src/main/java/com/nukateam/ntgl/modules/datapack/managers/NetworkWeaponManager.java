@@ -69,7 +69,7 @@ public class NetworkWeaponManager extends SimplePreparableReloadListener<Map<IWe
     public void writeRegisteredGuns(FriendlyByteBuf buffer) {
         buffer.writeVarInt(this.registeredWeapons.size());
         this.registeredWeapons.forEach((id, gun) -> {
-            buffer.writeResourceLocation(id);
+            buffer.writeIdentifier(id);
             buffer.writeNbt(gun.serializeNBT(null));
         });
     }
@@ -87,7 +87,7 @@ public class NetworkWeaponManager extends SimplePreparableReloadListener<Map<IWe
             ImmutableMap.Builder<Identifier, WeaponConfig> builder = ImmutableMap.builder();
 
             for (int i = 0; i < size; i++) {
-                var id = buffer.readResourceLocation();
+                var id = buffer.readIdentifier();
                 WeaponConfig weaponConfig = WeaponConfig.create(id, buffer.readNbt());
                 builder.put(id, weaponConfig);
             }
@@ -107,7 +107,7 @@ public class NetworkWeaponManager extends SimplePreparableReloadListener<Map<IWe
         clientRegisteredWeapons.clear();
         if (registeredConfigs != null) {
             for (Map.Entry<Identifier, WeaponConfig> entry : registeredConfigs.entrySet()) {
-                var item = BuiltInRegistries.ITEM.get(entry.getKey());
+                var item = BuiltInRegistries.ITEM.getValue(entry.getKey());
                 if (!(item instanceof IWeapon)) {
                     return;
                 }

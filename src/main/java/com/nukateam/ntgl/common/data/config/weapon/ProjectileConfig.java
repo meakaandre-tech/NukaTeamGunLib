@@ -51,7 +51,7 @@ public class ProjectileConfig implements INBTSerializable<CompoundTag> {
         var tag = new CompoundTag();
         tag.putString("Projectile", this.projectile.toString());
         tag.putString("Variant", this.variant.toString());
-        tag.putString("DamageType", this.damageType.location().toString());
+        tag.putString("DamageType", this.damageType.identifier().toString());
         tag.putFloat("Damage", this.damage);
         tag.putBoolean("Visible", this.visible);
         tag.putFloat("Size", this.size);
@@ -161,7 +161,7 @@ public class ProjectileConfig implements INBTSerializable<CompoundTag> {
         object.addProperty("burnSeconds", this.burnSeconds);
         object.addProperty("projectile", this.projectile.toString());
         object.addProperty("variant", this.variant.toString());
-        object.addProperty("damageType", this.damageType.location().toString());
+        object.addProperty("damageType", this.damageType.identifier().toString());
         object.addProperty("hitSound", this.hitSound.toString());
         GunJsonUtil.addObjectIfNotEmpty(object,"explosion", this.explosion.toJsonObject());
 

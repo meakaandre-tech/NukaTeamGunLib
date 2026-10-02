@@ -14,7 +14,9 @@ public record AmmoContext(ItemStack stack, @Nullable Container container) implem
         var ammo = ammoHolder.onConsume().apply(stack, amount);
         for (var stack : ammo) {
             if(!addItem(stack)){
-                entity.spawnAtLocation(stack);
+                if (entity.level() instanceof net.minecraft.server.level.ServerLevel serverLevel) {
+                    entity.spawnAtLocation(serverLevel, stack);
+                }
             }
         }
 

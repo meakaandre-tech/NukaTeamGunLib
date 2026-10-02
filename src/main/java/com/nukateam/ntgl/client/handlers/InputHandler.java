@@ -167,7 +167,7 @@ public class InputHandler {
             var player = Minecraft.getInstance().player;
             if(player != null) {
                 String mode = ClientDebug.tuningMode.getName();
-                player.displayClientMessage(Component.literal("Tuning Mode: " + mode), true);
+                player.sendOverlayMessage(Component.literal("Tuning Mode: " + mode));
             }
             return;
         }

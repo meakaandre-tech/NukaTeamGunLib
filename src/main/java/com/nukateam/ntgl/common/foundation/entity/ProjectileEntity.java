@@ -28,8 +28,7 @@ import com.nukateam.ntgl.common.foundation.init.ModSyncedDataKeys;
 import com.nukateam.ntgl.common.util.world.ExplosionUtils;
 import com.nukateam.ntgl.common.network.PacketHandler;
 import com.nukateam.ntgl.common.foundation.event.GunProjectileSpawnEvent;
-import com.nukateam.ntgl.common.compat.sable.SableSupport;
-import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
@@ -154,9 +153,26 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
+    protected final void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput output) {
+        var tag = new CompoundTag();
+        saveNbt(tag);
+        output.store("ntgl", CompoundTag.CODEC, tag);
+    }
+
+    @Override
+    protected final void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput input) {
+        loadNbt(input.read("ntgl", CompoundTag.CODEC).orElseGet(CompoundTag::new));
+    }
+
+    @Override
+    public boolean hurtServer(ServerLevel level, DamageSource source, float amount) {
+        return false;
+    }
+
+    /** NBT form of the entity data (replaces addAdditionalSaveData(CompoundTag) for subclasses). */
+    protected void saveNbt(CompoundTag compound) {
         var provider = getProvider();
-        compound.put("Weapon", weapon.save(provider, new CompoundTag()));
+        compound.put("Weapon", com.nukateam.ntgl.platform.StackNbt.save(provider, weapon));
         compound.putString("WeaponAction", weaponAction.toString());
         compound.putString("AmmoHolder", ammoHolder.toString());
         compound.putDouble("ModifiedGravity", this.modifiedGravity);
@@ -164,7 +180,7 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
         compound.putBoolean("IsRightHand", this.isRightHand);
         compound.putInt("ShooterId", this.shooterId);
 
-        compound.put("Ammo", getItem().save(provider, new CompoundTag()));
+        compound.put("Ammo", com.nukateam.ntgl.platform.StackNbt.save(provider, getItem()));
         compound.put("Projectile", getProjectile().serializeNBT(provider));
     }
 
@@ -172,10 +188,10 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
         return level().registryAccess();
     }
 
-    @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {
+    /** NBT form of the entity data (replaces readAdditionalSaveData(CompoundTag) for subclasses). */
+    protected void loadNbt(CompoundTag compound) {
         var provider = getProvider();
-        this.weapon = ItemStack.parseOptional(provider, compound.getCompoundOrEmpty("Weapon"));
+        this.weapon = com.nukateam.ntgl.platform.StackNbt.parse(provider, compound.getCompoundOrEmpty("Weapon"));
         this.weaponAction = WeaponMode.getType(compound.getStringOr("WeaponAction", ""));
         this.ammoHolder = AmmoHolder.getType(compound.getStringOr("AmmoHolder", ""));
         this.modifiedGravity = compound.getDoubleOr("ModifiedGravity", 0D);
@@ -188,7 +204,7 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
                 getProjectile().getSize(), getProjectile().getSize(), getProjectile().getSize(),
                 -getProjectile().getSize(), -getProjectile().getSize(), -getProjectile().getSize()));
 
-        setItem(ItemStack.parseOptional(provider, compound.getCompoundOrEmpty("Ammo")));
+        setItem(com.nukateam.ntgl.platform.StackNbt.parse(provider, compound.getCompoundOrEmpty("Ammo")));
         setProjectile(ProjectileConfig.create(compound.getCompoundOrEmpty("Projectile")));
     }
 
@@ -227,7 +243,7 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
     }
 
     private boolean isAffectedByFluid() {
-        return getProjectile().affectedByFluid() && this.isInFluidType();
+        return getProjectile().affectedByFluid() && (this.isInWater() || this.isInLava());
     }
 
     public boolean isVisible(){
@@ -326,19 +342,6 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
                 ? Double.MAX_VALUE
                 : startVec.distanceToSqr(result.getLocation());
 
-        // SABLE: also test against blocks belonging to any sub-level whose plot currently
-        // overlaps this ray segment (getAllIntersecting + inverse pose transform).
-
-        if(Ntgl.sableLoaded) {
-            var subLevelHit = SableSupport.findSubLevelBlockHit(this.level(), startVec, endVec, getBlockFilter(), this);
-            if (subLevelHit != null) {
-                double subLevelDistSqr = startVec.distanceToSqr(subLevelHit.getLocation());
-                if (subLevelDistSqr < bestDistSqr) {
-                    bestDistSqr = subLevelDistSqr;
-                    result = subLevelHit;
-                }
-            }
-        }
         if (result.getType() != HitResult.Type.MISS) {
             if (!(result instanceof BlockHitResult bhr && !level().getBlockState(bhr.getBlockPos()).getFluidState().isEmpty())) {
                 // getLocation() is global here (see note above), so entity search below still
@@ -369,8 +372,8 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
 
     protected double getFluidDrag() {
         var fluidState = this.level().getFluidState(blockPosition());
-        var fluid = fluidState.getType();
-        var density = fluid.getFluidType().getDensity();
+        // NeoForge fluid types carried a density (water 1000, lava 3000); vanilla fluids have none
+        var density = fluidState.isEmpty() ? 0 : (fluidState.is(FluidTags.LAVA) ? 3000 : 1000);
         if (density <= 0) return 1.0;
         return 1.0 / (1.0 + (density / 1000.0));
     }
@@ -425,7 +428,7 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
                 // SABLE: use the sub-level-aware distance instead of a raw distanceTo, so
                 // targets riding/standing on a sub-level are ranked correctly even though
                 // Sable already fixes Entity#distanceToSqr for tracking entities in general.
-                var distanceToHit = SableSupport.distanceSquared(this.level(), startVec, hitPos);
+                var distanceToHit = startVec.distanceToSqr(hitPos);
 
                 if (distanceToHit < closestDistance) {
                     hitVec = hitPos;
@@ -495,7 +498,7 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
 
         // SABLE: project the blood-effect position to global space before sending it to
         // clients — harmless no-op when Sable isn't installed or the position isn't in a plot.
-        var globalHitVec = SableSupport.toGlobal(this.level(), hitVec);
+        var globalHitVec = hitVec;
         PacketHandler.getPlayChannel().sendToTrackingEntity(() -> entity, new S2CMessageBlood(globalHitVec));
         onContact(hitVec);
         handlePierce(HitTarget.ENTITY);
@@ -532,8 +535,8 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
     protected void playHitSound() {
         var hitSound = getProjectile().getHitSound();
         if(hitSound != null) {
-            var sound = BuiltInRegistries.SOUND_EVENT.get(hitSound);
-            this.playSound(sound, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
+            var sound = BuiltInRegistries.SOUND_EVENT.getValue(hitSound);
+            if (sound != null) this.playSound(sound, 1.0F, 1.2F / (this.random.nextFloat() * 0.2F + 0.9F));
         }
     }
 
@@ -546,7 +549,7 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
             wasTouchingWater = true;
 
             // SABLE: fluid hit position projected to global space for the nearby-players packet.
-            var globalPos = SableSupport.toGlobal(this.level(), pos);
+            var globalPos = pos;
 
             PacketHandler.getPlayChannel().sendToNearbyPlayers(
                     () -> LevelLocation.create((ServerLevel)level(), globalPos, 32),
@@ -596,7 +599,7 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
             // SABLE: explosions must be centered on the GLOBAL position — if hitVec came from a
             // sub-level-local block hit, an un-projected position would blow up the wrong spot
             // (somewhere in the plotgrid instead of where the player actually sees the impact).
-            var globalHitVec = SableSupport.toGlobal(this.level(), hitVec);
+            var globalHitVec = hitVec;
             ExplosionUtils.createExplosion(this, getProjectile().getExplosion(), globalHitVec);
             this.remove(RemovalReason.KILLED);
         }
@@ -642,7 +645,7 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
 
         }, (rayTraceContext) -> {
             Vec3 Vector3d = rayTraceContext.getFrom().subtract(rayTraceContext.getTo());
-            return BlockHitResult.miss(rayTraceContext.getTo(), Direction.getNearest(Vector3d.x, Vector3d.y, Vector3d.z), BlockPos.containing(rayTraceContext.getTo()));
+            return BlockHitResult.miss(rayTraceContext.getTo(), Direction.getApproximateNearest(Vector3d.x, Vector3d.y, Vector3d.z), BlockPos.containing(rayTraceContext.getTo()));
         });
     }
 
@@ -656,7 +659,7 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
     private ItemStack setupAmmo(WeaponData data) {
         var ammoHolder = WeaponStateHelper.getCurrentAmmo(data);
         if(ammoHolder.canReturnAmmo()) {
-            var ammo = BuiltInRegistries.ITEM.get(ammoHolder.getId());
+            var ammo = BuiltInRegistries.ITEM.getValue(ammoHolder.getId());
             return new ItemStack(ammo);
         }
         return ItemStack.EMPTY;
@@ -701,8 +704,8 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
 
     private @NotNull DamageSource getDamageSource() {
         return new DamageSource(getProvider()
-                .registryOrThrow(Registries.DAMAGE_TYPE)
-                .getHolderOrThrow(getProjectile().getDamageType()), owner);
+                .lookupOrThrow(Registries.DAMAGE_TYPE)
+                .getOrThrow(getProjectile().getDamageType()), owner);
     }
 
     private void sendEntityHitMessage(Entity entity, Vec3 hitVec, boolean headshot, boolean isCritical) {
@@ -713,7 +716,7 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
             // SABLE: project to global before sending — the client's world renders the target
             // at its global position, so the hit-marker position must match that, not the raw
             // (possibly plot-local) hitVec.
-            var globalHitVec = SableSupport.toGlobal(this.level(), hitVec);
+            var globalHitVec = hitVec;
 
             PacketHandler.getPlayChannel().sendToPlayer(() -> playerShooter,
                     new S2CMessageProjectileHitEntity(globalHitVec.x, globalHitVec.y, globalHitVec.z, hitType, entity instanceof Player));
@@ -728,7 +731,7 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
         // texture/BlockState) only exists at the local plot-grid coordinate; converting it to
         // global here would make the client's getBlockState(blockPos) resolve to air, which is
         // exactly what caused block-hit particles to render with no texture.
-        var globalHitVec = SableSupport.toGlobal(this.level(), hitVec);
+        var globalHitVec = hitVec;
 
         var message = new S2CMessageProjectileHitBlock(globalHitVec, blockPos, hitResult.getDirection());
         PacketHandler.getPlayChannel()

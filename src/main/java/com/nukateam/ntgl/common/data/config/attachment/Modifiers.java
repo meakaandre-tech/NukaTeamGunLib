@@ -161,7 +161,7 @@ public class Modifiers implements INBTSerializable<CompoundTag>, IWeaponModifier
         if (tag.contains("fireModes")) {
             this.fireModes.clear();
             tag.getListOrEmpty("fireModes").forEach(t ->
-                    this.fireModes.add(FireMode.getType(t.getAsString()))
+                    this.fireModes.add(FireMode.getType(t.asString().orElse("")))
             );
         }
     }
@@ -188,7 +188,7 @@ public class Modifiers implements INBTSerializable<CompoundTag>, IWeaponModifier
         if (tag.contains("ammoItems")) {
             this.ammoItems.clear();
             tag.getListOrEmpty("ammoItems").forEach(t ->
-                    this.ammoItems.add(AmmoHolder.getType(t.getAsString()))
+                    this.ammoItems.add(AmmoHolder.getType(t.asString().orElse("")))
             );
         }
     }
@@ -215,7 +215,7 @@ public class Modifiers implements INBTSerializable<CompoundTag>, IWeaponModifier
         if (tag.contains("fuel")) {
             this.fuel.clear();
             tag.getListOrEmpty("fuel").forEach(t ->
-                    this.fuel.add(AmmoHolder.getType(t.getAsString()))
+                    this.fuel.add(AmmoHolder.getType(t.asString().orElse("")))
             );
         }
     }

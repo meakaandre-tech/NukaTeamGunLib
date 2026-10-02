@@ -5,6 +5,8 @@ import com.nukateam.ntgl.common.network.message.weapon.S2CMessageUpdateAmmo;
 import com.nukateam.ntgl.common.network.message.weapon.S2CMessageUpdateAttachments;
 import com.nukateam.ntgl.common.network.message.weapon.S2CMessageUpdateProjectiles;
 import com.nukateam.ntgl.common.network.message.weapon.S2CMessageUpdateWeapons;
+import com.nukateam.ntgl.common.network.message.weapon.S2CMessageUpdateRecipes;
+import com.nukateam.ntgl.modules.crafting.recipe.WorkbenchRecipes;
 import com.nukateam.ntgl.modules.datapack.managers.*;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,5 +28,7 @@ public class NetworkManagerHandler {
         PacketHandler.getPlayChannel().sendToPlayer(() -> player, new S2CMessageUpdateAmmo());
         PacketHandler.getPlayChannel().sendToPlayer(() -> player, new S2CMessageUpdateProjectiles());
         PacketHandler.getPlayChannel().sendToPlayer(() -> player, new S2CMessageUpdateAttachments());
+        PacketHandler.getPlayChannel().sendToPlayer(() -> player,
+                new S2CMessageUpdateRecipes(WorkbenchRecipes.getAllHolders(player.level())));
     }
 }

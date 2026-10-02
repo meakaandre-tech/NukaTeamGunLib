@@ -6,7 +6,7 @@ import com.nukateam.ntgl.common.debug.IEditorMenu;
 import com.nukateam.ntgl.common.util.interfaces.IWeaponModifier;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
-import net.neoforged.fml.loading.FMLEnvironment;
+import com.nukateam.ntgl.platform.PlatformHelper;
 import org.apache.commons.lang3.tuple.Pair;
 import java.util.List;
 import java.util.function.Supplier;

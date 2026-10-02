@@ -32,7 +32,7 @@ public class AshPile extends Entity implements GeoEntity {
 
         if (this.timeToLive > 0)
             --timeToLive;
-        else this.kill();
+        else this.discard();
     }
 
     public int getMaxLife(){
@@ -47,10 +47,15 @@ public class AshPile extends Entity implements GeoEntity {
     protected void defineSynchedData(SynchedEntityData.Builder builder) {}
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {}
+    protected void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput input) {}
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {}
+    protected void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput output) {}
+
+    @Override
+    public boolean hurtServer(net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
+        return false;
+    }
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {}

@@ -15,7 +15,6 @@ import java.util.List;
 
 public record WorkbenchRecipe(ItemStack result, List<WorkbenchIngredient> materials) implements Recipe<WorkbenchRecipeInput> {
     public WorkbenchRecipe(ItemStack result, List<WorkbenchIngredient> materials) {
-        System.out.println("WorkbenchRecipe CREATED: " + result);
         this.result = result;
         this.materials = List.copyOf(materials);
     }
@@ -34,27 +33,41 @@ public record WorkbenchRecipe(ItemStack result, List<WorkbenchIngredient> materi
     }
 
     @Override
-    public ItemStack assemble(WorkbenchRecipeInput input, HolderLookup.Provider access) {
+    public ItemStack assemble(WorkbenchRecipeInput input) {
         return result.copy();
     }
 
-    @Override
     public ItemStack getResultItem(HolderLookup.Provider access) {
         return result.copy();
     }
 
     @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return true;
+    public boolean showNotification() {
+        return false;
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public String group() {
+        return "";
+    }
+
+    @Override
+    public net.minecraft.world.item.crafting.PlacementInfo placementInfo() {
+        return net.minecraft.world.item.crafting.PlacementInfo.NOT_PLACEABLE;
+    }
+
+    @Override
+    public net.minecraft.world.item.crafting.RecipeBookCategory recipeBookCategory() {
+        return net.minecraft.world.item.crafting.RecipeBookCategories.CRAFTING_MISC;
+    }
+
+    @Override
+    public RecipeSerializer<WorkbenchRecipe> getSerializer() {
         return ModRecipeSerializers.WORKBENCH.get();
     }
 
     @Override
-    public RecipeType<?> getType() {
+    public RecipeType<WorkbenchRecipe> getType() {
         return ModRecipeTypes.WORKBENCH.get();
     }
 

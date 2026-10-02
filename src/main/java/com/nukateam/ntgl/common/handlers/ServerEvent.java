@@ -7,7 +7,6 @@ import com.nukateam.ntgl.common.util.util.WeaponStateHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import com.nukateam.ntgl.platform.SubscribeEvent;
-import net.neoforged.fml.LogicalSide;
 import com.nukateam.ntgl.platform.event.PlayerTickEvent;
 
 import static com.nukateam.ntgl.common.util.trackers.ShootTracker.*;

@@ -56,7 +56,7 @@ public class FlyingGibsRenderer extends EntityRenderer<FlyingGib> {
                     isGeoModel = true;
                 }
 
-                var partialTickTime = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+                var partialTickTime = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
 
                 if (flyingGib.onGround()) {
                     if (flyingGib.timeToLive <= 20) {
@@ -70,7 +70,7 @@ public class FlyingGibsRenderer extends EntityRenderer<FlyingGib> {
 
                 poseStack.translate(0,-entity.getType().getHeight() / 2,0);
 
-                var partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+                var partialTicks = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
                 var texture = data.texture;
                 var rendertype = RenderType.itemEntityTranslucentCull(texture);
                 var vertexConsumer = buffer.getBuffer(rendertype);

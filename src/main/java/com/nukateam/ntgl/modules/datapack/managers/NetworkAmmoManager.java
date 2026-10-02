@@ -63,7 +63,7 @@ public class NetworkAmmoManager extends SimplePreparableReloadListener<Map<IAmmo
     public void writeRegisteredAmmo(FriendlyByteBuf buffer) {
         buffer.writeVarInt(this.registeredAmmo.size());
         this.registeredAmmo.forEach((id, ammo) -> {
-            buffer.writeResourceLocation(id);
+            buffer.writeIdentifier(id);
             buffer.writeNbt(ammo.serializeNBT(null));
         });
     }
@@ -81,7 +81,7 @@ public class NetworkAmmoManager extends SimplePreparableReloadListener<Map<IAmmo
             var builder = ImmutableMap.<Identifier, ProjectileConfig>builder();
 
             for (int i = 0; i < size; i++) {
-                var id = buffer.readResourceLocation();
+                var id = buffer.readIdentifier();
                 var ammo = ProjectileConfig.create(buffer.readNbt());
                 builder.put(id, ammo);
             }
@@ -102,7 +102,7 @@ public class NetworkAmmoManager extends SimplePreparableReloadListener<Map<IAmmo
     private static boolean updateRegisteredAmmo(Map<Identifier, ProjectileConfig> registeredAmmo) {
         if (registeredAmmo != null) {
             for (var entry : registeredAmmo.entrySet()) {
-                Item item = BuiltInRegistries.ITEM.get(entry.getKey());
+                Item item = BuiltInRegistries.ITEM.getValue(entry.getKey());
                 if (!(item instanceof IAmmo)) {
                     return false;
                 }

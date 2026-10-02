@@ -52,7 +52,7 @@ public class ReloadTracker {
         var weaponItem = (IWeapon)weapon.getItem();
 
         if(wielder instanceof Player player) {
-            this.slot = arm == InteractionHand.MAIN_HAND ? player.getInventory().selected : Inventory.SLOT_OFFHAND;
+            this.slot = arm == InteractionHand.MAIN_HAND ? player.getInventory().getSelectedSlot() : Inventory.SLOT_OFFHAND;
         }
 
         reloadTick = WeaponModifierHelper.getReloadTime(data);
@@ -93,7 +93,7 @@ public class ReloadTracker {
 
     @SubscribeEvent
     public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
-        var server = event.getEntity().getServer();
+        var server = event.getEntity().level().getServer();
         if (server != null) {
             server.execute(() -> RELOAD_TRACKER_MAP.remove(event.getEntity()));
         }
@@ -315,7 +315,7 @@ public class ReloadTracker {
             var ammoCount = WeaponStateHelper.getAmmoCount(data);
 
             if(ammoCount > 0 && ammoHolder.canReturnAmmo()) {
-                var usedMagazine = new ItemStack(BuiltInRegistries.ITEM.get(ammoHolder.getId()));
+                var usedMagazine = new ItemStack(BuiltInRegistries.ITEM.getValue(ammoHolder.getId()));
                 StackUtils.setDurability(usedMagazine, ammoCount);
 
                 if(entity instanceof Player player){

@@ -62,7 +62,7 @@ public class NetworkAttachmentManager extends SimplePreparableReloadListener<Map
     public void writeRegistered(FriendlyByteBuf buffer) {
         buffer.writeVarInt(this.registeredAttachments.size());
         this.registeredAttachments.forEach((id, config) -> {
-            buffer.writeResourceLocation(id);
+            buffer.writeIdentifier(id);
             buffer.writeNbt(config.serializeNBT(null));
         });
     }
@@ -74,7 +74,7 @@ public class NetworkAttachmentManager extends SimplePreparableReloadListener<Map
             var builder = ImmutableMap.<Identifier, AttachmentConfig>builder();
 
             for (int i = 0; i < size; i++) {
-                var id = buffer.readResourceLocation();
+                var id = buffer.readIdentifier();
                 AttachmentConfig config = AttachmentConfig.create(id, buffer.readNbt());
                 builder.put(id, config);
             }
@@ -91,7 +91,7 @@ public class NetworkAttachmentManager extends SimplePreparableReloadListener<Map
         clientRegisteredAttachments.clear();
         if (registered != null) {
             for (Map.Entry<Identifier, AttachmentConfig> entry : registered.entrySet()) {
-                Item item = BuiltInRegistries.ITEM.get(entry.getKey());
+                Item item = BuiltInRegistries.ITEM.getValue(entry.getKey());
                 if (!(item instanceof IAttachment<?>)) {
                     return false;
                 }

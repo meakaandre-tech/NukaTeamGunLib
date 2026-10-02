@@ -53,7 +53,7 @@ public class LivingEntityModelMixin<T extends LivingEntity> {
                 return;
             }
 
-            var aimProgress = AimingHandler.get().getAimProgress(entity, Minecraft.getInstance().getTimer().getRealtimeDeltaTicks());
+            var aimProgress = AimingHandler.get().getAimProgress(entity, Minecraft.getInstance().getDeltaTracker().getRealtimeDeltaTicks());
             var gripType = WeaponModifierHelper.getGripType(new WeaponData(heldItem, entity));
 
             gripType.getHeldAnimation().applyHumanoidModelRotation(

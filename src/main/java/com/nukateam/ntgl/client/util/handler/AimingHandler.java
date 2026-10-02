@@ -65,7 +65,7 @@ public class AimingHandler {
 
     public static boolean isAiming(ItemStack gun) {
         var minecraft = Minecraft.getInstance();
-        var delta = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
+        var delta = minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(true);
         var progress = get().getAimProgress(minecraft.player, delta);
         return gun.getItem() instanceof IWeapon
                 && get().isAiming()

@@ -7,7 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import com.nukateam.ntgl.platform.ICancellableEvent;
 import com.nukateam.ntgl.platform.event.PlayerEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import com.nukateam.ntgl.platform.event.LivingEvent;
 /**
  * <p>Fired when a player reloads a gun.</p>
  *
@@ -38,7 +38,7 @@ public class GunReloadEvent extends LivingEvent {
      * @return Whether or not this event was fired on the client side
      */
     public boolean isClient() {
-        return this.getEntity().getCommandSenderWorld().isClientSide();
+        return this.getEntity().level().isClientSide();
     }
 
     /**

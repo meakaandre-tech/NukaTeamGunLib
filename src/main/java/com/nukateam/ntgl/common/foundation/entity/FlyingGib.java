@@ -21,7 +21,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.PowderSnowBlock;
 import net.minecraft.world.phys.Vec3;
 import com.nukateam.ntgl.platform.Lazy;
-import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
@@ -36,7 +36,7 @@ public class FlyingGib extends Entity {
     public static final EntityDataAccessor<Integer> PART = defineId(FlyingGib.class, EntityDataSerializers.INT);
     public static final EntityDataAccessor<Float> SIZE = defineId(FlyingGib.class, EntityDataSerializers.FLOAT);
     public static final EntityDataAccessor<Float> GRAVITY = defineId(FlyingGib.class, EntityDataSerializers.FLOAT);
-    public static final EntityDataAccessor<CompoundTag> DATA = defineId(FlyingGib.class, EntityDataSerializers.COMPOUND_TAG);
+    public static final EntityDataAccessor<CompoundTag> DATA = defineId(FlyingGib.class, com.nukateam.ntgl.common.foundation.init.NtglEntityDataSerializers.COMPOUND_TAG);
     public static final int LIFE = 20 * 3;
         private final Lazy<Optional<LivingEntity>> localEntity =
                 Lazy.of(() -> Optional.ofNullable((LivingEntity) Minecraft.getInstance().level.getEntity(getEntityId())));
@@ -100,7 +100,7 @@ public class FlyingGib extends Entity {
 
         if (this.timeToLive > 0)
             --timeToLive;
-        else this.kill();
+        else this.discard();
 
         handleLavaMovement();
 
@@ -112,7 +112,7 @@ public class FlyingGib extends Entity {
             }
 
             var pos = getBlockPosBelowThatAffectsMyMovement();
-            var friction = (this.level().getBlockState(pos).getFriction(this.level(), pos, this) * 0.98F) / 5;
+            var friction = (this.level().getBlockState(pos).getBlock().getFriction() * 0.98F) / 5;
             friction = friction * 0.91F;
             this.setDeltaMovement(this.getDeltaMovement().multiply(friction, 0.98D, friction));
 
@@ -151,7 +151,7 @@ public class FlyingGib extends Entity {
     }
 
     private void handleGravity(){
-        this.checkSlowFallDistance();
+        this.resetFallDistance();
 
         var gravity = getData().gravity;
         var vec3 = this.getDeltaMovement();
@@ -203,7 +203,7 @@ public class FlyingGib extends Entity {
         return data;
     }
 
-    @OnlyIn(Dist.CLIENT) @Nullable
+    @Nullable
     public LivingEntity getLocalEntity(){
         return localEntity.get().isPresent() ? localEntity.get().get() : null;
     }
@@ -214,8 +214,13 @@ public class FlyingGib extends Entity {
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag pCompound) {}
+    protected void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput input) {}
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag pCompound) {}
+    protected void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput output) {}
+
+    @Override
+    public boolean hurtServer(net.minecraft.server.level.ServerLevel level, net.minecraft.world.damagesource.DamageSource source, float amount) {
+        return false;
+    }
 }

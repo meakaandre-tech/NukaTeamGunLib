@@ -9,8 +9,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.syncher.EntityDataSerializer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityDataRegistry;
 import net.minecraft.resources.Identifier;
-import com.nukateam.ntgl.platform.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 
 import java.util.function.Supplier;
 
@@ -32,6 +30,10 @@ public class NtglEntityDataSerializers {
                             NtglEntityDataSerializers::readGeneral
                     )
             );
+
+    /** Vanilla 26.x has no CompoundTag serializer any more. */
+    public static final EntityDataSerializer<CompoundTag> COMPOUND_TAG =
+            EntityDataSerializer.forValueType(net.minecraft.network.codec.ByteBufCodecs.COMPOUND_TAG);
 
     public static final Supplier<EntityDataSerializer<ProjectileConfig>> PROJECTILE_CONFIG =
             () -> PROJECTILE_CONFIG_SERIALIZER;
@@ -70,5 +72,6 @@ public class NtglEntityDataSerializers {
     public static void register(){
         FabricEntityDataRegistry.register(Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "projectile_config"), PROJECTILE_CONFIG_SERIALIZER);
         FabricEntityDataRegistry.register(Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "general_config"), GENERAL_CONFIG_SERIALIZER);
+        FabricEntityDataRegistry.register(Identifier.fromNamespaceAndPath(Ntgl.MOD_ID, "compound_tag"), COMPOUND_TAG);
     }
 }

@@ -22,7 +22,7 @@ public class MultiPlayerGameModeMixin {
     @Inject(method = "ensureHasSentCarriedItem()V", at = @At(value = "HEAD"), remap=false)
     private void onEnsureHasSentCarriedItem(CallbackInfo ci) {
         var player = Minecraft.getInstance().player;
-        int selected = player.getInventory().selected;
+        int selected = player.getInventory().getSelectedSlot();
         if (selected != this.carriedIndex) {
             var hand = carriedIndex == Inventory.SLOT_OFFHAND ?
                     InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;

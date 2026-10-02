@@ -153,7 +153,7 @@ public class AttachmentContainer extends AbstractContainerMenu {
         }
 
         for (int i = 0; i < 9; i++) {
-            if (i == playerInventory.selected) {
+            if (i == playerInventory.getSelectedSlot()) {
                 this.addSlot(new Slot(playerInventory, i, 8 + i * HOTBAR_OFFSET.x, HOTBAR_OFFSET.y) {
                     @Override
                     public boolean mayPickup(Player playerIn) {

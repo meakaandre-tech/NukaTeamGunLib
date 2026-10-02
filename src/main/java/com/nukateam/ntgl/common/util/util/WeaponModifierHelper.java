@@ -127,7 +127,7 @@ public class WeaponModifierHelper {
         if (data != null && config != null && data.weapon.getItem() instanceof IWeapon) {
             if (WeaponStateHelper.getProjectileConfig(data).isMagazineMode()) {
                 var id = WeaponStateHelper.getCurrentAmmo(data);
-                var item = BuiltInRegistries.ITEM.get(id.getId());
+                var item = BuiltInRegistries.ITEM.getValue(id.getId());
                 finalMaxAmmo.set(item.getMaxDamage(new ItemStack(item)));
             }
         }
@@ -558,7 +558,7 @@ public class WeaponModifierHelper {
         if(getAmmoData(data, ammoId) != null) {
             config = getAmmoData(data, ammoId).getProjectile().copy();
         }
-        else if(item.canReturnAmmo() && BuiltInRegistries.ITEM.get(item.getId()) instanceof IAmmo ammoItem) {
+        else if(item.canReturnAmmo() && BuiltInRegistries.ITEM.getValue(item.getId()) instanceof IAmmo ammoItem) {
             config = ammoItem.getAmmo().copy();
         }
         if(config == null) {

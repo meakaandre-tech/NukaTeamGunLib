@@ -1,11 +1,8 @@
 package com.nukateam.ntgl.common.foundation.item;
 
 import com.google.common.collect.HashMultimap;
-import com.nukateam.geo.render.ProxyItemRenderer;
 import com.nukateam.ntgl.Ntgl;
-import com.nukateam.ntgl.client.animators.WeaponAnimator;
 import com.nukateam.ntgl.client.input.NtglKeyBinds;
-import com.nukateam.ntgl.client.registry.WeaponRegistry;
 import com.nukateam.ntgl.common.data.WeaponData;
 import com.nukateam.ntgl.common.data.config.weapon.ExplosionConfig;
 import com.nukateam.ntgl.common.data.config.weapon.WeaponConfig;
@@ -20,12 +17,9 @@ import com.nukateam.ntgl.modules.datapack.ConfigSupplier;
 import com.nukateam.ntgl.common.util.util.FuelUtils;
 import com.nukateam.ntgl.common.util.interfaces.IWeaponModifier;
 import com.nukateam.ntgl.common.util.util.*;
-import com.nukateam.geo.render.DynamicGeoItemRenderer;
-import com.nukateam.ntgl.client.render.renderers.weapon.*;
 import com.nukateam.ntgl.common.foundation.item.interfaces.*;
 import net.minecraft.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
@@ -38,10 +32,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.neoforged.fml.loading.FMLEnvironment;
-import com.geckolib.animatable.GeoItem;
-import com.geckolib.animatable.client.GeoRenderProvider;
-import com.geckolib.animatable.instance.AnimatableInstanceCache;
+import com.nukateam.ntgl.platform.PlatformHelper;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
@@ -49,25 +40,26 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.*;
 import com.nukateam.ntgl.platform.Lazy;
-import com.geckolib.animatable.manager.AnimatableManager;
-import com.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 
-import static com.geckolib.util.GeckoLibUtil.createInstanceCache;
 import static net.minecraft.world.item.component.ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT;
 
-public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable{
+/**
+ * Fabric port note: the item is no longer a GeckoLib GeoItem. Its animated model is drawn by the
+ * "ntgl:weapon" special item model (see the item model definition of each weapon), which looks the
+ * renderer up in WeaponRegistry.
+ */
+public class WeaponItem extends Item implements IWeapon, IThrowable, net.fabricmc.fabric.api.item.v1.FabricItem {
     public static final String VARIANT = "variant";
     private final Lazy<Identifier> id = Lazy.of(this::getRegistryName);
     private final WeakHashMap<CompoundTag, WeaponConfig> modifiedGunCache = new WeakHashMap<>();
     private WeaponConfig weaponConfig = new WeaponConfig();
-    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     protected IWeaponModifier[] modifiers;
 
     public WeaponItem(Item.Properties properties, IWeaponModifier... modifiers) {
-        super(properties);
+        super(properties.enchantable(5));
         this.modifiers = modifiers;
     }
 
@@ -75,9 +67,6 @@ public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable{
     public IWeaponModifier[] getModifiers() {
         return modifiers;
     }
-
-    @Override
-    public void registerControllers(AnimatableManager.ControllerRegistrar controllerRegistrar) {}
 
     @Override
     public void setConfig(ConfigSupplier<WeaponConfig> supplier) {
@@ -95,26 +84,12 @@ public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable{
         return id.get();
     }
 
-    @Override
-    public void createGeoRenderer(Consumer<GeoRenderProvider> consumer) {
-        consumer.accept(new GeoRenderProvider() {
-            private ProxyItemRenderer renderer;
-
-            @Override
-            public BlockEntityWithoutLevelRenderer getGeoItemRenderer() {
-                if (this.renderer == null)
-                    this.renderer = new ProxyItemRenderer(WeaponRegistry.getRenderer(WeaponItem.this));
-                return this.renderer;
-            }
-        });
-    }
-
     public void setDefaultTag(ItemStack stack){
         WeaponStateHelper.setAmmoCount(new WeaponData(stack, null), getConfig().getGeneral().getMaxAmmo());
     }
 
     @Override
-    public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
+    public void inventoryTick(ItemStack stack, net.minecraft.server.level.ServerLevel level, Entity entity, @Nullable net.minecraft.world.entity.EquipmentSlot slot) {
         if(entity instanceof LivingEntity livingEntity) {
             WeaponItemUtils.checkAmmo(stack, entity, livingEntity);
         }
@@ -126,7 +101,13 @@ public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable{
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, net.minecraft.world.item.component.TooltipDisplay display, Consumer<Component> tooltipAdder, TooltipFlag tooltipFlag) {
+        var tooltip = new ArrayList<Component>();
+        appendWeaponTooltip(stack, context, tooltip, tooltipFlag);
+        tooltip.forEach(tooltipAdder);
+    }
+
+    protected void appendWeaponTooltip(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag tooltipFlag) {
         var data = new WeaponData(stack, null, context.registries());
 
         boolean canShoot = WeaponModifierHelper.canShoot(data);
@@ -162,18 +143,18 @@ public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable{
         boolean hasAttachments = !WeaponModifierHelper.getAttachmentTypes(data).isEmpty();
 
         if (hasHandlingOptions) {
-            if (net.minecraft.client.gui.screens.Screen.hasShiftDown()) {
+            if (net.minecraft.client.Minecraft.getInstance().hasShiftDown()) {
                 WeaponItemTooltips.addHandlingStats(tooltip, data, true);
             } else {
                 tooltip.add(Component.translatable("info.ntgl.hold_shift").withStyle(ChatFormatting.DARK_GRAY));
             }
         } else if (hasAttachments) {
-            if (!net.minecraft.client.gui.screens.Screen.hasShiftDown()) {
+            if (!net.minecraft.client.Minecraft.getInstance().hasShiftDown()) {
                 tooltip.add(Component.translatable("info.ntgl.hold_shift").withStyle(ChatFormatting.DARK_GRAY));
             }
         }
 
-        var name = NtglKeyBinds.KEY_ATTACHMENTS.getKey().getDisplayName();
+        var name = NtglKeyBinds.KEY_ATTACHMENTS.getTranslatedKeyMessage();
 
         tooltip.add(Component.translatable("info.ntgl.attachment_help", name)
                 .withStyle(ChatFormatting.YELLOW));
@@ -202,34 +183,17 @@ public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable{
         return this.weaponConfig;
     }
 
+    /** Weapons only take enchantments when their config allows it (replaces isEnchantable/isBookEnchantable). */
     @Override
-    public boolean isBookEnchantable(ItemStack stack, ItemStack book) {
-        return this.weaponConfig.getGeneral().isEnchantable() && super.isBookEnchantable(stack, book);
+    public boolean canBeEnchantedWith(ItemStack stack, net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment> enchantment, net.fabricmc.fabric.api.item.v1.EnchantingContext context) {
+        return this.weaponConfig.getGeneral().isEnchantable()
+                && net.fabricmc.fabric.api.item.v1.FabricItem.super.canBeEnchantedWith(stack, enchantment, context);
     }
 
+    /** Ammo and state live in data components; changing them must not replay the equip animation. */
     @Override
-    public boolean onEntitySwing(ItemStack stack, LivingEntity entity, InteractionHand hand) {
-        return true;
-    }
-
-    @Override
-    public boolean shouldCauseReequipAnimation(ItemStack oldStack, ItemStack newStack, boolean slotChanged) {
-        return slotChanged;
-    }
-
-    @Override
-    public boolean isEnchantable(ItemStack stack) {
-        return this.weaponConfig.getGeneral().isEnchantable() && this.getMaxStackSize(stack) == 1;
-    }
-
-    @Override
-    public int getEnchantmentValue(ItemStack stack) {
-        return this.weaponConfig.getGeneral().isEnchantable() ? 5 : 0;
-    }
-
-    @Override
-    public int getEnchantmentValue() {
-        return this.weaponConfig.getGeneral().isEnchantable() ? 5 : 0;
+    public boolean allowComponentsUpdateAnimation(Player player, InteractionHand hand, ItemStack oldStack, ItemStack newStack) {
+        return false;
     }
 
     private Identifier getRegistryName() {
@@ -267,10 +231,5 @@ public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable{
         return ProjectileManager.getInstance()
                 .getFactory(projectile)
                 .create(world, entity, this, timeLeft);
-    }
-
-    @Override
-    public AnimatableInstanceCache getAnimatableInstanceCache() {
-        return cache;
     }
 }

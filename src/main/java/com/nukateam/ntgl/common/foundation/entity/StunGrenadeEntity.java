@@ -33,12 +33,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.Shapes;
-import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
 import com.nukateam.ntgl.platform.SubscribeEvent;
 
 import javax.annotation.Nullable;
 
-@EventBusSubscriber
 public class StunGrenadeEntity<T extends Item & IThrowable & IWeapon> extends ThrowableGrenadeEntity<T> {
     public StunGrenadeEntity(EntityType<? extends ThrowableGrenadeEntity> entityType, Level world) {
         super(entityType, world);
@@ -49,19 +47,15 @@ public class StunGrenadeEntity<T extends Item & IThrowable & IWeapon> extends Th
         this.setItem(new ItemStack(item));
     }
 
-    @SubscribeEvent
-    public static void blindMobs(LivingChangeTargetEvent event) {
-        if (Config.COMMON.stunGrenades.blind.blindMobs.get()
-                && event.getEntity() instanceof Mob
-                && event.getEntity().hasEffect(ModEffects.BLINDED)) {
-            ((Mob) event.getEntity()).setTarget(null);
-        }
+    /** Blinded mobs cannot acquire a target; called from MobMixin (was a LivingChangeTargetEvent handler). */
+    public static boolean isBlinded(Mob mob) {
+        return Config.COMMON.stunGrenades.blind.blindMobs.get() && mob.hasEffect(ModEffects.BLINDED.getHolder());
     }
 
     @Override
     public void onDeath() {
         double y = this.getY() + this.getType().getDimensions().height() * 0.5;
-        this.level().playSound(null, this.getX(), y, this.getZ(), ModSounds.ENTITY_STUN_GRENADE_EXPLOSION.get(), SoundSource.BLOCKS, 4, (1 + (level().random.nextFloat() - level().random.nextFloat()) * 0.2F) * 0.7F);
+        this.level().playSound(null, this.getX(), y, this.getZ(), ModSounds.ENTITY_STUN_GRENADE_EXPLOSION.get(), SoundSource.BLOCKS, 4, (1 + (level().getRandom().nextFloat() - level().getRandom().nextFloat()) * 0.2F) * 0.7F);
         if (this.level().isClientSide()) {
             return;
         }
@@ -92,10 +86,10 @@ public class StunGrenadeEntity<T extends Item & IThrowable & IWeapon> extends Th
             double angle = Math.toDegrees(Math.acos(entity.getViewVector(1.0F).dot(directionGrenade.normalize())));
 
             // Apply effects as determined by their criteria
-            if (this.calculateAndApplyEffect(ModEffects.DEAFENED, Config.COMMON.stunGrenades.deafen.criteria, entity, grenade, eyes, distance, angle) && Config.COMMON.stunGrenades.deafen.panicMobs.get()) {
+            if (this.calculateAndApplyEffect(ModEffects.DEAFENED.getHolder(), Config.COMMON.stunGrenades.deafen.criteria, entity, grenade, eyes, distance, angle) && Config.COMMON.stunGrenades.deafen.panicMobs.get()) {
                 entity.setLastHurtByMob(entity);
             }
-            if (this.calculateAndApplyEffect(ModEffects.BLINDED, Config.COMMON.stunGrenades.blind.criteria, entity, grenade, eyes, distance, angle) && Config.COMMON.stunGrenades.blind.blindMobs.get() && entity instanceof Mob) {
+            if (this.calculateAndApplyEffect(ModEffects.BLINDED.getHolder(), Config.COMMON.stunGrenades.blind.criteria, entity, grenade, eyes, distance, angle) && Config.COMMON.stunGrenades.blind.blindMobs.get() && entity instanceof Mob) {
                 ((Mob) entity).setTarget(null);
             }
         }
@@ -105,7 +99,7 @@ public class StunGrenadeEntity<T extends Item & IThrowable & IWeapon> extends Th
         double angleMax = criteria.angleEffect.get() * 0.5;
         if (distance <= criteria.radius.get() && angleMax > 0 && angle <= angleMax) {
             // Verify that light can pass through all blocks obstructing the entity's line of sight to the grenade
-            if (effect != ModEffects.BLINDED.get() || !Config.COMMON.stunGrenades.blind.criteria.raytraceOpaqueBlocks.get() || rayTraceOpaqueBlocks(this.level(), eyes, grenade, false, false, false) == null) {
+            if (effect != ModEffects.BLINDED.getHolder() || !Config.COMMON.stunGrenades.blind.criteria.raytraceOpaqueBlocks.get() || rayTraceOpaqueBlocks(this.level(), eyes, grenade, false, false, false) == null) {
                 // Duration attenuated by distance
                 int durationBlinded = (int) Math.round(criteria.durationMax.get() - (criteria.durationMax.get() - criteria.durationMin.get()) * (distance / criteria.radius.get()));
 
@@ -134,7 +128,7 @@ public class StunGrenadeEntity<T extends Item & IThrowable & IWeapon> extends Th
                 BlockState stateInside = world.getBlockState(pos);
 
                 // Added light opacity check
-                if (stateInside.getLightBlock(world, pos) != 0 && (!ignoreBlockWithoutBoundingBox || stateInside.getCollisionShape(world, pos) != Shapes.empty())) {
+                if (stateInside.getLightDampening() != 0 && (!ignoreBlockWithoutBoundingBox || stateInside.getCollisionShape(world, pos) != Shapes.empty())) {
                     HitResult raytraceresult = world.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
                     if (raytraceresult != null) {
                         return raytraceresult;
@@ -222,7 +216,7 @@ public class StunGrenadeEntity<T extends Item & IThrowable & IWeapon> extends Th
                     BlockState state = world.getBlockState(pos);
 
                     // Added light opacity check
-                    if (state.getLightBlock(world, pos) != 0 && (!ignoreBlockWithoutBoundingBox || state.is(Blocks.NETHER_PORTAL) || state.getCollisionShape(world, pos) != Shapes.empty())) {
+                    if (state.getLightDampening() != 0 && (!ignoreBlockWithoutBoundingBox || state.is(Blocks.NETHER_PORTAL) || state.getCollisionShape(world, pos) != Shapes.empty())) {
                         return world.clip(new ClipContext(start, end, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, this));
                     }
                 }

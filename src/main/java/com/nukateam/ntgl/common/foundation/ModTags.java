@@ -13,7 +13,7 @@ public class ModTags {
         public static final TagKey<Block> FRAGILE = tag("fragile");
 
         private static TagKey<Block> tag(String name) {
-            return BlockTags.create(Identifier.tryBuild(Ntgl.MOD_ID, name));
+            return TagKey.create(net.minecraft.core.registries.Registries.BLOCK, Identifier.tryBuild(Ntgl.MOD_ID, name));
         }
     }
 

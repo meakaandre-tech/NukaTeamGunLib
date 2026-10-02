@@ -30,21 +30,21 @@ public class ArrowLikeProjectile extends ProjectileEntity {
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
-        super.addAdditionalSaveData(compound);
+    protected void saveNbt(CompoundTag compound) {
+        super.saveNbt(compound);
         compound.putBoolean("inGround", this.inGround);
         if (this.inBlockPos != null) {
-            compound.put("inBlock", NbtUtils.writeBlockPos(inBlockPos));
+            compound.store("inBlock", net.minecraft.core.BlockPos.CODEC, inBlockPos);
         }
         compound.putInt("shakeTime", this.shakeTime);
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {
-        super.readAdditionalSaveData(compound);
+    protected void loadNbt(CompoundTag compound) {
+        super.loadNbt(compound);
         this.inGround = compound.getBooleanOr("inGround", false);
         if (compound.contains("inBlock")) {
-            NbtUtils.readBlockPos(compound, "inBlockPos").ifPresent(pos -> this.inBlockPos = pos);
+            compound.read("inBlock", net.minecraft.core.BlockPos.CODEC).ifPresent(pos -> this.inBlockPos = pos);
         }
         this.shakeTime = compound.getIntOr("shakeTime", 0);
     }
@@ -52,7 +52,7 @@ public class ArrowLikeProjectile extends ProjectileEntity {
     @Override
     protected void travel() {
         if (this.inGround) {
-            this.checkInsideBlocks();
+            this.applyEffectsFromBlocks();
 
             if (this.shakeTime > 0) {
                 this.shakeTime--;
@@ -68,7 +68,7 @@ public class ArrowLikeProjectile extends ProjectileEntity {
             this.inGround = true;
             this.inBlockPos = hitResult.getBlockPos().immutable();
             this.shakeTime = 20;
-            this.hasImpulse = false;
+            this.needsSync = false;
             this.setDeltaMovement(Vec3.ZERO);
             this.setPos(hitResult.getLocation());
         }

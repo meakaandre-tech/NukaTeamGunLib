@@ -34,12 +34,12 @@ public class C2SMessageCraft implements CustomPacketPayload {
     }
 
     public static void encode(C2SMessageCraft message, FriendlyByteBuf buffer) {
-        buffer.writeResourceLocation(message.id);
+        buffer.writeIdentifier(message.id);
         buffer.writeBlockPos(message.pos);
     }
 
     public static C2SMessageCraft decode(FriendlyByteBuf buffer) {
-        return new C2SMessageCraft(buffer.readResourceLocation(), buffer.readBlockPos());
+        return new C2SMessageCraft(buffer.readIdentifier(), buffer.readBlockPos());
     }
 
     public static void handle(C2SMessageCraft message, IPayloadContext supplier) {

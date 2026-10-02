@@ -14,17 +14,13 @@ public class EffectHelper {
     private static final RandomSource random = RandomSource.create();
 
     public static void doSplashEffect(Vec3 pos, float size, float speed, boolean isInLava) {
-        if (Ntgl.subtleEffectsLoaded && SubtleEffectsHelper.doSplashEffect(pos, size, speed, isInLava))
-            return;
         if(!isInLava){
             doWaterSplashEffect(pos, size, speed);
         }
     }
 
     public static void doExplosionSplash(Level level, float radius, Vec3 position) {
-        if(Ntgl.subtleEffectsLoaded) {
-            SubtleEffectsHelper.doExplosionSplash(level, radius, position);
-        }
+        // Subtle Effects integration is not available on Fabric 26.2
     }
 
     private static void doWaterSplashEffect(Vec3 pos, float size, float speed) {

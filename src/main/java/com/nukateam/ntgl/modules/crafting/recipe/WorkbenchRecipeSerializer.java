@@ -11,10 +11,12 @@ import net.minecraft.world.item.crafting.RecipeSerializer;
 /**
  * Author: MrCrayfish
  */
-public class WorkbenchRecipeSerializer implements RecipeSerializer<WorkbenchRecipe> {
+/**
+ * Codecs of the workbench recipe (RecipeSerializer is a record in 26.x, see ModRecipeSerializers).
+ */
+public class WorkbenchRecipeSerializer {
     public static final MapCodec<WorkbenchRecipe> CODEC =
             RecordCodecBuilder.mapCodec(instance -> {
-                System.out.println("Workbench codec used");
                 return instance.group(
                         ItemStack.CODEC.fieldOf("result").forGetter(WorkbenchRecipe::result),
                         WorkbenchIngredient.CODEC.listOf().fieldOf("materials").forGetter(WorkbenchRecipe::materials)
@@ -29,14 +31,4 @@ public class WorkbenchRecipeSerializer implements RecipeSerializer<WorkbenchReci
                     WorkbenchRecipe::materials,
                     WorkbenchRecipe::new
             );
-
-    @Override
-    public MapCodec<WorkbenchRecipe> codec() {
-        return CODEC;
-    }
-
-    @Override
-    public StreamCodec<RegistryFriendlyByteBuf, WorkbenchRecipe> streamCodec() {
-        return STREAM_CODEC;
-    }
 }

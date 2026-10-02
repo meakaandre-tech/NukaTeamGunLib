@@ -22,7 +22,7 @@ import static net.minecraft.world.item.ItemStack.isSameItemSameComponents;
 public class InventoryUtil {
     public static int getItemStackAmount(Player player, ItemStack find) {
         int count = 0;
-        for (ItemStack stack : player.getInventory().items) {
+        for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
             if (!stack.isEmpty() && areItemStacksEqualIgnoreCount(stack, find)) {
                 count += stack.getCount();
             }
@@ -44,7 +44,7 @@ public class InventoryUtil {
     public static boolean hasWorkstationIngredient(Player player, WorkbenchIngredient find) {
         int count = 0;
 
-        for (ItemStack stack : player.getInventory().items) {
+        for (ItemStack stack : player.getInventory().getNonEquipmentItems()) {
             if (!stack.isEmpty() && find.ingredient().test(stack)) {
                 count += stack.getCount();
             }
@@ -142,7 +142,7 @@ public class InventoryUtil {
 
     @NotNull
     public static AmmoContext getCreativeAmmoContext(Identifier id) {
-        var item = BuiltInRegistries.ITEM.get(id);
+        var item = BuiltInRegistries.ITEM.getValue(id);
         var ammo = item != null ? new ItemStack(item, Integer.MAX_VALUE) : ItemStack.EMPTY;
         return new AmmoContext(ammo, null);
     }

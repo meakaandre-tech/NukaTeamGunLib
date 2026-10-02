@@ -22,7 +22,12 @@ import javax.annotation.Nullable;
 /**
  * Author: MrCrayfish
  */
-public class WorkbenchBlockEntity extends SyncedBlockEntity implements IStorageBlock {
+public class WorkbenchBlockEntity extends SyncedBlockEntity implements IStorageBlock, net.fabricmc.fabric.api.menu.v1.ExtendedMenuProvider<BlockPos> {
+    @Override
+    public BlockPos getScreenOpeningData(net.minecraft.server.level.ServerPlayer player) {
+        return this.worldPosition;
+    }
+
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
 
     public WorkbenchBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
@@ -35,15 +40,15 @@ public class WorkbenchBlockEntity extends SyncedBlockEntity implements IStorageB
     }
 
     @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        ContainerHelper.saveAllItems(tag, inventory, registries);
+    protected void saveAdditional(net.minecraft.world.level.storage.ValueOutput tag) {
+        super.saveAdditional(tag);
+        ContainerHelper.saveAllItems(tag, inventory);
     }
 
     @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        ContainerHelper.loadAllItems(tag, inventory, registries);
+    protected void loadAdditional(net.minecraft.world.level.storage.ValueInput tag) {
+        super.loadAdditional(tag);
+        ContainerHelper.loadAllItems(tag, inventory);
     }
 
     @Override

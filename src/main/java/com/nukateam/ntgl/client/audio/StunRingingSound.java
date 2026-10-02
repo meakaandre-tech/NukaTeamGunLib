@@ -20,7 +20,7 @@ public class StunRingingSound extends AbstractTickableSoundInstance {
     public void tick() {
         var player = Minecraft.getInstance().player;
         if (player != null && player.isAlive()) {
-            var effect = player.getEffect(ModEffects.DEAFENED);
+            var effect = player.getEffect(ModEffects.DEAFENED.getHolder());
             if (effect != null) {
                 this.x = (float) player.getX();
                 this.y = (float) player.getY();

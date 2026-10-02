@@ -95,7 +95,7 @@ public class DynamicGeoItemRenderer<Animator extends ItemAnimator> extends GeoOb
             buffEntity = null;
         }
 
-        var partialTick = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks();
+        var partialTick = Minecraft.getInstance().getDeltaTracker().getRealtimeDeltaTicks();
         super.render(poseStack, getAnimator(currentEntity, transformType, stack), bufferSource, renderType, buffer, packedLight, partialTick);
     }
 

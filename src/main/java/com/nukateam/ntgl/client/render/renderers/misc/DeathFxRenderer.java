@@ -90,7 +90,7 @@ public class DeathFxRenderer {
 //        var minecraft = Minecraft.getInstance();
 //        minecraft.level.playSeededSound(
 //                minecraft.player, entity.getX(), entity.getY(), entity.getZ(), ModSounds.DEATH_GORE.get(),
-//                SoundSource.NEUTRAL, 8.0f, 1.0f, minecraft.level.random.nextLong());
+//                SoundSource.NEUTRAL, 8.0f, 1.0f, minecraft.level.getRandom().nextLong());
 
 
         for (int i = 0; i < data.getNumGibs(); i++) {

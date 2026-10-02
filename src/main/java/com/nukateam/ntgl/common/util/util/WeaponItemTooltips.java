@@ -4,7 +4,7 @@ import com.nukateam.ntgl.common.data.WeaponData;
 import com.nukateam.ntgl.common.data.config.weapon.ExplosionConfig;
 import com.nukateam.ntgl.common.data.config.weapon.ProjectileConfig;
 import net.minecraft.ChatFormatting;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -214,7 +214,7 @@ public class WeaponItemTooltips {
         tooltip.add(Component.empty());
         tooltip.add(Component.translatable("info.ntgl.header.attachments").withStyle(ChatFormatting.DARK_GRAY));
 
-        boolean isShift = net.minecraft.client.gui.screens.Screen.hasShiftDown();
+        boolean isShift = net.minecraft.client.Minecraft.getInstance().hasShiftDown();
 
         for (com.nukateam.ntgl.common.data.holders.AttachmentType type : validTypes) {
             var attachmentItem = WeaponStateHelper.getAttachmentItem(type, data);

@@ -20,7 +20,7 @@ public class GameRendererMixin {
 
         if (player == null) return;
 
-        var effect = player.getEffect(ModEffects.BLINDED);
+        var effect = player.getEffect(ModEffects.BLINDED.getHolder());
         if (effect != null) {
             // Render white screen-filling overlay at full alpha effect when duration is above threshold
             // When below threshold, fade to full transparency as duration approaches 0

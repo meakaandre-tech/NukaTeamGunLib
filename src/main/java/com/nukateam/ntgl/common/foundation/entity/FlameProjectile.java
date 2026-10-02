@@ -50,7 +50,7 @@ public class FlameProjectile extends ProjectileEntity {
             double offsetZ = 0;
 
             if (this.tickCount < 10) {
-                Vec3 muzzleWorldPos = MuzzleMatrixHelper.getMuzzleWorldPosForEntity(shooterId, Minecraft.getInstance().getTimer().getRealtimeDeltaTicks());
+                Vec3 muzzleWorldPos = MuzzleMatrixHelper.getMuzzleWorldPosForEntity(shooterId, Minecraft.getInstance().getDeltaTracker().getRealtimeDeltaTicks());
 
                 if (muzzleWorldPos != null) {
                     double blend = 1.0 - ((double) this.tickCount / 10.0);
@@ -77,11 +77,11 @@ public class FlameProjectile extends ProjectileEntity {
                 double px = startX + (endX - startX) * fraction;
                 double py = startY + (endY - startY) * fraction;
                 double pz = startZ + (endZ - startZ) * fraction;
-                this.level().addParticle(ParticleTypes.FLAME, true, px, py, pz, 0.0, 0.0, 0.0);
+                this.level().addParticle(ParticleTypes.FLAME, true, false, px, py, pz, 0.0, 0.0, 0.0);
             }
-            if (this.level().random.nextInt(2) == 0) {
-                this.level().addParticle(ParticleTypes.SMOKE, true, endX, endY, endZ, 0.0, 0.0, 0.0);
-                this.level().addParticle(ParticleTypes.FLAME, true, endX, endY, endZ, 0.0, 0.0, 0.0);
+            if (this.level().getRandom().nextInt(2) == 0) {
+                this.level().addParticle(ParticleTypes.SMOKE, true, false, endX, endY, endZ, 0.0, 0.0, 0.0);
+                this.level().addParticle(ParticleTypes.FLAME, true, false, endX, endY, endZ, 0.0, 0.0, 0.0);
             }
         }
     }

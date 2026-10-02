@@ -74,11 +74,11 @@ public interface IStorageBlock extends Container, MenuProvider {
     }
 
     @Override
-    default void startOpen(Player player) {
+    default void startOpen(net.minecraft.world.entity.ContainerUser player) {
     }
 
     @Override
-    default void stopOpen(Player player) {
+    default void stopOpen(net.minecraft.world.entity.ContainerUser player) {
     }
 
     @Override

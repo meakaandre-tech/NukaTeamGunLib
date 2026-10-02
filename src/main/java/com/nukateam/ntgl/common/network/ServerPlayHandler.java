@@ -185,7 +185,7 @@ public class ServerPlayHandler {
             var posY = shooter.getY() + shooter.getEyeHeight();
             var posZ = shooter.getZ();
             var volume = WeaponModifierHelper.getFireSoundVolume(data);
-            var pitch = 0.9F + level.random.nextFloat() * 0.2F;
+            var pitch = 0.9F + level.getRandom().nextFloat() * 0.2F;
             var radius = WeaponModifierHelper.getModifiedFireSoundRadius(data, Config.SERVER.gunShotMaxDistance.get());
             var messageSound = new S2CMessageGunSound(fireSound, SoundSource.PLAYERS, (float) posX, (float) posY, (float) posZ, volume, pitch, shooter.getId(), false);
 
@@ -216,7 +216,7 @@ public class ServerPlayHandler {
                 var posY = player.getY() + player.getEyeHeight();
                 var posZ = player.getZ();
                 var volume = WeaponModifierHelper.getFireSoundVolume(data);
-                var pitch = 0.9F + world.random.nextFloat() * 0.2F;
+                var pitch = 0.9F + world.getRandom().nextFloat() * 0.2F;
                 var radius = WeaponModifierHelper.getModifiedFireSoundRadius(data, Config.SERVER.gunShotMaxDistance.get());
                 var messageSound = new S2CMessageGunSound(fireSound, SoundSource.PLAYERS, (float) posX, (float) posY, (float) posZ, volume, pitch, player.getId(), false);
                 PacketHandler.getPlayChannel().sendToNearbyPlayers(() -> LevelLocation.create((ServerLevel)player.level(), posX, posY, posZ, radius), messageSound);
@@ -261,7 +261,7 @@ public class ServerPlayHandler {
 
         if (itemHolder.canReturnAmmo()) {
             var id = itemHolder.getId();
-            var item = BuiltInRegistries.ITEM.get(id);
+            var item = BuiltInRegistries.ITEM.getValue(id);
 
             if (item != null && data.wielder instanceof Player player && !player.isCreative()) {
                 givePlayerAmmo(player, item, count);
@@ -279,7 +279,7 @@ public class ServerPlayHandler {
             var ammoHolder = WeaponStateHelper.getCurrentAmmoWithoutCheck(data);
 
             if (ammoHolder.canReturnAmmo()) {
-                var item = BuiltInRegistries.ITEM.get(ammoHolder.getId());
+                var item = BuiltInRegistries.ITEM.getValue(ammoHolder.getId());
 
                 if (item != null && data.wielder instanceof Player player && !player.isCreative()) {
                     var usedMagazine = new ItemStack(item);
@@ -451,7 +451,7 @@ public class ServerPlayHandler {
                 var event = new WorkbenchCraftEvent(player, recipe.result().copy());
                 if (Ntgl.EVENT_BUS.post(event).isCanceled()) {
                     if (event.getRejectionMessage() != null) {
-                        player.displayClientMessage(event.getRejectionMessage(), true);
+                        player.sendOverlayMessage(event.getRejectionMessage());
                     }
                     return;
                 }

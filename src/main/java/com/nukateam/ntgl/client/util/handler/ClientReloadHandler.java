@@ -50,7 +50,7 @@ public class ClientReloadHandler {
         var player = Minecraft.getInstance().player;
         if (player != null) {
             if (ModSyncedDataKeys.RELOADING_RIGHT.getValue(player)) {
-                if (this.reloadingSlot != player.getInventory().selected) {
+                if (this.reloadingSlot != player.getInventory().getSelectedSlot()) {
                     stopReloading(InteractionHand.MAIN_HAND);
                 }
             }
@@ -114,7 +114,7 @@ public class ClientReloadHandler {
 
                     dataKey.setValue(player, true);
                     PacketHandler.getPlayChannel().sendToServer(new C2SMessageReload(hand, data.weaponMode));
-                    this.reloadingSlot = player.getInventory().selected;
+                    this.reloadingSlot = player.getInventory().getSelectedSlot();
 
                     Ntgl.EVENT_BUS.post(new GunReloadEvent.Post(data, hand));
                 }

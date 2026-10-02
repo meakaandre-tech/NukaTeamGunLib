@@ -28,11 +28,11 @@ public class LevelLocation {
     }
 
     public static LevelLocation create(ServerLevel level, BlockPos pos) {
-        return new LevelLocation(level, pos.getCenter(), 16.0F);
+        return new LevelLocation(level, net.minecraft.world.phys.Vec3.atCenterOf(pos), 16.0F);
     }
 
     public static LevelLocation create(ServerLevel level, BlockPos pos, double range) {
-        return new LevelLocation(level, pos.getCenter(), range);
+        return new LevelLocation(level, net.minecraft.world.phys.Vec3.atCenterOf(pos), range);
     }
 
     public static LevelLocation create(ServerLevel level, Vec3 pos, double range) {

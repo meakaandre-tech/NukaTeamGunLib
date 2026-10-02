@@ -12,7 +12,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import com.nukateam.ntgl.platform.event.PlayerEvent;
 import com.nukateam.ntgl.platform.SubscribeEvent;
-import net.neoforged.fml.LogicalSide;
 import com.nukateam.ntgl.platform.event.PlayerTickEvent;
 
 import javax.annotation.Nullable;

@@ -39,7 +39,7 @@ public class ThrowableGrenadeEntity<T extends Item & IThrowable & IWeapon> exten
             this.rotation += speed * 50;
         }
         if (this.level().isClientSide()) {
-            this.level().addParticle(ParticleTypes.SMOKE, true, this.getX(), this.getY() + 0.25, this.getZ(), 0, 0, 0);
+            this.level().addParticle(ParticleTypes.SMOKE, true, false, this.getX(), this.getY() + 0.25, this.getZ(), 0, 0, 0);
         }
     }
 
@@ -52,8 +52,4 @@ public class ThrowableGrenadeEntity<T extends Item & IThrowable & IWeapon> exten
         ExplosionUtils.createExplosion(this, getProjectile().getExplosion(), position());
     }
 
-    @Override
-    public boolean alwaysAccepts() {
-        return super.alwaysAccepts();
-    }
 }

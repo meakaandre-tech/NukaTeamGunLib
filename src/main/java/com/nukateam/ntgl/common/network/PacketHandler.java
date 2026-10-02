@@ -45,6 +45,7 @@ public class PacketHandler {
         s2c.registerLarge(S2CMessageUpdateWeapons.TYPE, S2CMessageUpdateWeapons.CODEC, LARGE_PAYLOAD_SIZE);
         s2c.registerLarge(S2CMessageUpdateAmmo.TYPE, S2CMessageUpdateAmmo.CODEC, LARGE_PAYLOAD_SIZE);
         s2c.registerLarge(S2CMessageUpdateProjectiles.TYPE, S2CMessageUpdateProjectiles.CODEC, LARGE_PAYLOAD_SIZE);
+        s2c.registerLarge(S2CMessageUpdateRecipes.TYPE, S2CMessageUpdateRecipes.CODEC, LARGE_PAYLOAD_SIZE);
         s2c.registerLarge(S2CMessageUpdateAttachments.TYPE, S2CMessageUpdateAttachments.CODEC, LARGE_PAYLOAD_SIZE);
         s2c.register(S2CMessageBlood.TYPE, S2CMessageBlood.CODEC);
         s2c.register(S2CMessageGunSound.TYPE, S2CMessageGunSound.CODEC);

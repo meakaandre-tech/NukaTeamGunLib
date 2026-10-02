@@ -2,8 +2,7 @@ package com.nukateam.ntgl.common.util.util;
 
 import com.nukateam.ntgl.Ntgl;
 import net.minecraft.server.MinecraftServer;
-import net.neoforged.fml.LogicalSide;
-import net.neoforged.neoforge.common.util.LogicalSidedProvider;
+import com.nukateam.ntgl.platform.PlatformHelper;
 import com.nukateam.ntgl.platform.event.ServerStartedEvent;
 import com.nukateam.ntgl.platform.event.ServerStoppingEvent;
 import com.nukateam.ntgl.platform.SubscribeEvent;
@@ -34,7 +33,7 @@ public class DelayedTask {
 
     @SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event) {
-        var server = (MinecraftServer) LogicalSidedProvider.WORKQUEUE.get(LogicalSide.SERVER);
+        var server = PlatformHelper.getServer();
         if (server == null) return;
         var it = tasks.iterator();
         while (it.hasNext()) {
@@ -53,7 +52,7 @@ public class DelayedTask {
      * @param run   a runnable get with the code to run
      */
     public static void runAfter(int ticks, Runnable run) {
-        MinecraftServer server = (MinecraftServer) LogicalSidedProvider.WORKQUEUE.get(LogicalSide.SERVER);
+        MinecraftServer server = PlatformHelper.getServer();
         if (!server.isSameThread()) {
             throw new IllegalStateException("Tried to add a delayed task off the main thread");
         }

@@ -3,7 +3,7 @@ package com.nukateam.ntgl.common.util.trackers;
 import com.nukateam.ntgl.common.data.WeaponData;
 import com.nukateam.ntgl.common.foundation.item.WeaponItem;
 import com.nukateam.ntgl.common.util.util.WeaponModifierHelper;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;

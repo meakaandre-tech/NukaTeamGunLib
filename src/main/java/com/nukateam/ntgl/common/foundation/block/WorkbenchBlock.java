@@ -52,7 +52,7 @@ public class WorkbenchBlock extends BaseEntityBlock {
     }
 
     @Override
-    public VoxelShape getOcclusionShape(BlockState state, BlockGetter reader, BlockPos pos) {
+    public VoxelShape getOcclusionShape(BlockState state) {
         return this.getShape(state);
     }
 
@@ -60,8 +60,8 @@ public class WorkbenchBlock extends BaseEntityBlock {
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (!level.isClientSide()) {
             BlockEntity tileEntity = level.getBlockEntity(pos);
-            if (tileEntity instanceof MenuProvider) {
-                player.openMenu((MenuProvider) tileEntity, pos);
+            if (tileEntity instanceof MenuProvider provider) {
+                player.openMenu(provider);
             }
         }
         return InteractionResult.SUCCESS;

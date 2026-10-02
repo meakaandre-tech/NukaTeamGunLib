@@ -62,7 +62,7 @@ public class SpreadTracker {
 
     @SubscribeEvent
     public static void onPlayerDisconnect(PlayerEvent.PlayerLoggedOutEvent event) {
-        MinecraftServer server = event.getEntity().getServer();
+        MinecraftServer server = event.getEntity().level().getServer();
         if (server != null) {
             server.execute(() -> TRACKER_MAP.remove(event.getEntity()));
         }
@@ -71,7 +71,7 @@ public class SpreadTracker {
     @SubscribeEvent
     public static void onPlayerDisconnect(LivingDeathEvent event) {
         var entity = event.getEntity();
-        MinecraftServer server = entity.getServer();
+        MinecraftServer server = entity.level().getServer();
         if (server != null) {
             server.execute(() -> TRACKER_MAP.remove(entity));
         }

@@ -2,11 +2,10 @@ package com.nukateam.ntgl.common.data.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.nukateam.chassis_core.common.data.holders.ChassisPart;
 import com.nukateam.ntgl.client.util.helpers.Easings;
 import com.google.gson.JsonDeserializer;
 import com.nukateam.ntgl.common.data.holders.*;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
@@ -36,7 +35,6 @@ public class JsonDeserializers {
     public static final JsonDeserializer<AnimationType> ANIMATION_TYPE = (json, typeOfT, context) -> AnimationType.getType(json.getAsString());
     public static final JsonDeserializer<CustomAttack> CUSTOM_ATTACK = (json, typeOfT, context) -> CustomAttack.getType(json.getAsString());
     public static final JsonDeserializer<ResourceKey<DamageType>> DAMAGE_TYPE = (json, typeOfT, context) -> getDamageTypeResourceKey(json.getAsString());
-    public static final JsonDeserializer<ChassisPart> BODY_PART = (json, typeOfT, context) -> ChassisPart.getType(json.getAsString());
 
     public static final JsonDeserializer<Vec3> VECTOR = (json, typeOfT, context) -> {
         var array = json.getAsJsonArray();
@@ -74,7 +72,6 @@ public class JsonDeserializers {
         builder.registerTypeAdapter(CustomAttack.class, CUSTOM_ATTACK);
         builder.registerTypeAdapter(Vec3.class, VECTOR);
         builder.excludeFieldsWithModifiers(Modifier.TRANSIENT);
-        builder.registerTypeAdapter(ChassisPart.class, BODY_PART);
         return builder.create();
     });
 

@@ -107,14 +107,14 @@ public class ClientPlayHandler {
 
         /* Spawn lingering smoke particles */
         for (int i = 0; i < 30; i++) {
-            spawnParticle(particleManager, ParticleTypes.CLOUD, x, y, z, world.random, 0.2);
+            spawnParticle(particleManager, ParticleTypes.CLOUD, x, y, z, world.getRandom(), 0.2);
         }
 
         /* Spawn fast moving smoke/spark particles */
         for (int i = 0; i < 30; i++) {
-            var smoke = spawnParticle(particleManager, ParticleTypes.SMOKE, x, y, z, world.random, 4.0);
+            var smoke = spawnParticle(particleManager, ParticleTypes.SMOKE, x, y, z, world.getRandom(), 4.0);
             smoke.setLifetime((int) ((8 / (Math.random() * 0.1 + 0.4)) * 0.5));
-            spawnParticle(particleManager, ParticleTypes.CRIT, x, y, z, world.random, 4.0);
+            spawnParticle(particleManager, ParticleTypes.CRIT, x, y, z, world.getRandom(), 4.0);
         }
     }
 
@@ -143,7 +143,7 @@ public class ClientPlayHandler {
                 for (int i = 0; i < 4; i++) {
                     var normal = message.getFace().getNormal();
                     var motion = new Vec3(normal.getX(), normal.getY(), normal.getZ());
-                    motion.add(getRandomDir(world.random), getRandomDir(world.random), getRandomDir(world.random));
+                    motion.add(getRandomDir(world.getRandom()), getRandomDir(world.getRandom()), getRandomDir(world.getRandom()));
 
                     world.addParticle(
                             new BlockParticleOption(ParticleTypes.BLOCK, state), false,
@@ -183,7 +183,7 @@ public class ClientPlayHandler {
         var event = getHitSound(message.isCritical(), message.isHeadshot(), message.isPlayer());
         if (event == null) return;
 
-        mc.getSoundManager().play(SimpleSoundInstance.forUI(event, 1.0F, 0.8F + world.random.nextFloat() * 0.2F));
+        mc.getSoundManager().play(SimpleSoundInstance.forUI(event, 1.0F, 0.8F + world.getRandom().nextFloat() * 0.2F));
     }
 
     public static void handleProjectileHitFluid(S2CMessageProjectileHitFluid message) {
@@ -204,12 +204,12 @@ public class ClientPlayHandler {
     private static SoundEvent getHitSound(boolean critical, boolean headshot, boolean player) {
         if (critical) {
             if (Config.CLIENT.sounds.playSoundWhenCritical.get()) {
-                SoundEvent event = BuiltInRegistries.SOUND_EVENT.get(Identifier.parse(Config.CLIENT.sounds.criticalSound.get()));
+                SoundEvent event = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(Config.CLIENT.sounds.criticalSound.get()));
                 return event != null ? event : SoundEvents.PLAYER_ATTACK_CRIT;
             }
         } else if (headshot) {
             if (Config.CLIENT.sounds.playSoundWhenHeadshot.get()) {
-                SoundEvent event = BuiltInRegistries.SOUND_EVENT.get(Identifier.parse(Config.CLIENT.sounds.headshotSound.get()));
+                SoundEvent event = BuiltInRegistries.SOUND_EVENT.getValue(Identifier.parse(Config.CLIENT.sounds.headshotSound.get()));
                 return event != null ? event : SoundEvents.PLAYER_ATTACK_KNOCKBACK;
             }
         } else if (player) {

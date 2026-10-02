@@ -212,7 +212,7 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
     protected void renderBg(GuiGraphicsExtractor graphics, float partialTicks, int mouseX, int mouseY) {
         try {
             /* Fixes partial ticks to use percentage from 0 to 1 */
-            partialTicks = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+            partialTicks = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
 
             int startX = this.leftPos;
             int startY = this.topPos;

@@ -18,6 +18,7 @@ public class ClientPacketHandler {
         ClientPlayNetworking.registerGlobalReceiver(S2CMessageUpdateWeapons.TYPE, (packet, ctx) -> S2CMessageUpdateWeapons.handle(packet, client(ctx)));
         ClientPlayNetworking.registerGlobalReceiver(S2CMessageUpdateAmmo.TYPE, (packet, ctx) -> S2CMessageUpdateAmmo.handle(packet, client(ctx)));
         ClientPlayNetworking.registerGlobalReceiver(S2CMessageUpdateProjectiles.TYPE, (packet, ctx) -> S2CMessageUpdateProjectiles.handle(packet, client(ctx)));
+        ClientPlayNetworking.registerGlobalReceiver(S2CMessageUpdateRecipes.TYPE, (packet, ctx) -> S2CMessageUpdateRecipes.handle(packet, client(ctx)));
         ClientPlayNetworking.registerGlobalReceiver(S2CMessageUpdateAttachments.TYPE, (packet, ctx) -> S2CMessageUpdateAttachments.handle(packet, client(ctx)));
         ClientPlayNetworking.registerGlobalReceiver(S2CMessageBlood.TYPE, (packet, ctx) -> S2CMessageBlood.handle(packet, client(ctx)));
         ClientPlayNetworking.registerGlobalReceiver(S2CMessageGunSound.TYPE, (packet, ctx) -> S2CMessageGunSound.handle(packet, client(ctx)));

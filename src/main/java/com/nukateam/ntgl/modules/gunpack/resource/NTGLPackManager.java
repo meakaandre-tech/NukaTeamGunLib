@@ -1,17 +1,15 @@
 package com.nukateam.ntgl.modules.gunpack.resource;
 
-import com.nukateam.ntgl.Ntgl;
+import com.nukateam.ntgl.platform.PlatformHelper;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.PackLocationInfo;
-import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackSelectionConfig;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.PathPackResources;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
-
-import com.nukateam.ntgl.platform.SubscribeEvent;
-import net.neoforged.fml.loading.FMLPaths;
-import net.neoforged.neoforge.event.AddPackFindersEvent;
+import net.minecraft.server.packs.repository.RepositorySource;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -20,13 +18,22 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
+/**
+ * Gun packs: every zip or folder in &lt;game dir&gt;/ntgl that has an assets and/or data folder (and a
+ * pack.mcmeta) is added as an always-enabled resource pack and/or data pack.
+ * <p>
+ * Fabric has no AddPackFindersEvent; PackRepositoryMixin adds {@link #createSource(PackType)} to the
+ * client resource pack repository and to the server data pack repositories. Packs are read with the
+ * vanilla file/folder pack classes instead of the custom NTGLPackResources.
+ */
 public class NTGLPackManager {
     private static final List<Path> RESOURCE_PACKS = new ArrayList<>();
     private static final List<Path> DATA_PACKS = new ArrayList<>();
 
     public static void scanPacks() {
-        var packsDir = FMLPaths.GAMEDIR.get().resolve("ntgl");
+        var packsDir = PlatformHelper.getGameDir().resolve("ntgl");
 
         try {
             if (!Files.exists(packsDir)) {
@@ -36,8 +43,9 @@ public class NTGLPackManager {
             RESOURCE_PACKS.clear();
             DATA_PACKS.clear();
 
-            Files.list(packsDir).forEach(NTGLPackManager::processPack);
-
+            try (var stream = Files.list(packsDir)) {
+                stream.forEach(NTGLPackManager::processPack);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -63,22 +71,17 @@ public class NTGLPackManager {
             if (hasData) DATA_PACKS.add(packPath);
 
             if (isZip) fs.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    @SubscribeEvent
-    public static void addResourcePacks(AddPackFindersEvent event) {
-        if (event.getPackType() == PackType.CLIENT_RESOURCES) {
-            addPacks(event, RESOURCE_PACKS, "assets");
-        } else if (event.getPackType() == PackType.SERVER_DATA) {
-            addPacks(event, DATA_PACKS, "data");
-        }
+    /** The repository source that offers the scanned gun packs of the given type. */
+    public static RepositorySource createSource(PackType type) {
+        return consumer -> addPacks(consumer, type == PackType.CLIENT_RESOURCES ? RESOURCE_PACKS : DATA_PACKS, type);
     }
 
-    private static void addPacks(AddPackFindersEvent event, List<Path> packs, String type) {
+    private static void addPacks(Consumer<Pack> consumer, List<Path> packs, PackType type) {
         for (Path packPath : packs) {
             PackLocationInfo locInfo = new PackLocationInfo(
                     "ntgl/" + packPath.getFileName(),
@@ -87,31 +90,19 @@ public class NTGLPackManager {
                     Optional.empty()
             );
 
-
-            Pack.ResourcesSupplier supplier = new Pack.ResourcesSupplier() {
-                @Override
-                public PackResources openPrimary(PackLocationInfo info) {
-                    try {
-                        return new NTGLPackResources(packPath, type, info.id());
-                    } catch (IOException e) {
-                        throw new RuntimeException("Failed to create pack resources for " + packPath, e);
-                    }
-                }
-                @Override
-                public PackResources openFull(PackLocationInfo info, Pack.Metadata meta) {
-                    return openPrimary(info);
-                }
-            };
+            Pack.ResourcesSupplier supplier = Files.isDirectory(packPath)
+                    ? new PathPackResources.PathResourcesSupplier(packPath)
+                    : new FilePackResources.FileResourcesSupplier(packPath);
 
             Pack pack = Pack.readMetaAndCreate(
                     locInfo,
                     supplier,
-                    event.getPackType(),
+                    type,
                     new PackSelectionConfig(true, Pack.Position.TOP, false)
             );
 
             if (pack != null) {
-                event.addRepositorySource(consumer -> consumer.accept(pack));
+                consumer.accept(pack);
             }
         }
     }

@@ -43,7 +43,9 @@ public abstract class ThrowableItemEntity<T extends Item & IWeapon & IThrowable>
     }
 
     public ThrowableItemEntity(EntityType<? extends ThrowableItemEntity> entityType, Level world, LivingEntity thrower, T item) {
-        super(entityType, thrower, world);
+        super(entityType, world);
+        this.setOwner(thrower);
+        this.setPos(thrower.getX(), thrower.getEyeY() - 0.1F, thrower.getZ());
         setProjectile(item.getConfig().getThrowable().getProjectile());
         this.setItem(new ItemStack(item));
 
@@ -71,20 +73,34 @@ public abstract class ThrowableItemEntity<T extends Item & IWeapon & IThrowable>
     }
 
     @Override
-    protected void addAdditionalSaveData(CompoundTag compound) {
-        var provider = this.level().registryAccess();
-        compound.putBoolean("ShouldBounce", shouldBounce);
-        compound.putFloat("GravityVelocity", gravityVelocity);
-        compound.put("Item", getItem().save(provider, new CompoundTag()));
-        compound.put("Projectile", getProjectile().serializeNBT(provider));
+    protected final void addAdditionalSaveData(net.minecraft.world.level.storage.ValueOutput output) {
+        super.addAdditionalSaveData(output);
+        var tag = new CompoundTag();
+        saveNbt(tag);
+        output.store("ntgl", CompoundTag.CODEC, tag);
     }
 
     @Override
-    protected void readAdditionalSaveData(CompoundTag compound) {
+    protected final void readAdditionalSaveData(net.minecraft.world.level.storage.ValueInput input) {
+        super.readAdditionalSaveData(input);
+        loadNbt(input.read("ntgl", CompoundTag.CODEC).orElseGet(CompoundTag::new));
+    }
+
+    /** NBT form of the entity data (replaces addAdditionalSaveData(CompoundTag) for subclasses). */
+    protected void saveNbt(CompoundTag compound) {
+        var provider = this.level().registryAccess();
+        compound.putBoolean("ShouldBounce", shouldBounce);
+        compound.putFloat("GravityVelocity", gravityVelocity);
+        compound.put("Item", com.nukateam.ntgl.platform.StackNbt.save(provider, getItem()));
+        compound.put("Projectile", getProjectile().serializeNBT(provider));
+    }
+
+    /** NBT form of the entity data (replaces readAdditionalSaveData(CompoundTag) for subclasses). */
+    protected void loadNbt(CompoundTag compound) {
         var provider = this.level().registryAccess();
         this.shouldBounce = compound.getBooleanOr("ShouldBounce", false);
         this.gravityVelocity = compound.getFloatOr("GravityVelocity", 0F);
-        setItem(ItemStack.parseOptional(provider, compound.getCompoundOrEmpty("Item")));
+        setItem(com.nukateam.ntgl.platform.StackNbt.parse(provider, compound.getCompoundOrEmpty("Item")));
         setProjectile(ProjectileConfig.create(compound.getCompoundOrEmpty("Projectile")));
     }
 
@@ -119,7 +135,7 @@ public abstract class ThrowableItemEntity<T extends Item & IWeapon & IThrowable>
                 var damage = getProjectile().getDamage();
                 entity.hurt(entity.damageSources().thrown(this, this.getOwner()), damage);
             }
-            this.bounce(Direction.getNearest(this.getDeltaMovement().x(), this.getDeltaMovement().y(), this.getDeltaMovement().z()).getOpposite());
+            this.bounce(Direction.getApproximateNearest(this.getDeltaMovement().x(), this.getDeltaMovement().y(), this.getDeltaMovement().z()).getOpposite());
             this.setDeltaMovement(this.getDeltaMovement().multiply(0.25, 1.0, 0.25));
         } else {
             this.remove(RemovalReason.KILLED);
@@ -143,7 +159,7 @@ public abstract class ThrowableItemEntity<T extends Item & IWeapon & IThrowable>
 //        }
 //        else
             if (this.shouldBounce) {
-            var event = state.getBlock().getSoundType(state, this.level(), resultPos, this).getStepSound();
+            var event = state.getSoundType().getStepSound();
             var speed = this.getDeltaMovement().length();
             if (speed > 0.1) {
                 this.level().playSound(null, result.getLocation().x, result.getLocation().y, result.getLocation().z, event, SoundSource.AMBIENT, 1.0F, 1.0F);

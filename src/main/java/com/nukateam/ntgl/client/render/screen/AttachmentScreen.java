@@ -27,7 +27,6 @@ import net.minecraft.resources.*;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;
-import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.client.*;
 import org.lwjgl.glfw.GLFW;
 import java.util.*;
@@ -389,7 +388,7 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
 //                MutableComponent modName = literal("Configured");
 //                modName.setStyle(modName.getStyle().withColor(ChatFormatting.YELLOW).withUnderlined(true).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, translatable("ntgl.chat.open_curseforge_page"))).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://www.curseforge.com/minecraft/mc-mods/configured")));
 //                Component message = translatable("ntgl.chat.install_configured", modName);
-//                this.minecraft.player.displayClientMessage(message, false);
+//                this.minecraft.player.sendSystemMessage(message);
 //            }
 //        });
 //    }

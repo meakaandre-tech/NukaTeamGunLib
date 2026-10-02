@@ -33,7 +33,7 @@ public class ModelGibsGeo extends ModelGibs {
                        VertexConsumer pVertexConsumer, int packedLight, int packedOverlay, int colour) {
         var bone = (GeoBone) gibs.get(part);
         var vertexConsumer = buffer.getBuffer(rendertype);
-        float partialTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+        float partialTick = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true);
 
         geoRenderer.renderRecursively(
                 poseStack, entity, bone,

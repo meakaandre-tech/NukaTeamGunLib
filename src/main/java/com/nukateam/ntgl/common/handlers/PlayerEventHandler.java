@@ -59,7 +59,7 @@ public class PlayerEventHandler {
         var newItem = player.getItemInHand(hand);
 
         if (newItem.getItem() != lastSlot.stack.getItem() || newItem.getCount() < lastSlot.stackSize()
-                || player.getInventory().selected != lastSlot.slotId) {
+                || player.getInventory().getSelectedSlot() != lastSlot.slotId) {
 
             if (newItem.getItem() instanceof IThrowable) {
                 if (newItem.getCount() < lastSlot.stackSize()) {
@@ -69,7 +69,7 @@ public class PlayerEventHandler {
                 }
             }
 
-            lastSelectedSlots.put(key, new Slot(newItem, newItem.getCount(), player.getInventory().selected));
+            lastSelectedSlots.put(key, new Slot(newItem, newItem.getCount(), player.getInventory().getSelectedSlot()));
         }
     }
 

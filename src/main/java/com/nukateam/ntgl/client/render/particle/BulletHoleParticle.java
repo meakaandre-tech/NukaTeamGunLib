@@ -36,7 +36,7 @@ public class BulletHoleParticle extends TextureSheetParticle {
         this.setSprite(this.getSprite(pos));
         this.direction = direction;
         this.pos = pos;
-        this.lifetime = (int) (Config.CLIENT.particle.bulletHoleLifeMin.get() + world.random.nextFloat() * (Config.CLIENT.particle.bulletHoleLifeMax.get() - Config.CLIENT.particle.bulletHoleLifeMin.get()));
+        this.lifetime = (int) (Config.CLIENT.particle.bulletHoleLifeMin.get() + world.getRandom().nextFloat() * (Config.CLIENT.particle.bulletHoleLifeMax.get() - Config.CLIENT.particle.bulletHoleLifeMin.get()));
         this.hasPhysics = false;
         this.gravity = 0.0F;
         this.quadSize = 0.05F;

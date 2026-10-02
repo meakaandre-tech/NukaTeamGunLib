@@ -4,13 +4,11 @@ import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
 import com.nukateam.ntgl.Config;
 import com.nukateam.ntgl.Ntgl;
-import com.nukateam.ntgl.common.compat.sable.SableSupport;
 import com.nukateam.ntgl.common.data.config.weapon.ExplosionConfig;
 import com.nukateam.ntgl.common.foundation.ModTags;
 import com.nukateam.ntgl.common.util.helpers.compatibility.EffectHelper;
-import com.nukateam.ntgl.common.util.helpers.compatibility.SubtleEffectsHelper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleOptions;
@@ -29,6 +27,7 @@ import net.minecraft.world.entity.item.PrimedTnt;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.ServerExplosion;
 import net.minecraft.world.level.ExplosionDamageCalculator;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseFireBlock;
@@ -38,13 +37,18 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
-
-public class ProjectileExplosion extends Explosion {
+/**
+ * NTGL's own explosion. In 26.x {@link Explosion} is an interface (the vanilla implementation is
+ * ServerExplosion), so this class now keeps its own list of affected blocks and hit players.
+ * It is also built on the client (from S2CMessageProjectileExplosion) only to play the effects.
+ */
+public class ProjectileExplosion implements Explosion {
     private static final ExplosionDamageCalculator DEFAULT_CONTEXT = new ExplosionDamageCalculator();
 
     private final Level level;
@@ -59,15 +63,13 @@ public class ProjectileExplosion extends Explosion {
     private final BlockInteraction blockInteraction;
     private final Vec3 pos;
     private final DamageSource damageSource;
+    private final ObjectArrayList<BlockPos> toBlow = new ObjectArrayList<>();
+    private final Map<Player, Vec3> hitPlayers = new HashMap<>();
 
     public ProjectileExplosion(Level level, Entity exploder,
                                @Nullable DamageSource source,
                                @Nullable ExplosionDamageCalculator context, ExplosionConfig projectile,
                                Vec3 pos, BlockInteraction mode) {
-        super(level, exploder, source, context, pos.x, pos.y, pos.z, projectile.getRadius(), projectile.isCauseFire(), mode,
-                ParticleTypes.EXPLOSION,
-                ParticleTypes.EXPLOSION_EMITTER,
-                SoundEvents.GENERIC_EXPLODE);
         this.level = level;
         this.causesFire = projectile.isCauseFire();
         this.blockInteraction = mode;
@@ -76,7 +78,7 @@ public class ProjectileExplosion extends Explosion {
         this.exploder = exploder;
         this.context = context == null ? DEFAULT_CONTEXT : context;
         this.damage = projectile.getDamage();
-        this.damageSource = source;
+        this.damageSource = source != null || level.isClientSide() ? source : Explosion.getDefaultDamageSource(level, exploder);
         this.knockback = projectile.getKnockback();
         this.damageDecreaseWithDistance = projectile.isDamageReduceOverDistance();
     }
@@ -87,7 +89,62 @@ public class ProjectileExplosion extends Explosion {
         this.getToBlow().addAll(toBlow);
     }
 
+    public List<BlockPos> getToBlow() {
+        return toBlow;
+    }
+
+    public void clearToBlow() {
+        toBlow.clear();
+    }
+
+    public Map<Player, Vec3> getHitPlayers() {
+        return hitPlayers;
+    }
+
+    public boolean interactsWithBlocks() {
+        return this.blockInteraction != BlockInteraction.KEEP;
+    }
+
     @Override
+    public ServerLevel level() {
+        return (ServerLevel) this.level;
+    }
+
+    @Override
+    public BlockInteraction getBlockInteraction() {
+        return this.blockInteraction;
+    }
+
+    @Override
+    public @Nullable LivingEntity getIndirectSourceEntity() {
+        return Explosion.getIndirectSourceEntity(this.exploder);
+    }
+
+    @Override
+    public @Nullable Entity getDirectSourceEntity() {
+        return this.exploder;
+    }
+
+    @Override
+    public float radius() {
+        return this.radius;
+    }
+
+    @Override
+    public Vec3 center() {
+        return this.pos;
+    }
+
+    @Override
+    public boolean canTriggerBlocks() {
+        return false;
+    }
+
+    @Override
+    public boolean shouldAffectBlocklikeEntities() {
+        return this.blockInteraction != BlockInteraction.KEEP;
+    }
+
     public void explode() {
         destroyBlocks();
         this.level.gameEvent(this.exploder, GameEvent.EXPLODE, new Vec3(this.pos.x, this.pos.y, this.pos.z));
@@ -125,9 +182,8 @@ public class ProjectileExplosion extends Explosion {
                 deltaZ = 0.0;
             }
 
-            var blockDensity = (double) getSeenPercent(pos, entity);
+            var blockDensity = (double) ServerExplosion.getSeenPercent(pos, entity);
             var knockback = (1.0D - strength) * blockDensity * this.knockback;
-//            float finalDamage = (int)((knockback * knockback + knockback) / 2.0D * 7.0D * diameter + 1.0D);
             float finalDamage = this.damage;
 
             if(this.damageDecreaseWithDistance){
@@ -135,9 +191,6 @@ public class ProjectileExplosion extends Explosion {
             }
 
             entity.hurt(this.damageSource, finalDamage);
-
-//            if (entity instanceof LivingEntity)
-//                knockback = ProtectionEnchantment.getExplosionKnockbackAfterDampener((LivingEntity) entity, knockback);
 
             entity.setDeltaMovement(entity.getDeltaMovement().add(deltaX * knockback, deltaY * knockback, deltaZ * knockback));
 
@@ -149,18 +202,16 @@ public class ProjectileExplosion extends Explosion {
         }
     }
 
-    @Override
     public void finalizeExplosion(boolean spawnParticles) {
-
         if (this.level.isClientSide()) {
             this.level.playLocalSound(pos.x, pos.y, pos.z,
                     SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4.0F,
-                    (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F,
+                    (1.0F + (this.level.getRandom().nextFloat() - this.level.getRandom().nextFloat()) * 0.2F) * 0.7F,
                     false);
         }
 
         var interactsWithBlocks = this.interactsWithBlocks();
-        var toBlow = (ObjectArrayList<BlockPos>)getToBlow();
+        var toBlow = this.toBlow;
 
         if (spawnParticles) {
             EffectHelper.doExplosionSplash(level, radius, pos);
@@ -174,49 +225,18 @@ public class ProjectileExplosion extends Explosion {
 
         var canBrakeGlass = Config.COMMON.gameplay.griefing.enableGlassBreaking.get();
 
-//        var isFragile =  && state.is(ModTags.Blocks.FRAGILE);
-
-        if (interactsWithBlocks || canBrakeGlass) {
+        if ((interactsWithBlocks || canBrakeGlass) && this.level instanceof ServerLevel serverLevel) {
             var blockDrops = new ObjectArrayList<Pair<ItemStack, BlockPos>>();
-            var isPlayer = this.getIndirectSourceEntity() instanceof Player;
-            Util.shuffle(toBlow, this.level.random);
+            Util.shuffle(toBlow, this.level.getRandom());
 
             for(BlockPos blockpos : toBlow) {
                 var blockState = this.level.getBlockState(blockpos);
 
-                if (Math.abs(blockpos.getX()) > 100000) {
-                    System.out.println("[NTGL] toBlow entry " + blockpos + " state=" + blockState
-                            + " passesCheck=" + (!blockState.isAir() && (canBrakeGlass && blockState.is(ModTags.Blocks.FRAGILE) || interactsWithBlocks)));
-                }
-
                 if (!blockState.isAir() && ((canBrakeGlass && blockState.is(ModTags.Blocks.FRAGILE)) || interactsWithBlocks)) {
                     var immutableBLockPos = blockpos.immutable();
-                    this.level.getProfiler().push("explosion_blocks");
-                    if (blockState.canDropFromExplosion(this.level, blockpos, this)) {
-                        if (this.level instanceof ServerLevel serverLevel) {
-                            var blockEntity = blockState.hasBlockEntity() ? this.level.getBlockEntity(blockpos) : null;
-                            var builder = (new LootParams.Builder(serverLevel))
-                                    .withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockpos))
-                                    .withParameter(LootContextParams.TOOL, ItemStack.EMPTY)
-                                    .withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockEntity)
-                                    .withOptionalParameter(LootContextParams.THIS_ENTITY, this.exploder);
-
-                            if (this.blockInteraction == Explosion.BlockInteraction.DESTROY_WITH_DECAY) {
-                                builder.withParameter(LootContextParams.EXPLOSION_RADIUS, this.radius);
-                            }
-
-                            blockState.spawnAfterBreak(serverLevel, blockpos, ItemStack.EMPTY, isPlayer);
-                            blockState.getDrops(builder).forEach((p_46074_) -> {
-                                addBlockDrops(blockDrops, p_46074_, immutableBLockPos);
-                            });
-                        }
-                    }
-
-                    blockState.onBlockExploded(this.level, blockpos, this);
-                    if (Math.abs(blockpos.getX()) > 100000) {
-                        System.out.println("[NTGL] destroyed " + blockpos + " before=" + blockState + " after=" + this.level.getBlockState(blockpos));
-                    }
-                    this.level.getProfiler().pop();
+                    // drops, block removal and the block's own reaction, as vanilla's ServerExplosion does
+                    blockState.onExplosionHit(serverLevel, immutableBLockPos, this,
+                            (stack, dropPos) -> addBlockDrops(blockDrops, stack, dropPos));
                 }
             }
 
@@ -227,12 +247,11 @@ public class ProjectileExplosion extends Explosion {
 
         if (this.causesFire) {
             for(BlockPos blockpos2 : toBlow) {
-                if (this.random.nextInt(2) == 0 && this.level.getBlockState(blockpos2).isAir() && this.level.getBlockState(blockpos2.below()).isSolidRender(this.level, blockpos2.below())) {
+                if (this.random.nextInt(2) == 0 && this.level.getBlockState(blockpos2).isAir() && this.level.getBlockState(blockpos2.below()).isSolidRender()) {
                     this.level.setBlockAndUpdate(blockpos2, BaseFireBlock.getState(this.level, blockpos2));
                 }
             }
         }
-
     }
 
     private static void addBlockDrops(ObjectArrayList<Pair<ItemStack, BlockPos>> pDropPositionArray,
@@ -256,27 +275,7 @@ public class ProjectileExplosion extends Explosion {
 
     private void destroyBlocks() {
         var set = Sets.<BlockPos>newHashSet();
-
         collectExplodedBlocks(set, this.pos);
-        int normalCount = set.size();
-
-        var aabb = new AABB(pos.x - radius, pos.y - radius, pos.z - radius,
-                pos.x + radius, pos.y + radius, pos.z + radius);
-        int subLevelsFound = 0;
-        for (var sl : SableSupport.getIntersecting(this.level, aabb)) {
-            subLevelsFound++;
-            var pose = sl.logicalPose();
-            Vec3 local = pose.transformPositionInverse(this.pos);
-            Vec3 roundTrip = pose.transformPosition(local);
-            System.out.println("[NTGL] pos=" + this.pos + " -> local=" + local + " -> roundTrip=" + roundTrip);
-            collectExplodedBlocks(set, local);
-        }
-        System.out.println("[NTGL] normal=" + normalCount + " subLevelsFound=" + subLevelsFound);
-
-        long solid = set.stream().filter(p -> !this.level.getBlockState(p).isAir()).count();
-        System.out.println("[NTGL] normal=" + normalCount + " subLevelsFound=" + subLevelsFound
-                + " total=" + set.size() + " solid=" + solid);
-
         this.getToBlow().addAll(set);
     }
 
@@ -292,7 +291,7 @@ public class ProjectileExplosion extends Explosion {
                         d0 = d0 / d3;
                         d1 = d1 / d3;
                         d2 = d2 / d3;
-                        var f = this.radius * (0.7F + this.level.random.nextFloat() * 0.6F);
+                        var f = this.radius * (0.7F + this.level.getRandom().nextFloat() * 0.6F);
                         var blockX = origin.x;
                         var blockY = origin.y;
                         var blockZ = origin.z;

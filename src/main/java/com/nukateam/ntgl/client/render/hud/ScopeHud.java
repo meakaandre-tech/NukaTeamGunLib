@@ -26,7 +26,7 @@ public class ScopeHud{
 
         if (player == null) return;
         var gun = player.getMainHandItem();
-        var frameTime = minecraft.getTimer().getGameTimeDeltaPartialTick(true);
+        var frameTime = minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(true);
 
         scopeScale = Mth.lerp(0.5F * frameTime, scopeScale, 1.125F);
         var data = new WeaponData(gun, player);

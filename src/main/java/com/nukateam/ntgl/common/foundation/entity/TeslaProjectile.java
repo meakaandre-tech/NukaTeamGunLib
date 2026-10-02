@@ -33,7 +33,7 @@ public class TeslaProjectile extends AbstractBeamProjectile {
 
     public TeslaProjectile(EntityType<? extends ProjectileEntity> entityType, Level worldIn) {
         super(entityType, worldIn);
-        this.seed = worldIn.random.nextLong();
+        this.seed = worldIn.getRandom().nextLong();
         this.entityType = entityType;
     }
 

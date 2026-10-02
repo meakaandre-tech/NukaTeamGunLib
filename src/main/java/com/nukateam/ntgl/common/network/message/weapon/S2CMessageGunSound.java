@@ -74,7 +74,7 @@ public class S2CMessageGunSound implements CustomPacketPayload {
     }
 
     public static void encode(S2CMessageGunSound message, FriendlyByteBuf buffer) {
-        buffer.writeResourceLocation(message.id);
+        buffer.writeIdentifier(message.id);
         buffer.writeEnum(message.category);
         buffer.writeFloat(message.x);
         buffer.writeFloat(message.y);
@@ -86,7 +86,7 @@ public class S2CMessageGunSound implements CustomPacketPayload {
     }
 
     public static S2CMessageGunSound decode(FriendlyByteBuf buffer) {
-        var id = buffer.readResourceLocation();
+        var id = buffer.readIdentifier();
         var category = buffer.readEnum(SoundSource.class);
         float x = buffer.readFloat();
         float y = buffer.readFloat();
