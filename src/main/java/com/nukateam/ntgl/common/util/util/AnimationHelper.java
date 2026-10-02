@@ -58,8 +58,8 @@ public class AnimationHelper<T extends GeoAnimatable> {
     public double getAnimationDuration(String animationName) {
         var animation = getAnimation(animationName);
         // GeckoLib 5 stores the length in seconds, the callers work in ticks
-        // (looping animations without keyframes have no finite length)
-        return animation != null && Double.isFinite(animation.length()) ? animation.length() * 20.0 : 1;
+        // (looping animations without keyframes report an "infinite" length)
+        return animation != null && animation.length() < 100000 ? animation.length() * 20.0 : 1;
     }
 
     public boolean containsAnimation(String animationName) {

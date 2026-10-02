@@ -32,26 +32,33 @@ public class NtglSmokeTest implements FabricClientGameTest {
             context.takeScreenshot("01_pistol_first_person");
             step("diagnostics", () -> context.runOnClient(NtglSmokeTest::logDiagnostics));
 
+            step("input state", () -> context.runOnClient(mc -> logInput(mc, "before input")));
+
+            step("reload", () -> {
+                context.getInput().holdKeyFor(NtglKeyBinds.KEY_RELOAD, 4);
+                context.waitTicks(10);
+                context.takeScreenshot("02_pistol_reloading");
+                context.waitTicks(70);
+                context.runOnClient(mc -> logInput(mc, "after reload"));
+            });
+
             step("shoot", () -> {
-                context.getInput().holdMouseFor(0, 4);
-                context.waitTicks(2);
-                context.takeScreenshot("02_pistol_shooting");
+                context.getInput().holdMouse(0);
+                context.waitTicks(3);
+                context.runOnClient(mc -> logInput(mc, "while shooting"));
+                context.takeScreenshot("03_pistol_shooting");
+                context.getInput().releaseMouse(0);
                 context.waitTicks(20);
+                context.runOnClient(mc -> logInput(mc, "after shooting"));
             });
 
             step("aim", () -> {
                 context.getInput().holdMouse(1);
                 context.waitTicks(15);
-                context.takeScreenshot("03_pistol_aiming");
+                context.runOnClient(mc -> logInput(mc, "while aiming"));
+                context.takeScreenshot("04_pistol_aiming");
                 context.getInput().releaseMouse(1);
                 context.waitTicks(10);
-            });
-
-            step("reload", () -> {
-                context.getInput().pressKey(NtglKeyBinds.KEY_RELOAD);
-                context.waitTicks(12);
-                context.takeScreenshot("04_pistol_reloading");
-                context.waitTicks(60);
             });
 
             step("third person", () -> {
@@ -154,6 +161,22 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 name, controller.getPlayState(), controller.getCurrentRawAnimation(), controller.isAnimatingBones()));
         log.info("[smoke] muzzle matrix first person {} third person {}", com.nukateam.ntgl.client.helpers.MuzzleMatrixHelper.lastMuzzleMatrix != null,
                 com.nukateam.ntgl.client.helpers.MuzzleMatrixHelper.lastThirdPersonMuzzleMatrix != null);
+    }
+
+    private static void logInput(net.minecraft.client.Minecraft mc, String when) {
+        var stack = mc.player.getMainHandItem();
+        var data = new com.nukateam.ntgl.common.data.WeaponData(stack, mc.player);
+        com.nukateam.ntgl.Ntgl.LOGGER.info("[smoke] {}: inGame {} mouseGrabbed {} windowActive {} screen {} attackDown {} useDown {} aiming {} ads {} ammo {} shooting {} reloading {} entities {}",
+                when,
+                com.nukateam.ntgl.client.util.handler.ClientShootingHandler.isInGame(), mc.mouseHandler.isMouseGrabbed(), mc.isWindowActive(),
+                mc.gui.screen(), mc.options.keyAttack.isDown(), mc.options.keyUse.isDown(),
+                com.nukateam.ntgl.client.util.handler.AimingHandler.get().isAiming(),
+                com.nukateam.ntgl.client.util.handler.AimingHandler.get().getNormalisedAdsProgress(),
+                com.nukateam.ntgl.common.util.util.WeaponStateHelper.getAmmoCount(data),
+                com.nukateam.ntgl.client.util.handler.ClientShootingHandler.get().isShooting(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND),
+                com.nukateam.ntgl.client.util.handler.ClientReloadHandler.get().isReloading(mc.player, net.minecraft.world.InteractionHand.MAIN_HAND),
+                mc.level.entitiesForRendering() == null ? -1 : java.util.stream.StreamSupport.stream(mc.level.entitiesForRendering().spliterator(), false)
+                        .map(e -> e.getType().toShortString()).toList());
     }
 
     private static void hold(ClientGameTestContext context, TestServerContext server, String weapon) {
