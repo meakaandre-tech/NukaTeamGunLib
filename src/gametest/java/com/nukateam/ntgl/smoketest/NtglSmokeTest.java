@@ -107,6 +107,9 @@ public class NtglSmokeTest implements FabricClientGameTest {
             });
 
             step("third person", () -> {
+                // the arm pose of the weapon is only applied once the walk animation has started
+                context.getInput().holdKeyFor(options -> options.keyUp, 8);
+                context.waitTicks(4);
                 context.runOnClient(mc -> mc.options.setCameraType(CameraType.THIRD_PERSON_BACK));
                 context.waitTicks(10);
                 context.takeScreenshot("05_pistol_third_person_back");
@@ -174,6 +177,67 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 context.waitTicks(5);
             });
 
+        }
+
+        // Second pass against a real dedicated server: unlike singleplayer, every packet is encoded and decoded.
+        try (var dedicated = context.worldBuilder().createServer(); var connection = dedicated.connect()) {
+            connection.waitForChunksRender();
+            dedicated.runCommand("gamemode creative @a");
+            dedicated.runCommand("time set noon");
+            hold(context, dedicated, "pistol10mm");
+            context.waitTicks(20);
+
+            step("dedicated reload and shoot", () -> {
+                context.getInput().holdKeyFor(NtglKeyBinds.KEY_RELOAD, 4);
+                context.waitTicks(80);
+                context.runOnClient(mc -> logInput(mc, "dedicated: after reload"));
+                dedicated.runCommand("execute at @p run fill ^-3 ^-1 ^7 ^3 ^4 ^7 minecraft:smooth_stone");
+                dedicated.runCommand("execute at @p run summon minecraft:zombie ^ ^ ^3 {NoAI:1b,PersistenceRequired:1b}");
+                context.waitTicks(10);
+                context.getInput().holdMouse(0);
+                var seen = watchEntities(context, 30);
+                context.getInput().releaseMouse(0);
+                context.takeScreenshot("40_dedicated_shooting");
+                log("dedicated: entities seen while shooting: " + seen);
+                dedicated.runCommand("kill @e[type=!minecraft:player]");
+                context.waitTicks(5);
+            });
+
+            step("dedicated attachments screen", () -> {
+                context.getInput().pressKey(NtglKeyBinds.KEY_ATTACHMENTS);
+                context.waitTicks(15);
+                context.takeScreenshot("41_dedicated_attachments_screen");
+                context.getInput().pressKey(GLFW.GLFW_KEY_ESCAPE);
+                context.waitTicks(5);
+            });
+
+            step("dedicated workbench screen", () -> {
+                dedicated.runOnServer(minecraftServer -> {
+                    var player = minecraftServer.getPlayerList().getPlayers().getFirst();
+                    player.level().setBlockAndUpdate(player.blockPosition().above(4), ModBlocks.WORKBENCH.get().defaultBlockState());
+                });
+                context.waitTicks(10);
+                dedicated.runOnServer(minecraftServer -> {
+                    var player = minecraftServer.getPlayerList().getPlayers().getFirst();
+                    if (player.level().getBlockEntity(player.blockPosition().above(4)) instanceof MenuProvider provider)
+                        player.openMenu(provider);
+                });
+                context.waitTicks(15);
+                context.takeScreenshot("42_dedicated_workbench_screen");
+                context.getInput().pressKey(GLFW.GLFW_KEY_ESCAPE);
+                context.waitTicks(5);
+            });
+
+            step("dedicated grenade", () -> {
+                hold(context, dedicated, "grenade");
+                context.waitTicks(10);
+                context.getInput().holdMouse(0);
+                context.waitTicks(25);
+                context.getInput().releaseMouse(0);
+                var seen = watchEntities(context, 90);
+                context.takeScreenshot("43_dedicated_grenade");
+                log("dedicated: entities seen after throwing the grenade: " + seen);
+            });
         }
     }
 
