@@ -61,6 +61,51 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 context.waitTicks(10);
             });
 
+            step("shoot wall", () -> {
+                server.runCommand("execute at @p run fill ^-3 ^-1 ^7 ^3 ^4 ^7 minecraft:smooth_stone");
+                context.waitTicks(10);
+                context.getInput().holdMouse(0);
+                var seen = watchEntities(context, 12);
+                context.getInput().releaseMouse(0);
+                context.takeScreenshot("05_wall_hit");
+                log("entities seen while shooting the wall: " + seen);
+                context.runOnClient(mc -> logInput(mc, "after shooting the wall"));
+            });
+
+            step("shoot zombie", () -> {
+                server.runCommand("execute at @p run summon minecraft:zombie ^ ^ ^3 {NoAI:1b,PersistenceRequired:1b,Rotation:[180f,0f]}");
+                context.waitTicks(10);
+                context.takeScreenshot("06_zombie_before");
+                context.getInput().holdMouse(0);
+                var seen = watchEntities(context, 40);
+                context.getInput().releaseMouse(0);
+                context.takeScreenshot("07_zombie_after");
+                log("entities seen while shooting the zombie: " + seen);
+                server.runOnServer(minecraftServer -> {
+                    var level = minecraftServer.getPlayerList().getPlayers().getFirst().level();
+                    for (var entity : level.getAllEntities())
+                        if (entity instanceof net.minecraft.world.entity.LivingEntity living && !(entity instanceof net.minecraft.world.entity.player.Player))
+                            log("server entity " + entity.getType().toShortString() + " health " + living.getHealth());
+                });
+                server.runCommand("kill @e[type=!minecraft:player]");
+                context.waitTicks(5);
+            });
+
+            step("grenade throw", () -> {
+                hold(context, server, "grenade");
+                context.waitTicks(10);
+                context.getInput().holdMouse(0);
+                context.waitTicks(25);
+                context.getInput().releaseMouse(0);
+                var seen = watchEntities(context, 8);
+                context.takeScreenshot("08_grenade_thrown");
+                seen.addAll(watchEntities(context, 80));
+                context.takeScreenshot("09_grenade_after");
+                log("entities seen after throwing the grenade: " + seen);
+                hold(context, server, "pistol10mm");
+                context.waitTicks(10);
+            });
+
             step("third person", () -> {
                 context.runOnClient(mc -> mc.options.setCameraType(CameraType.THIRD_PERSON_BACK));
                 context.waitTicks(10);
@@ -161,6 +206,23 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 name, controller.getPlayState(), controller.getCurrentRawAnimation(), controller.isAnimatingBones()));
         log.info("[smoke] muzzle matrix first person {} third person {}", com.nukateam.ntgl.client.helpers.MuzzleMatrixHelper.lastMuzzleMatrix != null,
                 com.nukateam.ntgl.client.helpers.MuzzleMatrixHelper.lastThirdPersonMuzzleMatrix != null);
+    }
+
+    private static void log(String message) {
+        com.nukateam.ntgl.Ntgl.LOGGER.info("[smoke] {}", message);
+    }
+
+    /** Collects the types of the entities the client sees during the given number of ticks. */
+    private static java.util.Set<String> watchEntities(ClientGameTestContext context, int ticks) {
+        var seen = new java.util.TreeSet<String>();
+        for (int i = 0; i < ticks; i++) {
+            context.waitTick();
+            context.runOnClient(mc -> {
+                for (var entity : mc.level.entitiesForRendering())
+                    seen.add(entity.getType().toShortString());
+            });
+        }
+        return seen;
     }
 
     private static void logInput(net.minecraft.client.Minecraft mc, String when) {
