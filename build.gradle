@@ -46,6 +46,8 @@ fabricApi {
         enableGameTests = false
         enableClientGameTests = true
         eula = true
+        // CI drops a gun pack into the run directory before the test starts
+        clearRunDirectory = false
     }
 }
 

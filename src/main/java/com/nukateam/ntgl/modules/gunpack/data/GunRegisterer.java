@@ -39,7 +39,7 @@ public class GunRegisterer {
     private static final Gson GSON = new Gson();
     private static final String REGISTRY_FILE = "registry.json";
     private static final Pattern CONFIG_PATTERN = Pattern.compile("^data/([^/]+)/weapons/([^/]+\\.json)$");
-    private static final Pattern RECIPE_PATTERN = Pattern.compile("^data/([^/]+)/recipes/([^/]+\\.json)$");
+    private static final Pattern RECIPE_PATTERN = Pattern.compile("^data/([^/]+)/recipes?/([^/]+\\.json)$");
     private static final Map<String, DeferredRegister<Item>> ITEMS = new HashMap<>();
     private static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, GunPackModule.MOD_ID);
     private static final Map<String, Set<String>> MOD_CONFIGS = new HashMap<>();

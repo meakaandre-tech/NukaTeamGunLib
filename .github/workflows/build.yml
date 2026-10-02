@@ -63,6 +63,17 @@ jobs:
           pkill -f 'runServer' || true
           cp run/logs/latest.log /tmp/ci/smoke/server-latest.log 2>/dev/null || true
           cp -r run/crash-reports /tmp/ci/smoke/server-crash-reports 2>/dev/null || true
+          # --- a gun pack in the pre-26 layout (geo/, animations/, builtin/entity item model, no pack.mcmeta)
+          pack=/tmp/legacy_pack; res=src/main/resources
+          mkdir -p $pack/assets/legacytest/geo/weapons $pack/assets/legacytest/animations/weapons $pack/assets/legacytest/textures/weapons/testgun $pack/assets/legacytest/models/item $pack/data/legacytest/weapons/guns
+          cp $res/assets/ntgl/geckolib/models/weapons/pistol10mm.geo.json $pack/assets/legacytest/geo/weapons/testgun.geo.json
+          cp $res/assets/ntgl/geckolib/animations/weapons/pistol10mm.animation.json $pack/assets/legacytest/animations/weapons/testgun.animation.json
+          cp $res/assets/ntgl/textures/weapons/pistol10mm/pistol10mm.png $pack/assets/legacytest/textures/weapons/testgun/testgun.png
+          sed '0,/{/s//{ "parent": "builtin\/entity",/' $res/assets/ntgl/models/item/pistol10mm.json > $pack/assets/legacytest/models/item/testgun.json
+          cp $res/data/ntgl/weapons/guns/pistol10mm.json $pack/data/legacytest/weapons/guns/testgun.json
+          echo '{"weapons":["legacytest:testgun"],"attachments":[],"ammo":[]}' > $pack/registry.json
+          mkdir -p build/run/clientGameTest/ntgl
+          (cd $pack && zip -q -r "$GITHUB_WORKSPACE/build/run/clientGameTest/ntgl/legacy_test.zip" .) || true
           # --- client: fabric client game test under a virtual display
           timeout 1200 xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientGameTest --no-daemon -Dorg.gradle.console=plain > /tmp/ci/smoke/client-gradle.log 2>&1 || true
           d=build/run/clientGameTest

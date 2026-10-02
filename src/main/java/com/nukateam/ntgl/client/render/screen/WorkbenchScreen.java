@@ -70,6 +70,8 @@ public class WorkbenchScreen extends AbstractContainerScreen<WorkbenchContainer>
         this.playerInventory = playerInventory;
         this.workbench = container.getWorkbench();
         this.materials = new ArrayList<>();
+        // the labels were laid out for the default container height (the 1.21 screen grew after construction)
+        this.inventoryLabelY = DEFAULT_IMAGE_HEIGHT - 94;
         this.createTabs(WorkbenchRecipes.getAllHolders(playerInventory.player.level()));
     }
 

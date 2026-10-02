@@ -132,8 +132,18 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 });
             }
 
+            step("legacy gun pack", () -> {
+                server.runCommand("item replace entity @a weapon.mainhand with legacytest:testgun");
+                context.waitTicks(25);
+                context.takeScreenshot("15_legacy_pack_gun");
+                context.runOnClient(mc -> log("legacy pack: held " + mc.player.getMainHandItem()
+                        + " model ids " + com.geckolib.cache.GeckoLibResources.getBakedModels().cache().keySet().stream()
+                        .filter(id -> id.getNamespace().equals("legacytest")).toList()));
+            });
+
             step("inventory", () -> {
                 hold(context, server, "pistol10mm");
+                server.runCommand("give @a legacytest:testgun");
                 server.runCommand("give @a ntgl:minigun");
                 server.runCommand("give @a ntgl:shotgun");
                 server.runCommand("give @a ntgl:workbench");

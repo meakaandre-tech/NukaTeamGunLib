@@ -21,8 +21,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 /**
- * Gun packs: every zip or folder in &lt;game dir&gt;/ntgl that has an assets and/or data folder (and a
- * pack.mcmeta) is added as an always-enabled resource pack and/or data pack.
+ * Gun packs: every zip or folder in &lt;game dir&gt;/ntgl that has an assets and/or data folder is added as an always-enabled resource pack and/or data pack.
  * <p>
  * Fabric has no AddPackFindersEvent; PackRepositoryMixin adds {@link #createSource(PackType)} to the
  * client resource pack repository and to the server data pack repositories. Packs are read with the
@@ -90,9 +89,21 @@ public class NTGLPackManager {
                     Optional.empty()
             );
 
-            Pack.ResourcesSupplier supplier = Files.isDirectory(packPath)
+            Pack.ResourcesSupplier files = Files.isDirectory(packPath)
                     ? new PathPackResources.PathResourcesSupplier(packPath)
                     : new FilePackResources.FileResourcesSupplier(packPath);
+            // serves packs made for older versions in the layout 26.x expects (see LegacyGunPackResources)
+            Pack.ResourcesSupplier supplier = new Pack.ResourcesSupplier() {
+                @Override
+                public net.minecraft.server.packs.PackResources openPrimary(PackLocationInfo location) {
+                    return new LegacyGunPackResources(files.openPrimary(location), type);
+                }
+
+                @Override
+                public net.minecraft.server.packs.PackResources openFull(PackLocationInfo location, Pack.Metadata metadata) {
+                    return new LegacyGunPackResources(files.openFull(location, metadata), type);
+                }
+            };
 
             Pack pack = Pack.readMetaAndCreate(
                     locInfo,
