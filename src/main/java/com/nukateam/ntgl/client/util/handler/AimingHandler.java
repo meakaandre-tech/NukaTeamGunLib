@@ -45,7 +45,14 @@ import java.util.WeakHashMap;
  */
 public class AimingHandler {
     private static AimingHandler instance;
-    private WeaponData weaponData = new WeaponData(new ItemStack(ExampleWeapons.CLASSIC10MM.get()), null);
+    private WeaponData weaponData;
+
+    /** Item stacks cannot be created while the game is still starting (26.x), so the default is created on demand. */
+    private WeaponData currentData() {
+        if (this.weaponData == null)
+            this.weaponData = new WeaponData(new ItemStack(ExampleWeapons.CLASSIC10MM.get()), null);
+        return this.weaponData;
+    }
 
     public static AimingHandler get() {
         if (instance == null) {
@@ -141,7 +148,7 @@ public class AimingHandler {
                 this.aiming = false;
             }
 
-            this.localTracker.handleAiming(weaponData);
+            this.localTracker.handleAiming(currentData());
         }
     }
 
@@ -168,7 +175,7 @@ public class AimingHandler {
         if (ModSyncedDataKeys.RELOADING_RIGHT.getValue(mc.player))
             return;
 
-        var zoom = WeaponModifierHelper.getZoom(weaponData);
+        var zoom = WeaponModifierHelper.getZoom(currentData());
 
         if (zoom == null)
             return;
@@ -178,7 +185,7 @@ public class AimingHandler {
 
         if (progress > 0) {
             var time = PropertyHelper.getSightAnimations(heldItem).getFovCurve().apply(progress);
-            var modifier = WeaponStateHelper.getFovModifier(weaponData);
+            var modifier = WeaponStateHelper.getFovModifier(currentData());
             modifier = (1.0F - modifier) * (float) time;
             targetFov = defaultFov - defaultFov * modifier;
         } else {
@@ -207,7 +214,7 @@ public class AimingHandler {
     }
 
     public WeaponData getWeaponData() {
-        return weaponData;
+        return currentData();
     }
 
     public boolean isAiming() {
@@ -248,7 +255,7 @@ public class AimingHandler {
 
 //        this.weaponData = new WeaponData(mainHandItem, mc.player);
 
-        return isAimKeyDown(weaponData);
+        return isAimKeyDown(currentData());
 
 //        boolean zooming = mc.options.keyUse.isDown();
 //

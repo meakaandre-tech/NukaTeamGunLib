@@ -1,5 +1,6 @@
 package com.nukateam.ntgl.modules.crafting.recipe;
 
+import net.minecraft.world.item.ItemStackTemplate;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -18,15 +19,15 @@ public class WorkbenchRecipeSerializer {
     public static final MapCodec<WorkbenchRecipe> CODEC =
             RecordCodecBuilder.mapCodec(instance -> {
                 return instance.group(
-                        ItemStack.CODEC.fieldOf("result").forGetter(WorkbenchRecipe::result),
+                        ItemStackTemplate.CODEC.fieldOf("result").forGetter(WorkbenchRecipe::template),
                         WorkbenchIngredient.CODEC.listOf().fieldOf("materials").forGetter(WorkbenchRecipe::materials)
                 ).apply(instance, WorkbenchRecipe::new);
             });
 
     public static final StreamCodec<RegistryFriendlyByteBuf, WorkbenchRecipe> STREAM_CODEC =
             StreamCodec.composite(
-                    ItemStack.STREAM_CODEC,
-                    WorkbenchRecipe::result,
+                    ItemStackTemplate.STREAM_CODEC,
+                    WorkbenchRecipe::template,
                     WorkbenchIngredient.STREAM_CODEC.apply(ByteBufCodecs.list()),
                     WorkbenchRecipe::materials,
                     WorkbenchRecipe::new
