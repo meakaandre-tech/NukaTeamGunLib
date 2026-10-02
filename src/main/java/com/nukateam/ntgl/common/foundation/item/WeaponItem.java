@@ -223,6 +223,13 @@ public class WeaponItem extends Item implements GeoItem, IWeapon, IThrowable {
     }
 
     /** Ammo and state live in data components; changing them must not replay the equip animation. */
+    /**
+     * Return true to cancel the arm swing of the wielder (NeoForge's onEntitySwing; called from LivingEntityMixin).
+     */
+    public boolean onEntitySwing(ItemStack stack, LivingEntity entity, InteractionHand hand) {
+        return true;
+    }
+
     @Override
     public boolean allowComponentsUpdateAnimation(Player player, InteractionHand hand, ItemStack oldStack, ItemStack newStack) {
         return false;
