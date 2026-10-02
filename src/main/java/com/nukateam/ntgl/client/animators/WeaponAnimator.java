@@ -171,7 +171,7 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
         return event -> {
             if(itemCache != getStack()) {
                 itemCache = getStack();
-                return event.setAndContinue(playVoid());
+                return play(event, playVoid());
             }
             try {
                 var controller = event.controller();
@@ -179,7 +179,7 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
                 var shooter = getEntity();
 
                 if (!isHandTransform(transformType))
-                    return event.setAndContinue(getHoldAnimation(event));
+                    return play(event, getHoldAnimation(event));
 
                 var isShooting = shootingHandler.isShooting(shooter, arm);
                 var data = shootingHandler.getShootingData(arm);
@@ -226,7 +226,7 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
 //                    Ntgl.LOGGER.debug("! Hold");
                 }
 
-                return animation != null ? event.setAndContinue(animation): PlayState.STOP;
+                return play(event, animation);
             } catch (Exception e) {
                 Ntgl.LOGGER.error(e.getMessage(), e);
                 return PlayState.STOP;
@@ -258,7 +258,7 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
                 return PlayState.STOP;
             }
 
-            return event.setAndContinue(animation);
+            return play(event, animation);
         };
     }
 
@@ -296,9 +296,18 @@ public class WeaponAnimator extends ItemAnimator implements IConfigProvider<Weap
                 this.animationHelper.syncAnimation(event, rate, finalAnim);
             }
 
-            return animation != null ? event.setAndContinue(animation) : PlayState.STOP;
+            return play(event, animation);
         }
         return PlayState.STOP;
+    }
+
+    /**
+     * GeckoLib 5 complains about empty animations on every frame; an empty animation means "nothing to play".
+     */
+    protected static PlayState play(AnimationTest<WeaponAnimator> event, RawAnimation animation) {
+        if (animation == null || animation.getStageCount() == 0)
+            return PlayState.STOP;
+        return event.setAndContinue(animation);
     }
 
     protected RawAnimation getHoldAnimation(AnimationTest<WeaponAnimator> event) {

@@ -27,7 +27,7 @@ public class NtglSmokeTest implements FabricClientGameTest {
             server.runCommand("weather clear");
 
             hold(context, server, "pistol10mm");
-            server.runCommand("give @a ntgl:round10mm 64");
+            server.runCommand("give @a ntgl:round10mm 2");
             context.waitTicks(30);
             context.takeScreenshot("01_pistol_first_person");
             step("diagnostics", () -> context.runOnClient(NtglSmokeTest::logDiagnostics));
@@ -98,13 +98,22 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 context.waitTicks(5);
             });
 
+            step("dropped item", () -> {
+                server.runCommand("execute at @p run summon item ^ ^1 ^2 {Item:{id:\"ntgl:pistol10mm\",count:1},NoGravity:1b}");
+                context.waitTicks(20);
+                context.takeScreenshot("30_dropped_item");
+            });
             step("workbench screen", () -> {
                 server.runOnServer(minecraftServer -> {
                     var player = minecraftServer.getPlayerList().getPlayers().getFirst();
                     var level = player.level();
                     var pos = player.blockPosition().above(4);
                     level.setBlockAndUpdate(pos, ModBlocks.WORKBENCH.get().defaultBlockState());
-                    if (level.getBlockEntity(pos) instanceof MenuProvider provider)
+                });
+                context.waitTicks(10);
+                server.runOnServer(minecraftServer -> {
+                    var player = minecraftServer.getPlayerList().getPlayers().getFirst();
+                    if (player.level().getBlockEntity(player.blockPosition().above(4)) instanceof MenuProvider provider)
                         player.openMenu(provider);
                 });
                 context.waitTicks(15);
@@ -113,11 +122,6 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 context.waitTicks(5);
             });
 
-            step("dropped item", () -> {
-                server.runCommand("execute at @p run summon item ^ ^1 ^2 {Item:{id:\"ntgl:pistol10mm\",count:1},NoGravity:1b}");
-                context.waitTicks(20);
-                context.takeScreenshot("30_dropped_item");
-            });
         }
     }
 

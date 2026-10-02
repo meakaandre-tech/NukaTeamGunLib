@@ -24,7 +24,10 @@ public class NtglContainers {
 
     public static final DeferredHolder<MenuType<?>, MenuType<WorkbenchContainer>> WORKBENCH = REGISTER.register("workbench",
             () -> new ExtendedMenuType<WorkbenchContainer, BlockPos>((windowId, playerInventory, pos) -> {
-                var workstation = (WorkbenchBlockEntity) playerInventory.player.level().getBlockEntity(pos);
+                var level = playerInventory.player.level();
+                // the block entity may not have reached the client yet when the menu opens
+                var workstation = level.getBlockEntity(pos) instanceof WorkbenchBlockEntity workbench ? workbench
+                        : new WorkbenchBlockEntity(ModTileEntities.WORKBENCH.get(), pos, level.getBlockState(pos));
                 return new WorkbenchContainer(windowId, playerInventory, workstation);
             }, BlockPos.STREAM_CODEC));
 

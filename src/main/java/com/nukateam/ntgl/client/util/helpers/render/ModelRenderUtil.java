@@ -48,6 +48,9 @@ public class ModelRenderUtil {
     public static void applyTransformType(ItemStack stack, PoseStack poseStack, ItemDisplayContext transformType, @Nullable LivingEntity entity) {
         var leftHanded = transformType == FIRST_PERSON_LEFT_HAND || transformType == THIRD_PERSON_LEFT_HAND;
         getTransform(stack, transformType, entity).apply(leftHanded, poseStack.last());
+        // 26.x: ItemTransform.apply also moves to the corner of the model (-0.5), which used to be a separate step
+        // of the vanilla item renderer. The weapon renderers expect the pose without it, as on 1.21.
+        poseStack.translate(0.5F, 0.5F, 0.5F);
 
         /* Flips the model and normals if left handed. */
         if (leftHanded) {
