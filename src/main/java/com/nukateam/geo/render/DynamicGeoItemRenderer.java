@@ -11,6 +11,7 @@ import com.geckolib.renderer.base.RenderPassInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import com.nukateam.ntgl.client.registry.WeaponRegistry;
+import com.nukateam.ntgl.client.util.RenderDebug;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OrderedSubmitNodeCollector;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -69,6 +70,9 @@ public class DynamicGeoItemRenderer<Animator extends ItemAnimator> extends GeoOb
         var animator = getAnimator(currentEntity, transformType, stack);
         animator.setStack(stack);
 
+        RenderDebug.log("geo.render." + transformType, () -> stack.getItem() + " entity=" + currentEntity.getClass().getSimpleName()
+                + " pose " + RenderDebug.pose(poseStack));
+
         performRenderPass(animator, new RenderContext(currentEntity, stack, transformType),
                 poseStack, collector, cameraState, packedLight, partialTick);
     }
@@ -94,6 +98,9 @@ public class DynamicGeoItemRenderer<Animator extends ItemAnimator> extends GeoOb
     public void adjustRenderPose(RenderPassInfo<GeoRenderState> renderPassInfo) {
         renderPassInfo.poseStack().translate(0.0F, 0.01F, 0.0F);
         super.adjustRenderPose(renderPassInfo);
+        RenderDebug.log("geo.adjusted." + currentTransform, () -> "missing=" + renderPassInfo.model().isMissingno()
+                + " willRender=" + renderPassInfo.willRender() + " bones=" + renderPassInfo.model().boneLookup().get().size()
+                + " pose " + RenderDebug.pose(renderPassInfo.poseStack()));
     }
 
     @Override

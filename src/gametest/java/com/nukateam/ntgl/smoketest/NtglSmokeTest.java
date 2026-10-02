@@ -20,6 +20,7 @@ public class NtglSmokeTest implements FabricClientGameTest {
             var connection = singleplayer.getConnection();
             var server = singleplayer.getServer();
 
+            context.getInput().resizeWindow(1280, 720);
             connection.waitForChunksRender();
             server.runCommand("gamemode creative @a");
             server.runCommand("time set noon");
@@ -29,6 +30,7 @@ public class NtglSmokeTest implements FabricClientGameTest {
             server.runCommand("give @a ntgl:round10mm 64");
             context.waitTicks(30);
             context.takeScreenshot("01_pistol_first_person");
+            step("diagnostics", () -> context.runOnClient(NtglSmokeTest::logDiagnostics));
 
             step("shoot", () -> {
                 context.getInput().holdMouseFor(0, 4);
@@ -117,6 +119,37 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 context.takeScreenshot("30_dropped_item");
             });
         }
+    }
+
+    private static void logDiagnostics(net.minecraft.client.Minecraft mc) {
+        var log = com.nukateam.ntgl.Ntgl.LOGGER;
+        var animations = com.geckolib.cache.GeckoLibResources.getBakedAnimations().cache();
+        var models = com.geckolib.cache.GeckoLibResources.getBakedModels().cache();
+        log.info("[smoke] animation ids: {}", animations.keySet().stream().filter(id -> id.getNamespace().equals("ntgl")).sorted().toList());
+        log.info("[smoke] model ids: {}", models.keySet().stream().filter(id -> id.getNamespace().equals("ntgl")).sorted().toList());
+
+        var player = mc.player;
+        var stack = player.getMainHandItem();
+        log.info("[smoke] held: {} components {}", stack, stack.getComponentsPatch());
+        var transform = com.nukateam.ntgl.client.util.helpers.render.ModelRenderUtil.getTransform(stack,
+                net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND, player);
+        log.info("[smoke] first person transform: {}", transform);
+        log.info("[smoke] hand heights: main {} old {}", mc.gameRenderer.itemInHandRenderer.mainHandHeight, mc.gameRenderer.itemInHandRenderer.oMainHandHeight);
+
+        var renderer = com.nukateam.ntgl.client.registry.WeaponRegistry.getRenderer(stack.getItem());
+        var animator = (com.nukateam.ntgl.client.animators.WeaponAnimator) renderer.getAnimator(player,
+                net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND, stack);
+        var model = com.nukateam.ntgl.client.model.gun.GeoWeaponModel.INSTANCE;
+        log.info("[smoke] animator id {} animation resource {} model {} texture {}", animator.getId(),
+                model.getAnimationResource(animator), model.getModelResource(animator), model.getTextureResource(animator));
+        var helper = new com.nukateam.ntgl.common.util.util.AnimationHelper<>(animator, model);
+        log.info("[smoke] has hold {} shot {} reload {} hold length {}", helper.hasAnimation("hold"), helper.hasAnimation("shot"),
+                helper.hasAnimation("reload"), helper.getAnimationDuration("hold"));
+        var manager = animator.getAnimatableInstanceCache().getManagerForId(animator.hashCode());
+        manager.getAnimationControllers().forEach((name, controller) -> log.info("[smoke] controller {} state {} animation {} animating bones {}",
+                name, controller.getPlayState(), controller.getCurrentRawAnimation(), controller.isAnimatingBones()));
+        log.info("[smoke] muzzle matrix first person {} third person {}", com.nukateam.ntgl.client.helpers.MuzzleMatrixHelper.lastMuzzleMatrix != null,
+                com.nukateam.ntgl.client.helpers.MuzzleMatrixHelper.lastThirdPersonMuzzleMatrix != null);
     }
 
     private static void hold(ClientGameTestContext context, TestServerContext server, String weapon) {

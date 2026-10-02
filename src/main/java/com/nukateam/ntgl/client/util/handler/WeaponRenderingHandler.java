@@ -258,6 +258,8 @@ public class WeaponRenderingHandler {
 
 
     //        this.renderFirstPersonArms(event, poseStack, hand, heldItem, modifiedGun, packedLight);
+                com.nukateam.ntgl.client.util.RenderDebug.log("hand." + hand, () -> "equipProgress=" + equipProgress
+                        + " transform=" + model + " pose " + com.nukateam.ntgl.client.util.RenderDebug.pose(poseStack));
                 this.renderWeapon(player, heldItem, transformType, event.getPoseStack(), event.getSubmitNodeCollector(), getWeaponLghtning(event, player));
             }
             poseStack.popPose();

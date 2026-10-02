@@ -15,6 +15,13 @@ repositories {
 
 loom {
     accessWidenerPath = file("src/main/resources/ntgl.classtweaker")
+
+    runs {
+        configureEach {
+            // development runs only: log the weapon render path (see RenderDebug)
+            vmArg "-Dntgl.debugRender=true"
+        }
+    }
 }
 
 dependencies {
