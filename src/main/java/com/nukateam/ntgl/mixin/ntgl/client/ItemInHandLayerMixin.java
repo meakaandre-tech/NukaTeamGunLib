@@ -38,7 +38,7 @@ public class ItemInHandLayerMixin {
     private void renderArmWithItem(ArmedEntityRenderState state, ItemStackRenderState itemState, ItemStack stack,
                                    HumanoidArm arm, PoseStack poseStack, SubmitNodeCollector collector, int light, CallbackInfo ci) {
         LivingEntity entity = NtglRenderData.getEntity(state);
-        com.nukateam.ntgl.client.util.RenderDebug.log("layer." + arm, () -> stack.getItem() + " entity=" + entity + " pose " + com.nukateam.ntgl.client.util.RenderDebug.pose(poseStack));
+        if (com.nukateam.ntgl.client.util.RenderDebug.ENABLED) com.nukateam.ntgl.client.util.RenderDebug.log("layer." + arm, () -> stack.getItem() + " entity=" + entity + " pose " + com.nukateam.ntgl.client.util.RenderDebug.pose(poseStack));
         if (entity == null) return;
 
         var hand = state.mainArm == arm ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND;

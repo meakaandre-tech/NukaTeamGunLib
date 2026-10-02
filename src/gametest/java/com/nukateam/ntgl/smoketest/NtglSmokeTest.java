@@ -133,15 +133,29 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 context.waitTicks(5);
             });
 
-            for (var weapon : new String[]{"shotgun", "minigun", "hammer", "grenade", "fatman", "flamer"}) {
+            for (var weapon : new String[]{"shotgun", "minigun", "fatman", "flamer", "hammer", "stun_grenade"}) {
                 step(weapon, () -> {
                     hold(context, server, weapon);
                     context.waitTicks(25);
                     context.takeScreenshot("10_" + weapon + "_first_person");
-                    context.getInput().holdMouseFor(0, 6);
-                    context.waitTicks(4);
+
+                    // creative reload, then attack a weak zombie standing in front of the wall
+                    context.getInput().holdKeyFor(NtglKeyBinds.KEY_RELOAD, 4);
+                    context.waitTicks(110);
+                    server.runCommand("execute at @p run summon minecraft:zombie ^ ^ ^4 {NoAI:1b,PersistenceRequired:1b,Health:4f}");
+                    context.waitTicks(5);
+                    context.runOnClient(mc -> logInput(mc, weapon + ": before attack"));
+                    context.getInput().holdMouse(0);
+                    var seen = watchEntities(context, 30);
                     context.takeScreenshot("11_" + weapon + "_attack");
-                    context.waitTicks(25);
+                    context.getInput().releaseMouse(0);
+                    seen.addAll(watchEntities(context, 60));
+                    context.takeScreenshot("12_" + weapon + "_after");
+                    log(weapon + ": entities seen " + seen);
+                    context.runOnClient(mc -> logInput(mc, weapon + ": after attack"));
+                    server.runCommand("kill @e[type=!minecraft:player]");
+                    server.runCommand("effect clear @a");
+                    context.waitTicks(10);
                 });
             }
 

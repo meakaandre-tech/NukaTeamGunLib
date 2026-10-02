@@ -70,7 +70,7 @@ public class DynamicGeoItemRenderer<Animator extends ItemAnimator> extends GeoOb
         var animator = getAnimator(currentEntity, transformType, stack);
         animator.setStack(stack);
 
-        RenderDebug.log("geo.render." + transformType, () -> stack.getItem() + " entity=" + currentEntity.getClass().getSimpleName()
+        if (RenderDebug.ENABLED) RenderDebug.log("geo.render." + transformType, () -> stack.getItem() + " entity=" + currentEntity.getClass().getSimpleName()
                 + " pose " + RenderDebug.pose(poseStack));
 
         performRenderPass(animator, new RenderContext(currentEntity, stack, transformType),
@@ -98,7 +98,7 @@ public class DynamicGeoItemRenderer<Animator extends ItemAnimator> extends GeoOb
     public void adjustRenderPose(RenderPassInfo<GeoRenderState> renderPassInfo) {
         renderPassInfo.poseStack().translate(0.0F, 0.01F, 0.0F);
         super.adjustRenderPose(renderPassInfo);
-        RenderDebug.log("geo.adjusted." + currentTransform, () -> "missing=" + renderPassInfo.model().isMissingno()
+        if (RenderDebug.ENABLED) RenderDebug.log("geo.adjusted." + currentTransform, () -> "missing=" + renderPassInfo.model().isMissingno()
                 + " willRender=" + renderPassInfo.willRender() + " bones=" + renderPassInfo.model().boneLookup().get().size()
                 + " pose " + RenderDebug.pose(renderPassInfo.poseStack()));
     }
