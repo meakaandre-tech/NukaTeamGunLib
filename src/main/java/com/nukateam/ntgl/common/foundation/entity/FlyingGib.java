@@ -141,7 +141,7 @@ public class FlyingGib extends Entity {
     private void particleTick() {
         if (this.level().isClientSide() && getData().showBlood) {
             for (int i = 5; i > 0; i--) {
-                this.level().addParticle(ModParticleTypes.BLOOD.get(), true,
+                this.level().addParticle(ModParticleTypes.BLOOD.get(), true, false,
                         this.getX() - (this.getDeltaMovement().x() / i),
                         this.getY() - (this.getDeltaMovement().y() / i),
                         this.getZ() - (this.getDeltaMovement().z() / i),

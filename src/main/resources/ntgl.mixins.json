@@ -4,13 +4,12 @@
   "compatibilityLevel": "JAVA_25",
   "mixins": [
     "ntgl.common.LivingEntityMixin",
+    "ntgl.common.LivingEntityTickMixin",
+    "ntgl.common.MobMixin",
+    "ntgl.common.PackRepositoryMixin",
+    "ntgl.common.PlayerTickMixin",
     "ntgl.common.ServerGamePacketListenerImplMixin",
-    "ntgl.common.SittingPhaseMixin",
-
-    "chassis.common.LivingEntityMixin",
-    "chassis.common.MixinProjectileUtil",
-    "chassis.common.MobMixin",
-    "chassis.common.PlayerMixin"
+    "ntgl.common.SittingPhaseMixin"
   ],
   "client": [
     "ntgl.client.AgeableListModelAccessor",
@@ -26,13 +25,7 @@
     "ntgl.client.QuadrupedModelAccessor",
     "ntgl.client.RenderTypeLookupMixin",
     "ntgl.client.SoundOptionsScreenMixin",
-    "ntgl.client.VillagerModelAccessor",
-
-    "chassis.client.ClientPacketListenerMixin",
-    "chassis.client.CreativeInventoryScreenMixin",
-    "chassis.client.GameRendererMixin",
-    "chassis.client.InventoryScreenMixin",
-    "chassis.client.ModelPartMixin"
+    "ntgl.client.VillagerModelAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

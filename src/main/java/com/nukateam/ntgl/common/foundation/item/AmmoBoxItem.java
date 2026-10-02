@@ -5,7 +5,7 @@ import net.minecraft.world.item.*;
 
 public class AmmoBoxItem extends Item {
     private static final String TAG_ITEMS = "Items";
-    private static final int BAR_COLOR = Mth.color(0.4F, 0.4F, 1.0F);
+    private static final int BAR_COLOR = net.minecraft.util.ARGB.colorFromFloat(1.0F, 0.4F, 0.4F, 1.0F);
     private final int maxWeight;
 
     public AmmoBoxItem(Item.Properties pProperties, int maxWeight) {

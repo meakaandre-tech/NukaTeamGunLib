@@ -19,7 +19,7 @@ public class MinigunModifier implements IWeaponModifier {
 
     @Override
     public GripType modifyGripType(GripType gripType, WeaponData data) {
-        if(data.wielder.hasEffect(MobEffects.DAMAGE_BOOST)){
+        if(data.wielder.hasEffect(MobEffects.STRENGTH)){
             return GripType.ONE_HANDED;
         }
         return IWeaponModifier.super.modifyGripType(gripType, data);

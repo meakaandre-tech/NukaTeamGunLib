@@ -50,7 +50,7 @@ public class AttachmentContainer extends AbstractContainerMenu {
 
     public AttachmentContainer(int windowId, Inventory playerInventory) {
         super(NtglContainers.ATTACHMENTS.get(), windowId);
-        this.weapon = playerInventory.getSelected();
+        this.weapon = playerInventory.getSelectedItem();
         this.playerInventory = playerInventory;
         this.player = playerInventory.player;
         var gunData = new WeaponData(weapon, playerInventory.player);

@@ -92,6 +92,7 @@ public class Ntgl implements ModInitializer {
         EVENT_BUS.register(ThrowingTracker.class);
         EVENT_BUS.register(DelayedTask.class);
         EVENT_BUS.register(DataKeyManager.class);
+        EVENT_BUS.register(com.nukateam.ntgl.common.debug.Debug.class);
         NetworkManagerHandler.register();
         // The handler itself checks the improvedHitboxes option every tick
         EVENT_BUS.register(new BoundingBoxManager());

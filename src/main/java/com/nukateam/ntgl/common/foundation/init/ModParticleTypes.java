@@ -32,7 +32,7 @@ public class ModParticleTypes {
                     });
 
     public static final DeferredHolder<ParticleType<?>, SimpleParticleType> BLOOD =
-            REGISTER.register("blood", () -> new SimpleParticleType(true));
+            REGISTER.register("blood", () -> net.fabricmc.fabric.api.particle.v1.FabricParticleTypes.simple(true));
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<TrailData>> TRAIL =
             REGISTER.register("trail",

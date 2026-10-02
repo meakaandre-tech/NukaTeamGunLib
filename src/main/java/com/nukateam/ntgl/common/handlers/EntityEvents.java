@@ -58,7 +58,7 @@ public class EntityEvents {
             var multiMap = HashMultimap.<Holder<Attribute>, AttributeModifier>create();
 
             for (var modifier : modifiers) {
-                BuiltInRegistries.ATTRIBUTE.getHolder(modifier.getAttribute()).ifPresent((attribute -> {
+                BuiltInRegistries.ATTRIBUTE.get(modifier.getAttribute()).ifPresent((attribute -> {
                     var attributeInstance = player.getAttribute(attribute);
                     if (attributeInstance != null) {
                         var name = modifier.getAttribute().toString().replace(".", "_") + "_" + hand.toString().toLowerCase(Locale.ROOT);

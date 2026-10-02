@@ -99,7 +99,7 @@ public class GunEventHandler {
             if (currentDamage == (maxDamage - 1)) {
                 level.playSound(
                         shooter, shooter.blockPosition(),
-                        SoundEvents.ITEM_BREAK, SoundSource.PLAYERS,
+                        SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS,
                         1.0F, 1.0F
                 );
                 return true;
@@ -119,7 +119,7 @@ public class GunEventHandler {
             var cockSound = WeaponModifierHelper.getSound(SoundTypes.COCK, data);
             if (!wielder.isAlive()) return;
 
-            if (cockSound == null) cockSound = ModSounds.ITEM_PISTOL_COCK.get().getLocation();
+            if (cockSound == null) cockSound = ModSounds.ITEM_PISTOL_COCK.get().location();
 
             var radius = Config.SERVER.reloadMaxDistance.get();
             var messageSound = new S2CMessageGunSound(cockSound,
@@ -142,10 +142,10 @@ public class GunEventHandler {
             int currentDamage = stack.getDamageValue();
             if (currentDamage >= (maxDamage - 1)) {
                 if (currentDamage >= (maxDamage - 2)) {
-                    level.playSound(entity, entity.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1.0F, 1.0F);
+                    level.playSound(entity, entity.blockPosition(), SoundEvents.ITEM_BREAK.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
                 }
             } else {
-                stack.hurtAndBreak(1, entity, null);
+                stack.hurtAndBreak(1, entity, entity.getMainHandItem() == stack ? net.minecraft.world.InteractionHand.MAIN_HAND : net.minecraft.world.InteractionHand.OFF_HAND);
             }
         }
     }

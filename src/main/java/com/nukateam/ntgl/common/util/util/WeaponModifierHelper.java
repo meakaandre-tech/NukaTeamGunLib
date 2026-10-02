@@ -128,7 +128,7 @@ public class WeaponModifierHelper {
             if (WeaponStateHelper.getProjectileConfig(data).isMagazineMode()) {
                 var id = WeaponStateHelper.getCurrentAmmo(data);
                 var item = BuiltInRegistries.ITEM.getValue(id.getId());
-                finalMaxAmmo.set(item.getMaxDamage(new ItemStack(item)));
+                finalMaxAmmo.set(new ItemStack(item).getMaxDamage());
             }
         }
 

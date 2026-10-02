@@ -46,7 +46,7 @@ public class FuelUtils {
     public static int getFuel(ItemStack stack, AmmoHolder ammoHolder) {
         var fuelTag = getOrCreateFuelTag(stack);
 
-        if(fuelTag.contains(ammoHolder.toString(), Tag.TAG_INT))
+        if(fuelTag.contains(ammoHolder.toString()))
             return fuelTag.getIntOr(ammoHolder.toString(), 0);
         return 0;
     }

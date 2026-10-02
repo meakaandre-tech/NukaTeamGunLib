@@ -50,7 +50,7 @@ import static net.minecraft.world.item.component.ItemAttributeModifiers.ATTRIBUT
  * "ntgl:weapon" special item model (see the item model definition of each weapon), which looks the
  * renderer up in WeaponRegistry.
  */
-public class WeaponItem extends Item implements IWeapon, IThrowable, net.fabricmc.fabric.api.item.v1.FabricItem {
+public class WeaponItem extends Item implements IWeapon, IThrowable {
     public static final String VARIANT = "variant";
     private final Lazy<Identifier> id = Lazy.of(this::getRegistryName);
     private final WeakHashMap<CompoundTag, WeaponConfig> modifiedGunCache = new WeakHashMap<>();
@@ -187,7 +187,7 @@ public class WeaponItem extends Item implements IWeapon, IThrowable, net.fabricm
     @Override
     public boolean canBeEnchantedWith(ItemStack stack, net.minecraft.core.Holder<net.minecraft.world.item.enchantment.Enchantment> enchantment, net.fabricmc.fabric.api.item.v1.EnchantingContext context) {
         return this.weaponConfig.getGeneral().isEnchantable()
-                && net.fabricmc.fabric.api.item.v1.FabricItem.super.canBeEnchantedWith(stack, enchantment, context);
+                && super.canBeEnchantedWith(stack, enchantment, context);
     }
 
     /** Ammo and state live in data components; changing them must not replay the equip animation. */

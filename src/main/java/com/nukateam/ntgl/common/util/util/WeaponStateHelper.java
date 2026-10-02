@@ -185,7 +185,7 @@ public class WeaponStateHelper {
 
     public static ItemStack getAttachmentItem(AttachmentType type, WeaponData data) {
         var attachment = getAttachments(data.weapon);
-        if (attachment.contains(type.toString(), Tag.TAG_COMPOUND)) {
+        if (attachment.contains(type.toString())) {
             var registryAccess = data.registryAccess();
             if (registryAccess == null) {
                 return ItemStack.EMPTY;
@@ -202,7 +202,7 @@ public class WeaponStateHelper {
             return false;
 
         var attachment = getAttachments(stack);
-        return attachment.contains(type.toString(), Tag.TAG_COMPOUND);
+        return attachment.contains(type.toString());
 
     }
 

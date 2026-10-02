@@ -29,7 +29,7 @@ public class BoundingBoxManager {
 
     static {
         /* Player */
-        registerHeadshotBox(EntityType.PLAYER, (entity) -> {
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.PLAYER, (entity) -> {
             var headBox = new AABB(-4 * 0.0625, 0, -4 * 0.0625, 4 * 0.0625, 8 * 0.0625, 4 * 0.0625);
             var scale = 30.0 / 32.0;
 
@@ -43,41 +43,41 @@ public class BoundingBoxManager {
             return new AABB(headBox.minX * scale, headBox.minY * scale, headBox.minZ * scale, headBox.maxX * scale, headBox.maxY * scale, headBox.maxZ * scale);
         });
 
-        registerHeadshotBox(EntityType.ZOMBIE, new ChildHeadshotBox<>(8.0, 24.0, 0.75, 0.5));
-        registerHeadshotBox(EntityType.ZOMBIFIED_PIGLIN, new ChildHeadshotBox<>(8.0, 24.0, 0.75, 0.5));
-        registerHeadshotBox(EntityType.HUSK, new ChildHeadshotBox<>(8.0, 24.0, 0.75, 0.5));
-        registerHeadshotBox(EntityType.SKELETON, new BasicHeadshotBox<>(8.0, 24.0));
-        registerHeadshotBox(EntityType.STRAY, new BasicHeadshotBox<>(8.0, 24.0));
-        registerHeadshotBox(EntityType.CREEPER, new BasicHeadshotBox<>(8.0, 18.0));
-        registerHeadshotBox(EntityType.SPIDER, new RotatedHeadshotBox<>(8.0, 5.0, 7.0, false, true));
-        registerHeadshotBox(EntityType.DROWNED, new BasicHeadshotBox<>(8.0, 24.0));
-        registerHeadshotBox(EntityType.VILLAGER, new NoChildHeadshotBox<>(8.0, 9.0, 23.0));
-        registerHeadshotBox(EntityType.ZOMBIE_VILLAGER, new NoChildHeadshotBox<>(8.0, 9.0, 23.0));
-        registerHeadshotBox(EntityType.VINDICATOR, new NoChildHeadshotBox<>(8.0, 9.0, 23.0));
-        registerHeadshotBox(EntityType.EVOKER, new BasicHeadshotBox<>(8.0, 9.0, 23.0));
-        registerHeadshotBox(EntityType.PILLAGER, new BasicHeadshotBox<>(8.0, 9.0, 23.0));
-        registerHeadshotBox(EntityType.ILLUSIONER, new BasicHeadshotBox<>(8.0, 9.0, 23.0));
-        registerHeadshotBox(EntityType.WANDERING_TRADER, new BasicHeadshotBox<>(8.0, 9.0, 23.0));
-        registerHeadshotBox(EntityType.WITCH, new BasicHeadshotBox<>(8.0, 9.0, 23.0));
-        registerHeadshotBox(EntityType.SHEEP, new RotatedHeadshotBox<>(7.5, 8.0, 15.0, 9.5, false, true));
-        registerHeadshotBox(EntityType.CHICKEN, new NoChildRotatedHeadshotBox<>(4.0, 6.0, 9.0, 5.0, false, true));
-        registerHeadshotBox(EntityType.COW, new NoChildRotatedHeadshotBox<>(7.5, 8.0, 16.0, 10.5, false, true));
-        registerHeadshotBox(EntityType.MOOSHROOM, new NoChildRotatedHeadshotBox<>(7.5, 8.0, 16.0, 10.5, false, true));
-        registerHeadshotBox(EntityType.PIG, new NoChildRotatedHeadshotBox<>(8.0, 8.0, 10, false, true));
-        registerHeadshotBox(EntityType.HORSE, new RotatedHeadshotBox<>(10.0, 26.0, 16.0, false, true));
-        registerHeadshotBox(EntityType.SKELETON_HORSE, new RotatedHeadshotBox<>(10.0, 26.0, 16.0, false, true));
-        registerHeadshotBox(EntityType.DONKEY, new RotatedHeadshotBox<>(7.5, 8.0, 20.0, 13.0, false, true));
-        registerHeadshotBox(EntityType.MULE, new RotatedHeadshotBox<>(7.5, 8.0, 21.0, 14.0, false, true));
-        registerHeadshotBox(EntityType.LLAMA, new RotatedHeadshotBox<>(8.0, 26.0, 10.0, false, true));
-        registerHeadshotBox(EntityType.TRADER_LLAMA, new RotatedHeadshotBox<>(8.0, 26.0, 10.0, false, true));
-        registerHeadshotBox(EntityType.POLAR_BEAR, new RotatedHeadshotBox<>(9.0, 12.0, 20.0, false, true));
-        registerHeadshotBox(EntityType.SNOW_GOLEM, new BasicHeadshotBox<>(10.0, 20.5));
-        registerHeadshotBox(EntityType.TURTLE, new RotatedHeadshotBox<>(6.0, 5.0, 1.0, 10.0, false, true));
-        registerHeadshotBox(EntityType.IRON_GOLEM, new RotatedHeadshotBox<>(8.0, 10.0, 33.0, 3.5, false, true));
-        registerHeadshotBox(EntityType.PHANTOM, new RotatedHeadshotBox<>(6.0, 3.0, 1.5, 6.5, true, true));
-        registerHeadshotBox(EntityType.HOGLIN, new RotatedHeadshotBox<>(14.0, 16.0, 7.0, 19.0, false, true));
-        registerHeadshotBox(EntityType.ZOGLIN, new RotatedHeadshotBox<>(14.0, 16.0, 7.0, 19.0, false, true));
-        registerHeadshotBox(EntityType.PIGLIN, new ChildHeadshotBox<>(8.0, 24.0, 0.75, 0.5));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.ZOMBIE, new ChildHeadshotBox<>(8.0, 24.0, 0.75, 0.5));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.ZOMBIFIED_PIGLIN, new ChildHeadshotBox<>(8.0, 24.0, 0.75, 0.5));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.HUSK, new ChildHeadshotBox<>(8.0, 24.0, 0.75, 0.5));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.SKELETON, new BasicHeadshotBox<>(8.0, 24.0));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.STRAY, new BasicHeadshotBox<>(8.0, 24.0));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.CREEPER, new BasicHeadshotBox<>(8.0, 18.0));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.SPIDER, new RotatedHeadshotBox<>(8.0, 5.0, 7.0, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.DROWNED, new BasicHeadshotBox<>(8.0, 24.0));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.VILLAGER, new NoChildHeadshotBox<>(8.0, 9.0, 23.0));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.ZOMBIE_VILLAGER, new NoChildHeadshotBox<>(8.0, 9.0, 23.0));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.VINDICATOR, new NoChildHeadshotBox<>(8.0, 9.0, 23.0));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.EVOKER, new BasicHeadshotBox<>(8.0, 9.0, 23.0));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.PILLAGER, new BasicHeadshotBox<>(8.0, 9.0, 23.0));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.ILLUSIONER, new BasicHeadshotBox<>(8.0, 9.0, 23.0));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.WANDERING_TRADER, new BasicHeadshotBox<>(8.0, 9.0, 23.0));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.WITCH, new BasicHeadshotBox<>(8.0, 9.0, 23.0));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.SHEEP, new RotatedHeadshotBox<>(7.5, 8.0, 15.0, 9.5, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.CHICKEN, new NoChildRotatedHeadshotBox<>(4.0, 6.0, 9.0, 5.0, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.COW, new NoChildRotatedHeadshotBox<>(7.5, 8.0, 16.0, 10.5, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.MOOSHROOM, new NoChildRotatedHeadshotBox<>(7.5, 8.0, 16.0, 10.5, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.PIG, new NoChildRotatedHeadshotBox<>(8.0, 8.0, 10, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.HORSE, new RotatedHeadshotBox<>(10.0, 26.0, 16.0, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.SKELETON_HORSE, new RotatedHeadshotBox<>(10.0, 26.0, 16.0, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.DONKEY, new RotatedHeadshotBox<>(7.5, 8.0, 20.0, 13.0, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.MULE, new RotatedHeadshotBox<>(7.5, 8.0, 21.0, 14.0, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.LLAMA, new RotatedHeadshotBox<>(8.0, 26.0, 10.0, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.TRADER_LLAMA, new RotatedHeadshotBox<>(8.0, 26.0, 10.0, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.POLAR_BEAR, new RotatedHeadshotBox<>(9.0, 12.0, 20.0, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.SNOW_GOLEM, new BasicHeadshotBox<>(10.0, 20.5));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.TURTLE, new RotatedHeadshotBox<>(6.0, 5.0, 1.0, 10.0, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.IRON_GOLEM, new RotatedHeadshotBox<>(8.0, 10.0, 33.0, 3.5, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.PHANTOM, new RotatedHeadshotBox<>(6.0, 3.0, 1.5, 6.5, true, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.HOGLIN, new RotatedHeadshotBox<>(14.0, 16.0, 7.0, 19.0, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.ZOGLIN, new RotatedHeadshotBox<>(14.0, 16.0, 7.0, 19.0, false, true));
+        registerHeadshotBox(net.minecraft.world.entity.EntityTypes.PIGLIN, new ChildHeadshotBox<>(8.0, 24.0, 0.75, 0.5));
     }
 
     /**
