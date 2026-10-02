@@ -65,6 +65,12 @@ public record WorkbenchRecipe(ItemStackTemplate template, List<WorkbenchIngredie
         return "";
     }
 
+    /** Not a recipe book recipe: without this the game warns that it "can't be placed" on every data load. */
+    @Override
+    public boolean isSpecial() {
+        return true;
+    }
+
     @Override
     public net.minecraft.world.item.crafting.PlacementInfo placementInfo() {
         return net.minecraft.world.item.crafting.PlacementInfo.NOT_PLACEABLE;
