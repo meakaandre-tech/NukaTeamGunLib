@@ -42,7 +42,11 @@ public class NtglServerGameTest {
         var startHealth = zombie.getHealth();
         var seen = new TreeSet<String>();
 
-        log("start: player " + player.position() + " zombie " + zombie.position() + " ammo " + ammo(player));
+        // the mock player has no real connection, so nothing ticks it: do that by hand
+        for (int tick = 1; tick < 330; tick++)
+            helper.runAfterDelay(tick, player::doTick);
+
+        log("start: creative " + player.isCreative() + " player " + player.position() + " zombie " + zombie.position() + " ammo " + ammo(player));
         ServerPlayHandler.handleShoot(new C2SMessageShoot(player.getId(), 0F, 0F, 0F, 0F, InteractionHand.MAIN_HAND, WeaponMode.PRIMARY), player);
         collect(helper, seen);
 

@@ -72,6 +72,19 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 context.runOnClient(mc -> logInput(mc, "after shooting the wall"));
             });
 
+            step("survival ammo", () -> {
+                server.runCommand("gamemode survival @a");
+                context.waitTicks(5);
+                context.runOnClient(mc -> logInput(mc, "survival: before shooting"));
+                context.getInput().holdMouse(0);
+                context.waitTicks(12);
+                context.getInput().releaseMouse(0);
+                context.waitTicks(10);
+                context.runOnClient(mc -> logInput(mc, "survival: after shooting"));
+                server.runCommand("gamemode creative @a");
+                context.waitTicks(5);
+            });
+
             step("shoot zombie", () -> {
                 server.runCommand("execute at @p run summon minecraft:zombie ^ ^ ^3 {NoAI:1b,PersistenceRequired:1b,Rotation:[180f,0f]}");
                 context.waitTicks(10);
