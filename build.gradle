@@ -22,7 +22,7 @@ dependencies {
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-    // GeckoLib 5 for Fabric 26.2 (and any jars nested in it), downloaded by CI into libs/
+    // GeckoLib 5 for Fabric 26.3 (and any jars nested in it), downloaded by CI into libs/
     compileOnly fileTree(dir: "libs", include: ["*.jar", "nested/*.jar"])
 
     compileOnly "com.google.code.findbugs:jsr305:3.0.2"

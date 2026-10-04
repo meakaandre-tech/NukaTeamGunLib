@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: ["fabric-26.2"]
+    branches: ["fabric-26.3"]
   workflow_dispatch:
 
 permissions:
@@ -23,7 +23,7 @@ jobs:
         shell: bash
         run: |
           mkdir -p libs/nested
-          curl -fsSL -o libs/geckolib-fabric-26.2-5.5.3.jar https://cdn.modrinth.com/data/8BmcQJ2H/versions/L6bn4TS8/geckolib-fabric-26.2-5.5.3.jar
+          curl -fsSL -o libs/geckolib-fabric-26.3-5.5.7.jar https://cdn.modrinth.com/data/8BmcQJ2H/versions/kSxHvs99/geckolib-fabric-26.3-5.5.7.jar
           # jars nested inside the libraries are needed on the compile classpath too
           for j in libs/*.jar; do unzip -o -j -q "$j" 'META-INF/jars/*.jar' -d libs/nested 2>/dev/null || true; done
           ls -lR libs
@@ -156,7 +156,7 @@ jobs:
         if: success()
         uses: actions/upload-artifact@v4
         with:
-          name: ntgl-fabric-26.2
+          name: ntgl-fabric-26.3
           path: build/libs/*.jar
       - name: Publish the jar as a release
         if: success()
@@ -164,8 +164,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          gh release delete fabric-26.2-latest -y --cleanup-tag -R "${{ github.repository }}" || true
+          gh release delete fabric-26.3-latest -y --cleanup-tag -R "${{ github.repository }}" || true
           sleep 3
           jar=$(ls build/libs/*.jar | grep -v sources | head -1)
-          cp "$jar" ntgl-fabric-26.2.jar
-          gh release create fabric-26.2-latest ntgl-fabric-26.2.jar -R "${{ github.repository }}" --target "${GITHUB_SHA}" --title "NTGL for Fabric 26.2 (pack build)" --notes "Built from the fabric-26.2 branch at ${GITHUB_SHA}. Needs GeckoLib 5.5.3 and Fabric API."
+          cp "$jar" ntgl-fabric-26.3.jar
+          gh release create fabric-26.3-latest ntgl-fabric-26.3.jar -R "${{ github.repository }}" --target "${GITHUB_SHA}" --title "NTGL for Fabric 26.3 (pack build)" --notes "Built from the fabric-26.3 branch at ${GITHUB_SHA}. Needs GeckoLib 5.5.7 and Fabric API."
