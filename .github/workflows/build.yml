@@ -78,13 +78,35 @@ jobs:
           echo '{"weapons":["legacytest:testgun"],"attachments":[],"ammo":[]}' > $pack/registry.json
           mkdir -p build/run/clientGameTest/ntgl
           (cd $pack && zip -q -r "$GITHUB_WORKSPACE/build/run/clientGameTest/ntgl/legacy_test.zip" .) || true
-          # --- client: fabric client game test under a virtual display
-          timeout 1200 xvfb-run -a -s "-screen 0 1280x720x24" ./gradlew runClientGameTest --no-daemon -Dorg.gradle.console=plain > /tmp/ci/smoke/client-gradle.log 2>&1 || true
+          # --- client: fabric client game test under a virtual display.
+          # Minecraft 26.3 opens its window through SDL3, which is pickier about the software GL of a
+          # virtual display than GLFW was, so several display setups are tried until one renders.
+          sudo apt-get install -y -qq libegl1 libegl-mesa0 libgles2 libglx-mesa0 mesa-vulkan-drivers libvulkan1 > /dev/null 2>&1 || true
           d=build/run/clientGameTest
+          run_client() {
+            label="$1"; shift
+            rm -rf $d/screenshots $d/logs $d/crash-reports
+            log=/tmp/ci/smoke/client-gradle-$label.log
+            (env "$@" timeout 1200 xvfb-run -a -s "-screen 0 1280x720x24 +extension GLX +render -noreset" ./gradlew runClientGameTest --no-daemon -Dorg.gradle.console=plain > $log 2>&1 &)
+            for i in $(seq 1 400); do
+              sleep 3
+              pgrep -f runClientGameTest > /dev/null || break
+              # no window could be created: the game shows an error dialog and waits forever
+              if [ "$(grep -c 'Failed to create backend' $log)" -ge 2 ]; then sleep 5; pkill -f devlaunchinjector || true; pkill -f runClientGameTest || true; break; fi
+            done
+            sleep 3
+            cp $d/logs/latest.log /tmp/ci/smoke/client-latest-$label.log 2>/dev/null || true
+            ls $d/screenshots/*.png > /dev/null 2>&1
+          }
+          for attempt in "egl SDL_VIDEO_FORCE_EGL=1 LIBGL_ALWAYS_SOFTWARE=1" "glx LIBGL_ALWAYS_SOFTWARE=1 MESA_GL_VERSION_OVERRIDE=4.6" "plain SMOKE=1"; do
+            set -- $attempt
+            if run_client "$@"; then echo "client display setup: $1" > /tmp/ci/smoke/client-setup.txt; cp /tmp/ci/smoke/client-gradle-$1.log /tmp/ci/smoke/client-gradle.log; break; fi
+          done
           cp $d/logs/latest.log /tmp/ci/smoke/client-latest.log 2>/dev/null || true
           cp -r $d/crash-reports /tmp/ci/smoke/client-crash-reports 2>/dev/null || true
           cp $d/screenshots/*.png /tmp/ci/smoke/screenshots/ 2>/dev/null || true
           (ls -lR $d 2>&1 | head -300) > /tmp/ci/smoke/client-run-dir.txt || true
+          (vulkaninfo --summary 2>&1 | head -60; glxinfo -B 2>&1 | head -30) > /tmp/ci/smoke/gfx-info.txt || true
       - name: Dump game signatures
         if: always()
         shell: bash
