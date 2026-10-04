@@ -51,30 +51,30 @@ public class NtglSmokeTest implements FabricClientGameTest {
             });
 
             step("shoot", () -> {
-                context.getInput().holdMouse(0);
+                context.getInput().holdMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 context.waitTicks(3);
                 context.runOnClient(mc -> logInput(mc, "while shooting"));
                 context.takeScreenshot("03_pistol_shooting");
-                context.getInput().releaseMouse(0);
+                context.getInput().releaseMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 context.waitTicks(20);
                 context.runOnClient(mc -> logInput(mc, "after shooting"));
             });
 
             step("aim", () -> {
-                context.getInput().holdMouse(1);
+                context.getInput().holdMouse(InputConstants.MOUSE_BUTTON_RIGHT);
                 context.waitTicks(15);
                 context.runOnClient(mc -> logInput(mc, "while aiming"));
                 context.takeScreenshot("04_pistol_aiming");
-                context.getInput().releaseMouse(1);
+                context.getInput().releaseMouse(InputConstants.MOUSE_BUTTON_RIGHT);
                 context.waitTicks(10);
             });
 
             step("shoot wall", () -> {
                 server.runCommand("execute at @p run fill ^-3 ^-1 ^7 ^3 ^4 ^7 minecraft:smooth_stone");
                 context.waitTicks(10);
-                context.getInput().holdMouse(0);
+                context.getInput().holdMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 var seen = watchEntities(context, 12);
-                context.getInput().releaseMouse(0);
+                context.getInput().releaseMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 context.takeScreenshot("05_wall_hit");
                 log("entities seen while shooting the wall: " + seen);
                 context.runOnClient(mc -> logInput(mc, "after shooting the wall"));
@@ -84,9 +84,9 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 server.runCommand("gamemode survival @a");
                 context.waitTicks(5);
                 context.runOnClient(mc -> logInput(mc, "survival: before shooting"));
-                context.getInput().holdMouse(0);
+                context.getInput().holdMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 context.waitTicks(12);
-                context.getInput().releaseMouse(0);
+                context.getInput().releaseMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 context.waitTicks(10);
                 context.runOnClient(mc -> logInput(mc, "survival: after shooting"));
                 server.runCommand("gamemode creative @a");
@@ -97,9 +97,9 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 server.runCommand("execute at @p run summon minecraft:zombie ^ ^ ^3 {NoAI:1b,PersistenceRequired:1b,Rotation:[180f,0f]}");
                 context.waitTicks(10);
                 context.takeScreenshot("06_zombie_before");
-                context.getInput().holdMouse(0);
+                context.getInput().holdMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 var seen = watchEntities(context, 40);
-                context.getInput().releaseMouse(0);
+                context.getInput().releaseMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 context.takeScreenshot("07_zombie_after");
                 log("entities seen while shooting the zombie: " + seen);
                 server.runOnServer(minecraftServer -> {
@@ -115,9 +115,9 @@ public class NtglSmokeTest implements FabricClientGameTest {
             step("grenade throw", () -> {
                 hold(context, server, "grenade");
                 context.waitTicks(10);
-                context.getInput().holdMouse(0);
+                context.getInput().holdMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 context.waitTicks(25);
-                context.getInput().releaseMouse(0);
+                context.getInput().releaseMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 var seen = watchEntities(context, 8);
                 context.takeScreenshot("08_grenade_thrown");
                 seen.addAll(watchEntities(context, 80));
@@ -153,10 +153,10 @@ public class NtglSmokeTest implements FabricClientGameTest {
                     server.runCommand("execute at @p run summon minecraft:zombie ^ ^ ^4 {NoAI:1b,PersistenceRequired:1b,Health:4f}");
                     context.waitTicks(5);
                     context.runOnClient(mc -> logInput(mc, weapon + ": before attack"));
-                    context.getInput().holdMouse(0);
+                    context.getInput().holdMouse(InputConstants.MOUSE_BUTTON_LEFT);
                     var seen = watchEntities(context, 30);
                     context.takeScreenshot("11_" + weapon + "_attack");
-                    context.getInput().releaseMouse(0);
+                    context.getInput().releaseMouse(InputConstants.MOUSE_BUTTON_LEFT);
                     seen.addAll(watchEntities(context, 60));
                     context.takeScreenshot("12_" + weapon + "_after");
                     log(weapon + ": entities seen " + seen);
@@ -239,9 +239,9 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 dedicated.runCommand("execute at @p run fill ^-3 ^-1 ^7 ^3 ^4 ^7 minecraft:smooth_stone");
                 dedicated.runCommand("execute at @p run summon minecraft:zombie ^ ^ ^3 {NoAI:1b,PersistenceRequired:1b}");
                 context.waitTicks(10);
-                context.getInput().holdMouse(0);
+                context.getInput().holdMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 var seen = watchEntities(context, 30);
-                context.getInput().releaseMouse(0);
+                context.getInput().releaseMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 context.takeScreenshot("40_dedicated_shooting");
                 log("dedicated: entities seen while shooting: " + seen);
                 dedicated.runCommand("kill @e[type=!minecraft:player]");
@@ -276,9 +276,9 @@ public class NtglSmokeTest implements FabricClientGameTest {
             step("dedicated grenade", () -> {
                 hold(context, dedicated, "grenade");
                 context.waitTicks(10);
-                context.getInput().holdMouse(0);
+                context.getInput().holdMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 context.waitTicks(25);
-                context.getInput().releaseMouse(0);
+                context.getInput().releaseMouse(InputConstants.MOUSE_BUTTON_LEFT);
                 var seen = watchEntities(context, 90);
                 context.takeScreenshot("43_dedicated_grenade");
                 log("dedicated: entities seen after throwing the grenade: " + seen);

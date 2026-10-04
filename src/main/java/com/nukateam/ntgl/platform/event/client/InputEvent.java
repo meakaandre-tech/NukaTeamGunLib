@@ -9,7 +9,7 @@ import net.minecraft.world.InteractionHand;
  * Input events, raised from MinecraftMixin and MouseHandlerMixin. Stand-in for NeoForge's InputEvent.
  */
 public abstract class InputEvent extends Event {
-    /** Fired after a mouse button was pressed or released (GLFW button and action codes). */
+    /** Fired after a mouse button was pressed or released (InputConstants button and action codes; SDL numbering since 26.3). */
     public static abstract class MouseButton extends InputEvent {
         private final int button;
         private final int action;
