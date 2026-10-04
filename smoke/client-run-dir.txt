@@ -1,0 +1,300 @@
+build/run/clientGameTest:
+total 80
+-rw-r--r-- 1 runner runner    2 Oct  4 10:09 banned-ips.json
+-rw-r--r-- 1 runner runner    2 Oct  4 10:09 banned-players.json
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:06 config
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:06 data
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:06 downloads
+-rw-r--r-- 1 runner runner  112 Oct  4 10:04 eula.txt
+drwxr-xr-x 3 runner runner 4096 Oct  4 10:06 logs
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:06 mods
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:06 ntgl
+-rw-r--r-- 1 runner runner    2 Oct  4 10:09 ops.json
+-rw-r--r-- 1 runner runner 6239 Oct  4 10:09 options.txt
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:06 resourcepacks
+drwxr-xr-x 3 runner runner 4096 Oct  4 10:09 saves
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:09 screenshots
+-rw-r--r-- 1 runner runner 1794 Oct  4 10:09 server.properties
+-rw------- 1 runner runner   19 Oct  4 10:09 servers.dat
+-rw-r--r-- 1 runner runner  106 Oct  4 10:09 usercache.json
+-rw-r--r-- 1 runner runner   85 Oct  4 10:09 whitelist.json
+drwxr-xr-x 6 runner runner 4096 Oct  4 10:09 world
+
+build/run/clientGameTest/config:
+total 12
+-rw-r--r-- 1 runner runner 1057 Oct  4 10:06 ntgl-client.json
+-rw-r--r-- 1 runner runner 1426 Oct  4 10:06 ntgl-common.json
+-rw-r--r-- 1 runner runner  339 Oct  4 10:06 ntgl-server.json
+
+build/run/clientGameTest/data:
+total 4
+-rw-r--r-- 1 runner runner 13 Oct  4 10:06 fabric_default_resource_packs.json
+
+build/run/clientGameTest/downloads:
+total 0
+-rw-r--r-- 1 runner runner 0 Oct  4 10:06 log.json
+
+build/run/clientGameTest/logs:
+total 1852
+-rw-r--r-- 1 runner runner 1790986 Oct  4 10:09 debug.log
+-rw-r--r-- 1 runner runner   97668 Oct  4 10:09 latest.log
+drwxr-xr-x 2 runner runner    4096 Oct  4 10:06 telemetry
+
+build/run/clientGameTest/logs/telemetry:
+total 0
+
+build/run/clientGameTest/mods:
+total 0
+
+build/run/clientGameTest/ntgl:
+total 48
+-rw-r--r-- 1 runner runner 46985 Oct  4 10:06 legacy_test.zip
+
+build/run/clientGameTest/resourcepacks:
+total 0
+
+build/run/clientGameTest/saves:
+total 4
+drwxr-xr-x 6 runner runner 4096 Oct  4 10:09 New World
+
+build/run/clientGameTest/saves/New World:
+total 36
+drwxr-xr-x 4 runner runner 4096 Oct  4 10:07 data
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:07 datapacks
+drwxr-xr-x 3 runner runner 4096 Oct  4 10:07 dimensions
+-rw-r--r-- 1 runner runner 4956 Oct  4 10:07 icon.png
+-rw------- 1 runner runner  498 Oct  4 10:09 level.dat
+-rw------- 1 runner runner  497 Oct  4 10:07 level.dat_old
+drwxr-xr-x 5 runner runner 4096 Oct  4 10:09 players
+-rw-r--r-- 1 runner runner    3 Oct  4 10:07 session.lock
+
+build/run/clientGameTest/saves/New World/data:
+total 8
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:07 fabric
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:07 minecraft
+
+build/run/clientGameTest/saves/New World/data/fabric:
+total 4
+-rw-r--r-- 1 runner runner 637 Oct  4 10:07 registry_entries.dat
+
+build/run/clientGameTest/saves/New World/data/minecraft:
+total 36
+-rw-r--r-- 1 runner runner  48 Oct  4 10:07 custom_boss_events.dat
+-rw-r--r-- 1 runner runner 820 Oct  4 10:07 game_rules.dat
+-rw-r--r-- 1 runner runner 128 Oct  4 10:09 random_sequences.dat
+-rw-r--r-- 1 runner runner  59 Oct  4 10:07 scheduled_events.dat
+-rw-r--r-- 1 runner runner  48 Oct  4 10:07 scoreboard.dat
+-rw-r--r-- 1 runner runner  64 Oct  4 10:07 stopwatches.dat
+-rw-r--r-- 1 runner runner 107 Oct  4 10:09 weather.dat
+-rw-r--r-- 1 runner runner 103 Oct  4 10:09 world_clocks.dat
+-rw-r--r-- 1 runner runner 345 Oct  4 10:07 world_gen_settings.dat
+
+build/run/clientGameTest/saves/New World/datapacks:
+total 0
+
+build/run/clientGameTest/saves/New World/dimensions:
+total 4
+drwxr-xr-x 5 runner runner 4096 Oct  4 10:07 minecraft
+
+build/run/clientGameTest/saves/New World/dimensions/minecraft:
+total 12
+drwxr-xr-x 5 runner runner 4096 Oct  4 10:09 overworld
+drwxr-xr-x 3 runner runner 4096 Oct  4 10:07 the_end
+drwxr-xr-x 3 runner runner 4096 Oct  4 10:07 the_nether
+
+build/run/clientGameTest/saves/New World/dimensions/minecraft/overworld:
+total 12
+drwxr-xr-x 3 runner runner 4096 Oct  4 10:07 data
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:09 entities
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:07 region
+
+build/run/clientGameTest/saves/New World/dimensions/minecraft/overworld/data:
+total 4
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:07 minecraft
+
+build/run/clientGameTest/saves/New World/dimensions/minecraft/overworld/data/minecraft:
+total 12
+-rw-r--r-- 1 runner runner  48 Oct  4 10:09 chunk_tickets.dat
+-rw-r--r-- 1 runner runner  74 Oct  4 10:09 raids.dat
+-rw-r--r-- 1 runner runner 169 Oct  4 10:07 world_border.dat
+
+build/run/clientGameTest/saves/New World/dimensions/minecraft/overworld/entities:
+total 12
+-rw-r--r-- 1 runner runner 12288 Oct  4 10:09 r.0.0.mca
+
+build/run/clientGameTest/saves/New World/dimensions/minecraft/overworld/region:
+total 5508
+-rw-r--r-- 1 runner runner 1335296 Oct  4 10:09 r.-1.-1.mca
+-rw-r--r-- 1 runner runner 1409024 Oct  4 10:09 r.-1.0.mca
+-rw-r--r-- 1 runner runner 1409024 Oct  4 10:09 r.0.-1.mca
+-rw-r--r-- 1 runner runner 1486848 Oct  4 10:09 r.0.0.mca
+
+build/run/clientGameTest/saves/New World/dimensions/minecraft/the_end:
+total 4
+drwxr-xr-x 3 runner runner 4096 Oct  4 10:07 data
+
+build/run/clientGameTest/saves/New World/dimensions/minecraft/the_end/data:
+total 4
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:07 minecraft
+
+build/run/clientGameTest/saves/New World/dimensions/minecraft/the_end/data/minecraft:
+total 16
+-rw-r--r-- 1 runner runner  48 Oct  4 10:09 chunk_tickets.dat
+-rw-r--r-- 1 runner runner 160 Oct  4 10:07 ender_dragon_fight.dat
+-rw-r--r-- 1 runner runner  74 Oct  4 10:09 raids.dat
+-rw-r--r-- 1 runner runner 169 Oct  4 10:07 world_border.dat
+
+build/run/clientGameTest/saves/New World/dimensions/minecraft/the_nether:
+total 4
+drwxr-xr-x 3 runner runner 4096 Oct  4 10:07 data
+
+build/run/clientGameTest/saves/New World/dimensions/minecraft/the_nether/data:
+total 4
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:07 minecraft
+
+build/run/clientGameTest/saves/New World/dimensions/minecraft/the_nether/data/minecraft:
+total 12
+-rw-r--r-- 1 runner runner  48 Oct  4 10:09 chunk_tickets.dat
+-rw-r--r-- 1 runner runner  74 Oct  4 10:09 raids.dat
+-rw-r--r-- 1 runner runner 169 Oct  4 10:07 world_border.dat
+
+build/run/clientGameTest/saves/New World/players:
+total 12
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:09 advancements
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:09 data
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:09 stats
+
+build/run/clientGameTest/saves/New World/players/advancements:
+total 4
+-rw-r--r-- 1 runner runner 740 Oct  4 10:09 2654e3c3-150d-3857-a426-0b141796a4e0.json
+
+build/run/clientGameTest/saves/New World/players/data:
+total 4
+-rw------- 1 runner runner 973 Oct  4 10:09 2654e3c3-150d-3857-a426-0b141796a4e0.dat
+
+build/run/clientGameTest/saves/New World/players/stats:
+total 4
+-rw-r--r-- 1 runner runner 677 Oct  4 10:09 2654e3c3-150d-3857-a426-0b141796a4e0.json
+
+build/run/clientGameTest/screenshots:
+total 10980
+-rw-r--r-- 1 runner runner 259815 Oct  4 10:07 0000_00_sound_options.png
+-rw-r--r-- 1 runner runner 451287 Oct  4 10:07 0001_01_pistol_first_person.png
+-rw-r--r-- 1 runner runner 437344 Oct  4 10:07 0002_02_pistol_reloading.png
+-rw-r--r-- 1 runner runner 393987 Oct  4 10:07 0003_03_pistol_shooting.png
+-rw-r--r-- 1 runner runner 385691 Oct  4 10:07 0004_04_pistol_aiming.png
+-rw-r--r-- 1 runner runner 387574 Oct  4 10:07 0005_05_wall_hit.png
+-rw-r--r-- 1 runner runner 365161 Oct  4 10:07 0006_06_zombie_before.png
+-rw-r--r-- 1 runner runner 371980 Oct  4 10:07 0007_07_zombie_after.png
+-rw-r--r-- 1 runner runner 381426 Oct  4 10:07 0008_08_grenade_thrown.png
+-rw-r--r-- 1 runner runner 391417 Oct  4 10:07 0009_09_grenade_after.png
+-rw-r--r-- 1 runner runner 438770 Oct  4 10:07 0010_05_pistol_third_person_back.png
+-rw-r--r-- 1 runner runner 414584 Oct  4 10:07 0011_06_pistol_third_person_front.png
+-rw-r--r-- 1 runner runner 333751 Oct  4 10:07 0012_10_shotgun_first_person.png
+-rw-r--r-- 1 runner runner 365194 Oct  4 10:07 0013_11_shotgun_attack.png
+-rw-r--r-- 1 runner runner 368218 Oct  4 10:07 0014_12_shotgun_after.png
+-rw-r--r-- 1 runner runner 323985 Oct  4 10:07 0015_10_minigun_first_person.png
+-rw-r--r-- 1 runner runner 325301 Oct  4 10:07 0016_11_minigun_attack.png
+-rw-r--r-- 1 runner runner 325661 Oct  4 10:08 0017_12_minigun_after.png
+-rw-r--r-- 1 runner runner 344466 Oct  4 10:08 0018_10_fatman_first_person.png
+-rw-r--r-- 1 runner runner 342234 Oct  4 10:08 0019_11_fatman_attack.png
+-rw-r--r-- 1 runner runner 345654 Oct  4 10:08 0020_12_fatman_after.png
+-rw-r--r-- 1 runner runner 292736 Oct  4 10:08 0021_10_flamer_first_person.png
+-rw-r--r-- 1 runner runner 181661 Oct  4 10:08 0022_11_flamer_attack.png
+-rw-r--r-- 1 runner runner 178830 Oct  4 10:08 0023_12_flamer_after.png
+-rw-r--r-- 1 runner runner 171427 Oct  4 10:08 0024_10_hammer_first_person.png
+-rw-r--r-- 1 runner runner 169208 Oct  4 10:08 0025_11_hammer_attack.png
+-rw-r--r-- 1 runner runner 169559 Oct  4 10:08 0026_12_hammer_after.png
+-rw-r--r-- 1 runner runner 176439 Oct  4 10:08 0027_10_stun_grenade_first_person.png
+-rw-r--r-- 1 runner runner 172859 Oct  4 10:08 0028_11_stun_grenade_attack.png
+-rw-r--r-- 1 runner runner 173572 Oct  4 10:08 0029_12_stun_grenade_after.png
+-rw-r--r-- 1 runner runner 175704 Oct  4 10:08 0030_15_legacy_pack_gun.png
+-rw-r--r-- 1 runner runner 161715 Oct  4 10:08 0031_20_inventory.png
+-rw-r--r-- 1 runner runner  78427 Oct  4 10:08 0032_21_attachments_screen.png
+-rw-r--r-- 1 runner runner 179844 Oct  4 10:09 0033_30_dropped_item.png
+-rw-r--r-- 1 runner runner  79134 Oct  4 10:09 0034_22_workbench_screen.png
+-rw-r--r-- 1 runner runner 328195 Oct  4 10:09 0035_40_dedicated_shooting.png
+-rw-r--r-- 1 runner runner 181252 Oct  4 10:09 0036_41_dedicated_attachments_screen.png
+-rw-r--r-- 1 runner runner 134328 Oct  4 10:09 0037_42_dedicated_workbench_screen.png
+-rw-r--r-- 1 runner runner 391084 Oct  4 10:09 0038_43_dedicated_grenade.png
+
+build/run/clientGameTest/world:
+total 28
+drwxr-xr-x 4 runner runner 4096 Oct  4 10:09 data
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:09 datapacks
+drwxr-xr-x 3 runner runner 4096 Oct  4 10:09 dimensions
+-rw------- 1 runner runner  457 Oct  4 10:09 level.dat
+-rw------- 1 runner runner  453 Oct  4 10:09 level.dat_old
+drwxr-xr-x 5 runner runner 4096 Oct  4 10:09 players
+-rw-r--r-- 1 runner runner    3 Oct  4 10:09 session.lock
+
+build/run/clientGameTest/world/data:
+total 8
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:09 fabric
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:09 minecraft
+
+build/run/clientGameTest/world/data/fabric:
+total 4
+-rw-r--r-- 1 runner runner 637 Oct  4 10:09 registry_entries.dat
+
+build/run/clientGameTest/world/data/minecraft:
+total 36
+-rw-r--r-- 1 runner runner  48 Oct  4 10:09 custom_boss_events.dat
+-rw-r--r-- 1 runner runner 820 Oct  4 10:09 game_rules.dat
+-rw-r--r-- 1 runner runner 127 Oct  4 10:09 random_sequences.dat
+-rw-r--r-- 1 runner runner  59 Oct  4 10:09 scheduled_events.dat
+-rw-r--r-- 1 runner runner  48 Oct  4 10:09 scoreboard.dat
+-rw-r--r-- 1 runner runner  64 Oct  4 10:09 stopwatches.dat
+-rw-r--r-- 1 runner runner 104 Oct  4 10:09 weather.dat
+-rw-r--r-- 1 runner runner 103 Oct  4 10:09 world_clocks.dat
+-rw-r--r-- 1 runner runner 345 Oct  4 10:09 world_gen_settings.dat
+
+build/run/clientGameTest/world/datapacks:
+total 0
+
+build/run/clientGameTest/world/dimensions:
+total 4
+drwxr-xr-x 5 runner runner 4096 Oct  4 10:09 minecraft
+
+build/run/clientGameTest/world/dimensions/minecraft:
+total 12
+drwxr-xr-x 5 runner runner 4096 Oct  4 10:09 overworld
+drwxr-xr-x 3 runner runner 4096 Oct  4 10:09 the_end
+drwxr-xr-x 3 runner runner 4096 Oct  4 10:09 the_nether
+
+build/run/clientGameTest/world/dimensions/minecraft/overworld:
+total 12
+drwxr-xr-x 3 runner runner 4096 Oct  4 10:09 data
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:09 entities
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:09 region
+
+build/run/clientGameTest/world/dimensions/minecraft/overworld/data:
+total 4
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:09 minecraft
+
+build/run/clientGameTest/world/dimensions/minecraft/overworld/data/minecraft:
+total 12
+-rw-r--r-- 1 runner runner  48 Oct  4 10:09 chunk_tickets.dat
+-rw-r--r-- 1 runner runner  73 Oct  4 10:09 raids.dat
+-rw-r--r-- 1 runner runner 169 Oct  4 10:09 world_border.dat
+
+build/run/clientGameTest/world/dimensions/minecraft/overworld/entities:
+total 12
+-rw-r--r-- 1 runner runner 12288 Oct  4 10:09 r.0.0.mca
+
+build/run/clientGameTest/world/dimensions/minecraft/overworld/region:
+total 8868
+-rw-r--r-- 1 runner runner 2174976 Oct  4 10:09 r.-1.-1.mca
+-rw-r--r-- 1 runner runner 2269184 Oct  4 10:09 r.-1.0.mca
+-rw-r--r-- 1 runner runner 2269184 Oct  4 10:09 r.0.-1.mca
+-rw-r--r-- 1 runner runner 2367488 Oct  4 10:09 r.0.0.mca
+
+build/run/clientGameTest/world/dimensions/minecraft/the_end:
+total 4
+drwxr-xr-x 3 runner runner 4096 Oct  4 10:09 data
+
+build/run/clientGameTest/world/dimensions/minecraft/the_end/data:
+total 4
+drwxr-xr-x 2 runner runner 4096 Oct  4 10:09 minecraft
+
+build/run/clientGameTest/world/dimensions/minecraft/the_end/data/minecraft:

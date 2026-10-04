@@ -1,0 +1,2 @@
+/home/runner/work/_temp/f09743eb-6e37-4ee2-8020-db35cf8a2cb7.sh: line 61: vulkaninfo: command not found
+/home/runner/work/_temp/f09743eb-6e37-4ee2-8020-db35cf8a2cb7.sh: line 61: glxinfo: command not found
