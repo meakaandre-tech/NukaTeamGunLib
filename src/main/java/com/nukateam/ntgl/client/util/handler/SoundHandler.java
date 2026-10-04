@@ -121,7 +121,7 @@ public class SoundHandler {
 
         // Reduce volume to full value when duration is above threshold
         // When below threshold, fade to original sound level as duration approaches 0
-        event.getSound().resolve(Minecraft.getInstance().getSoundManager());
+        event.getSound().getOrResolve(Minecraft.getInstance().getSoundManager());
         event.setSound(new SoundMuted(event.getSound(), duration, isStunGrenade));
     }
 
@@ -164,8 +164,14 @@ public class SoundHandler {
 
         @Override
         @Nullable
-        public WeighedSoundEvents resolve(net.minecraft.client.sounds.SoundManager handler) {
-            return this.parent.resolve(handler);
+        public WeighedSoundEvents getOrResolve(net.minecraft.client.sounds.SoundManager handler) {
+            return this.parent.getOrResolve(handler);
+        }
+
+        @Override
+        @Nullable
+        public WeighedSoundEvents getSoundEvent() {
+            return this.parent.getSoundEvent();
         }
 
         @Override

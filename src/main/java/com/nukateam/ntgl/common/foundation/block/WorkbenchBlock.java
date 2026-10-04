@@ -72,9 +72,4 @@ public class WorkbenchBlock extends BaseEntityBlock {
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new WorkbenchBlockEntity(ModTileEntities.WORKBENCH.get(), pos, state);
     }
-
-    @Override
-    protected MapCodec<? extends WorkbenchBlock> codec() {
-        return simpleCodec(WorkbenchBlock::new);
-    }
 }

@@ -509,7 +509,7 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
         onContact(hitVec);
         handlePierce(HitTarget.ENTITY);
 
-        entity.invulnerableTime = 0;
+        entity.setInvulnerableTime(0);
     }
 
     private BlockPos hitBlockpos = BlockPos.ZERO;

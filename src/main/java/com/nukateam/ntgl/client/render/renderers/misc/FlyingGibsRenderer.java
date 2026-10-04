@@ -47,7 +47,7 @@ public class FlyingGibsRenderer extends LegacyEntityRenderer<FlyingGib> {
                     } catch (RuntimeException e) {
                         e.printStackTrace();
                     }
-                    poseStack.mulPose(Axis.ZP.rotationDegrees(180));
+                    poseStack.rotate(Axis.ZP.rotationDegrees(180));
                 }
 
                 if (data.texture == null) {
@@ -108,9 +108,9 @@ public class FlyingGibsRenderer extends LegacyEntityRenderer<FlyingGib> {
                         break;
 
                     case GORE:
-                        poseStack.mulPose(Axis.XP.rotationDegrees(prog * (float) flyingGib.rotationAxis.x));
-                        poseStack.mulPose(Axis.YP.rotationDegrees(prog * (float) flyingGib.rotationAxis.y));
-                        poseStack.mulPose(Axis.ZP.rotationDegrees(prog * (float) flyingGib.rotationAxis.z));
+                        poseStack.rotate(Axis.XP.rotationDegrees(prog * (float) flyingGib.rotationAxis.x));
+                        poseStack.rotate(Axis.YP.rotationDegrees(prog * (float) flyingGib.rotationAxis.y));
+                        poseStack.rotate(Axis.ZP.rotationDegrees(prog * (float) flyingGib.rotationAxis.z));
                         break;
                 }
 

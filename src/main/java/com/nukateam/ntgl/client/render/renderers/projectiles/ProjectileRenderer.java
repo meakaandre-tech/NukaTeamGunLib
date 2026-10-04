@@ -55,13 +55,13 @@ public class ProjectileRenderer extends LegacyEntityRenderer<ProjectileEntity> {
         var item = entity.getItem();
 
         if (!resolveItem(item, ItemDisplayContext.GROUND, entity).usesBlockLight()) {
-            poseStack.mulPose(cameraState.orientation);
-            poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+            poseStack.rotate(cameraState.orientation);
+            poseStack.rotate(Axis.YP.rotationDegrees(180.0F));
             renderItem(item, ItemDisplayContext.GROUND, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, entity);
         } else {
-            poseStack.mulPose(Axis.YP.rotationDegrees(180F));
-            poseStack.mulPose(Axis.YP.rotationDegrees(entityYaw));
-            poseStack.mulPose(Axis.XP.rotationDegrees(entity.getXRot()));
+            poseStack.rotate(Axis.YP.rotationDegrees(180F));
+            poseStack.rotate(Axis.YP.rotationDegrees(entityYaw));
+            poseStack.rotate(Axis.XP.rotationDegrees(entity.getXRot()));
             renderItem(item, ItemDisplayContext.NONE, light, OverlayTexture.NO_OVERLAY, poseStack, renderTypeBuffer, entity);
         }
 

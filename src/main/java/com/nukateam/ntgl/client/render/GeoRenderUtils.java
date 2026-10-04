@@ -39,9 +39,9 @@ public class GeoRenderUtils {
         poseStack.translate(bone.pivotX() / 16f, bone.pivotY() / 16f, bone.pivotZ() / 16f);
 
         if (snapshot != null) {
-            poseStack.mulPose(Axis.XP.rotationDegrees(snapshot.getRotX()));
-            poseStack.mulPose(Axis.YP.rotationDegrees(snapshot.getRotY()));
-            poseStack.mulPose(Axis.ZP.rotationDegrees(snapshot.getRotZ()));
+            poseStack.rotate(Axis.XP.rotationDegrees(snapshot.getRotX()));
+            poseStack.rotate(Axis.YP.rotationDegrees(snapshot.getRotY()));
+            poseStack.rotate(Axis.ZP.rotationDegrees(snapshot.getRotZ()));
         }
     }
 

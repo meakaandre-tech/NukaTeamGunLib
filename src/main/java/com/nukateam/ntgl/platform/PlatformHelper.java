@@ -4,7 +4,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.FuelValues;
 
 import java.nio.file.Path;
 
@@ -14,7 +13,6 @@ import java.nio.file.Path;
  */
 public final class PlatformHelper {
     private static MinecraftServer server;
-    private static FuelValues fuelValues;
 
     private PlatformHelper() {
     }
@@ -42,21 +40,42 @@ public final class PlatformHelper {
 
     public static void setServer(MinecraftServer current) {
         server = current;
-        if (current != null) {
-            fuelValues = current.fuelValues();
-        }
     }
 
-    /** Called on the client when a level is joined, so burn times are known on remote servers too. */
-    public static void setFuelValues(FuelValues values) {
-        if (values != null) {
-            fuelValues = values;
-        }
-    }
-
-    /** Furnace burn time of the stack in ticks; 0 while no world is loaded. Replaces ItemStack#getBurnTime. */
+    /**
+     * Furnace burn time of the stack in ticks. Replaces ItemStack#getBurnTime.
+     * <p>
+     * 26.3: burn times are the item's cooking_fuel component. Vanilla values are references into a
+     * server registry, so they resolve to the real number wherever a server runs in this JVM
+     * (dedicated server, singleplayer). A client on a remote server only knows that the item is a
+     * fuel and gets {@link #UNKNOWN_BURN_TIME}.
+     */
     public static int getBurnTime(ItemStack stack) {
-        if (stack.isEmpty() || fuelValues == null) return 0;
-        return fuelValues.burnDuration(stack);
+        if (stack.isEmpty()) return 0;
+        var fuel = stack.get(net.minecraft.core.component.DataComponents.COOKING_FUEL);
+        if (fuel == null) return 0;
+
+        var current = server;
+        if (current != null) {
+            try {
+                var level = current.overworld();
+                if (level != null) {
+                    var params = new net.minecraft.world.level.storage.loot.LootParams.Builder(level)
+                            .create(net.minecraft.world.level.storage.loot.parameters.LootContextParamSets.EMPTY);
+                    var context = new net.minecraft.world.level.storage.loot.LootContext.Builder(params).create(java.util.Optional.empty());
+                    return Math.max(0, fuel.burnTime().get(context, 0));
+                }
+            } catch (RuntimeException e) {
+                // registries not ready (server starting or stopping); fall through
+            }
+        }
+
+        if (fuel.burnTime() instanceof net.minecraft.world.level.storage.loot.providers.number.ints.ResolvableInt.Constant(int value)) {
+            return Math.max(0, value);
+        }
+        return UNKNOWN_BURN_TIME;
     }
+
+    /** Burn time reported for a fuel whose real value only the server can compute (one smelted item). */
+    public static final int UNKNOWN_BURN_TIME = 200;
 }

@@ -23,7 +23,6 @@ import com.nukateam.ntgl.common.foundation.init.*;
 import com.nukateam.ntgl.Ntgl;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.Identifier;
@@ -246,7 +245,7 @@ public class WeaponRenderingHandler {
                 /* Applies equip progress animation translations */
                 float equipProgress = this.getEquipProgress(event.getPartialTick());
                 poseStack.translate(0, equipProgress * -0.6F, 0);
-                poseStack.mulPose(Axis.XP.rotationDegrees(equipProgress * -50F));
+                poseStack.rotate(Axis.XP.rotationDegrees(equipProgress * -50F));
 
                 poseStack.translate(0.15 * offset, -1.0, -1.3);//Jetug
 
@@ -354,8 +353,8 @@ public class WeaponRenderingHandler {
             float bobbing = cameraEntity.bob;
 
             /* Reverses the original bobbing rotations and translations so it can be controlled */
-            poseStack.mulPose(Axis.XP.rotationDegrees(-(Math.abs(Mth.cos(distanceWalked * (float) Math.PI - 0.2F) * bobbing) * 5.0F)));
-            poseStack.mulPose(Axis.ZP.rotationDegrees(-(Mth.sin(distanceWalked * (float) Math.PI) * bobbing * 3.0F)));
+            poseStack.rotate(Axis.XP.rotationDegrees(-(Math.abs(Mth.cos(distanceWalked * (float) Math.PI - 0.2F) * bobbing) * 5.0F)));
+            poseStack.rotate(Axis.ZP.rotationDegrees(-(Mth.sin(distanceWalked * (float) Math.PI) * bobbing * 3.0F)));
             poseStack.translate(-(Mth.sin(distanceWalked * (float) Math.PI) * bobbing * 0.5F), -(-Math.abs(Mth.cos(distanceWalked * (float) Math.PI) * bobbing)), 0.0D);
 
             /* Slows down the bob by half */
@@ -365,8 +364,8 @@ public class WeaponRenderingHandler {
             /* The new controlled bobbing */
             double invertZoomProgress = 1.0 - AimingHandler.get().getNormalisedAdsProgress() * this.sprintIntensity;
             //poseStack.translate((double) (Mth.sin(distanceWalked * (float) Math.PI) * cameraYaw * 0.5F) * invertZoomProgress, (double) (-Math.abs(Mth.cos(distanceWalked * (float) Math.PI) * cameraYaw)) * invertZoomProgress, 0.0D);
-            poseStack.mulPose(Axis.ZP.rotationDegrees((Mth.sin(distanceWalked * (float) Math.PI) * bobbing * 3.0F) * (float) invertZoomProgress));
-            poseStack.mulPose(Axis.XP.rotationDegrees((Math.abs(Mth.cos(distanceWalked * (float) Math.PI - 0.2F) * bobbing) * 5.0F) * (float) invertZoomProgress));
+            poseStack.rotate(Axis.ZP.rotationDegrees((Mth.sin(distanceWalked * (float) Math.PI) * bobbing * 3.0F) * (float) invertZoomProgress));
+            poseStack.rotate(Axis.XP.rotationDegrees((Math.abs(Mth.cos(distanceWalked * (float) Math.PI - 0.2F) * bobbing) * 5.0F) * (float) invertZoomProgress));
         }
     }
 
@@ -380,9 +379,9 @@ public class WeaponRenderingHandler {
         poseStack.translate(0, -0.25, 0.25);
         var aiming = (float) Math.sin(Math.toRadians(AimingHandler.get().getNormalisedAdsProgress() * 180F));
         aiming = getSightAnimations(heldItem).getAimTransformCurve().apply(aiming);
-        poseStack.mulPose(Axis.ZP.rotationDegrees(aiming * 10F * offset));
-        poseStack.mulPose(Axis.XP.rotationDegrees(aiming * 5F));
-        poseStack.mulPose(Axis.YP.rotationDegrees(aiming * 5F * offset));
+        poseStack.rotate(Axis.ZP.rotationDegrees(aiming * 10F * offset));
+        poseStack.rotate(Axis.XP.rotationDegrees(aiming * 5F));
+        poseStack.rotate(Axis.YP.rotationDegrees(aiming * 5F * offset));
         poseStack.translate(0, 0.25, -0.25);
         poseStack.translate(-x * offset, -y, -z);
 //        }
@@ -394,20 +393,20 @@ public class WeaponRenderingHandler {
 
             double zOffset = WeaponModifierHelper.getGripType(new WeaponData(heldItem, player)).getHeldAnimation().getFallSwayZOffset();
             poseStack.translate(0, -0.25, zOffset);
-            poseStack.mulPose(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, this.prevFallSway, this.fallSway)));
+            poseStack.rotate(Axis.XP.rotationDegrees(Mth.lerp(partialTicks, this.prevFallSway, this.fallSway)));
             poseStack.translate(0, 0.25, -zOffset);
 
             float bobPitch = Mth.rotLerp(partialTicks, player.xBobO, player.xBob);
             float headPitch = Mth.rotLerp(partialTicks, player.xRotO, player.getXRot());
             float swayPitch = headPitch - bobPitch;
             swayPitch *= 1.0 - 0.5 * AimingHandler.get().getNormalisedAdsProgress();
-            poseStack.mulPose(Config.CLIENT.display.swayType.get().getPitchRotation().rotationDegrees(swayPitch * Config.CLIENT.display.swaySensitivity.get().floatValue()));
+            poseStack.rotate(Config.CLIENT.display.swayType.get().getPitchRotation().rotationDegrees(swayPitch * Config.CLIENT.display.swaySensitivity.get().floatValue()));
 
             float bobYaw = Mth.rotLerp(partialTicks, player.yBobO, player.yBob);
             float headYaw = Mth.rotLerp(partialTicks, player.yHeadRotO, player.yHeadRot);
             float swayYaw = headYaw - bobYaw;
             swayYaw *= 1.0 - 0.5 * AimingHandler.get().getNormalisedAdsProgress();
-            poseStack.mulPose(Config.CLIENT.display.swayType.get().getYawRotation().rotationDegrees(swayYaw * Config.CLIENT.display.swaySensitivity.get().floatValue()));
+            poseStack.rotate(Config.CLIENT.display.swayType.get().getYawRotation().rotationDegrees(swayYaw * Config.CLIENT.display.swaySensitivity.get().floatValue()));
 
             poseStack.translate(-translation.x(), -translation.y(), -translation.z());
         }
@@ -462,7 +461,7 @@ public class WeaponRenderingHandler {
             if (WeaponModifierHelper.isOneHanded(new WeaponData(stack, player))) {
                 double time = Mth.clamp((player.getTicksUsingItem() + partialTick), 0.0, 4.0) / 4.0;
                 poseStack.translate(0, 0.35 * time, 0);
-                poseStack.mulPose(Axis.XP.rotationDegrees(45F * (float) time));
+                poseStack.rotate(Axis.XP.rotationDegrees(45F * (float) time));
             }
         }
     }
@@ -500,8 +499,11 @@ public class WeaponRenderingHandler {
     }
 
     private float getEquipProgress(float partialTicks) {
-        ItemInHandRenderer firstPersonRenderer = Minecraft.getInstance().gameRenderer.itemInHandRenderer;
-        return 1.0F - Mth.lerp(partialTicks, firstPersonRenderer.oMainHandHeight, firstPersonRenderer.mainHandHeight);
+        var player = Minecraft.getInstance().player;
+        if (player == null) return 0.0F;
+        // 26.3: the equip animation state moved from ItemInHandRenderer to the local player
+        var hands = player.firstPersonHandsAndItems();
+        return 1.0F - Mth.lerp(partialTicks, hands.oMainHandHeight, hands.mainHandHeight);
     }
 
     private void updateImmersiveCamera() {

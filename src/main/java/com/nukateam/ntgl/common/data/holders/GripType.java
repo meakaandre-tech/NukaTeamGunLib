@@ -93,12 +93,12 @@ public class GripType extends ResourceHolder {
         if (entity.getItemBySlot(EquipmentSlot.CHEST).getItem() == Items.ELYTRA)
             return false;
 
-        poseStack.mulPose(Axis.YP.rotationDegrees(180F));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(180F));
+        poseStack.rotate(Axis.YP.rotationDegrees(180F));
+        poseStack.rotate(Axis.ZP.rotationDegrees(180F));
 
         if (entity.isCrouching()) {
             poseStack.translate(0 * 0.0625, -7 * 0.0625, -4 * 0.0625);
-            poseStack.mulPose(Axis.XP.rotationDegrees(30F));
+            poseStack.rotate(Axis.XP.rotationDegrees(30F));
         }
         else poseStack.translate(0 * 0.0625, -5 * 0.0625, -2 * 0.0625);
 
@@ -106,7 +106,7 @@ public class GripType extends ResourceHolder {
             poseStack.translate(0, 0, -1 * 0.0625);
         }
 
-        poseStack.mulPose(Axis.ZP.rotationDegrees(-45F));
+        poseStack.rotate(Axis.ZP.rotationDegrees(-45F));
         poseStack.scale(0.5F, 0.5F, 0.5F);
 
         return true;

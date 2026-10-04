@@ -5,6 +5,7 @@ import net.minecraft.SharedConstants;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackLocationInfo;
+import net.minecraft.server.packs.PackMetadataResources;
 import net.minecraft.server.packs.PackResources;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.metadata.MetadataSectionType;
@@ -188,13 +189,19 @@ public class LegacyGunPackResources implements PackResources {
 
     @Nullable
     @Override
-    @SuppressWarnings("unchecked")
     public <T> T getMetadataSection(MetadataSectionType<T> type) throws IOException {
+        return metadataSection(delegate, packType, type);
+    }
+
+    /** The pack's metadata section; packs without (or with an unreadable) pack.mcmeta get a generated one. */
+    @Nullable
+    @SuppressWarnings("unchecked")
+    static <T> T metadataSection(PackMetadataResources delegate, PackType packType, MetadataSectionType<T> type) {
         try {
             var section = delegate.getMetadataSection(type);
             if (section != null) return section;
         } catch (IOException | RuntimeException e) {
-            Ntgl.LOGGER.debug("Gun pack {}: unreadable pack.mcmeta section {}", packId(), type.name(), e);
+            Ntgl.LOGGER.debug("Gun pack {}: unreadable pack.mcmeta section {}", delegate.location().id(), type.name(), e);
         }
 
         if (type.name().equals(PackMetadataSection.CLIENT_TYPE.name())) {
@@ -203,6 +210,39 @@ public class LegacyGunPackResources implements PackResources {
         }
 
         return null;
+    }
+
+    /** Metadata-only view of a gun pack (Minecraft 26.3 reads the metadata before opening the resources). */
+    public static class Metadata implements PackMetadataResources {
+        private final PackMetadataResources delegate;
+        private final PackType packType;
+
+        public Metadata(PackMetadataResources delegate, PackType packType) {
+            this.delegate = delegate;
+            this.packType = packType;
+        }
+
+        @Override
+        public PackLocationInfo location() {
+            return delegate.location();
+        }
+
+        @Nullable
+        @Override
+        public IoSupplier<InputStream> getRootResource(String... path) {
+            return delegate.getRootResource(path);
+        }
+
+        @Nullable
+        @Override
+        public <T> T getMetadataSection(MetadataSectionType<T> type) {
+            return metadataSection(delegate, packType, type);
+        }
+
+        @Override
+        public void close() {
+            delegate.close();
+        }
     }
 
     @Override

@@ -76,10 +76,6 @@ public class NtglClient implements ClientModInitializer {
         ClientTickEvents.START_CLIENT_TICK.register(minecraft -> Ntgl.EVENT_BUS.post(new ClientTickEvent.Pre()));
         ClientTickEvents.END_CLIENT_TICK.register(minecraft -> Ntgl.EVENT_BUS.post(new ClientTickEvent.Post()));
 
-        ClientPlayConnectionEvents.JOIN.register((listener, sender, minecraft) -> {
-            if (minecraft.level != null)
-                PlatformHelper.setFuelValues(minecraft.level.fuelValues());
-        });
         ClientPlayConnectionEvents.DISCONNECT.register((listener, minecraft) ->
                 Ntgl.EVENT_BUS.post(new ClientPlayerNetworkEvent.LoggingOut()));
 

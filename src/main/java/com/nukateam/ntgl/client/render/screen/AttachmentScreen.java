@@ -25,7 +25,7 @@ import net.minecraft.resources.*;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.*;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 import java.util.*;
 
 import static com.nukateam.ntgl.client.util.helpers.render.ModelRenderUtil.*;
@@ -289,9 +289,9 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
         int startY = (this.height - this.imageHeight) / 2;
 
         if (isMouseWithin((int) mouseX, (int) mouseY, startX + 26, startY + 17, 142, 70)) {
-            if (!this.mouseGrabbed && (button == GLFW.GLFW_MOUSE_BUTTON_LEFT || button == GLFW.GLFW_MOUSE_BUTTON_RIGHT)) {
+            if (!this.mouseGrabbed && (button == InputConstants.MOUSE_BUTTON_LEFT || button == InputConstants.MOUSE_BUTTON_RIGHT)) {
                 this.mouseGrabbed = true;
-                this.mouseGrabbedButton = button == GLFW.GLFW_MOUSE_BUTTON_RIGHT ? 1 : 0;
+                this.mouseGrabbedButton = button == InputConstants.MOUSE_BUTTON_RIGHT ? 1 : 0;
                 this.mouseClickedX = (int) mouseX;
                 this.mouseClickedY = (int) mouseY;
                 this.showHelp = false;
@@ -307,11 +307,11 @@ public class AttachmentScreen extends AbstractContainerScreen<AttachmentContaine
         double mouseY = event.y();
         int button = event.button();
         if (this.mouseGrabbed) {
-            if (this.mouseGrabbedButton == 0 && button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+            if (this.mouseGrabbedButton == 0 && button == InputConstants.MOUSE_BUTTON_LEFT) {
                 this.mouseGrabbed = false;
                 this.windowX += (mouseX - this.mouseClickedX - 1);
                 this.windowY += (mouseY - this.mouseClickedY);
-            } else if (mouseGrabbedButton == 1 && button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+            } else if (mouseGrabbedButton == 1 && button == InputConstants.MOUSE_BUTTON_RIGHT) {
                 this.mouseGrabbed = false;
                 this.windowRotationX += (mouseX - this.mouseClickedX);
                 this.windowRotationY -= (mouseY - this.mouseClickedY);

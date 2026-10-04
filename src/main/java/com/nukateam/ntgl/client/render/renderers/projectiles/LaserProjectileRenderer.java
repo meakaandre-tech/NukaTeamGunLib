@@ -36,7 +36,7 @@ public class LaserProjectileRenderer extends LegacyEntityRenderer<LaserProjectil
     }
 
     @Override
-    public boolean shouldRender(LaserProjectile livingEntity, Frustum pCamera, double pCamX, double pCamY, double pCamZ) {
+    public boolean shouldRender(LaserProjectile livingEntity, Frustum pCamera, double pCamX, double pCamY, double pCamZ, float partialTick) {
         return true;
     }
 
@@ -88,8 +88,8 @@ public class LaserProjectileRenderer extends LegacyEntityRenderer<LaserProjectil
 
         poseStack.pushPose();
         {
-            poseStack.mulPose(Axis.YP.rotationDegrees((((float) Math.PI / 2F) - xzPos) * (180F / (float) Math.PI)));
-            poseStack.mulPose(Axis.XP.rotationDegrees(yPos * (180F / (float) Math.PI)));
+            poseStack.rotate(Axis.YP.rotationDegrees((((float) Math.PI / 2F) - xzPos) * (180F / (float) Math.PI)));
+            poseStack.rotate(Axis.XP.rotationDegrees(yPos * (180F / (float) Math.PI)));
 
             poseStack.translate(side * offset.x, offset.y, offset.z);
             long gameTime = projectile.level().getGameTime();

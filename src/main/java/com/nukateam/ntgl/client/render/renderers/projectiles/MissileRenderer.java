@@ -27,9 +27,9 @@ public class MissileRenderer extends LegacyEntityRenderer<MissileEntity> {
         }
 
         poseStack.pushPose();
-        poseStack.mulPose(Axis.YP.rotationDegrees(180F));
-        poseStack.mulPose(Axis.YP.rotationDegrees(entityYaw));
-        poseStack.mulPose(Axis.XP.rotationDegrees(entity.getXRot() - 90));
+        poseStack.rotate(Axis.YP.rotationDegrees(180F));
+        poseStack.rotate(Axis.YP.rotationDegrees(entityYaw));
+        poseStack.rotate(Axis.XP.rotationDegrees(entity.getXRot() - 90));
 
         renderItem(entity.getItem(), ItemDisplayContext.NONE, light, 15728880, poseStack, renderTypeBuffer, entity);
 

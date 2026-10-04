@@ -126,7 +126,7 @@ public class MiniGunPose extends WeaponPose {
 //        poseStack.translate(-0.5, 0.37, -1.25);
 //        poseStack.translate(X * 0.0625 , Y * 0.0625, Z * 0.0625);
         poseStack.translate(-7 * 0.0625 , 3 * 0.0625, -20 * 0.0625);
-        poseStack.mulPose(Axis.XP.rotationDegrees(67));
+        poseStack.rotate(Axis.XP.rotationDegrees(67));
 
         super.applyHeldItemTransforms(entity, hand, aimProgress, poseStack);
 //        poseStack.mulPose(Axis.YP.rotationDegrees(Y));

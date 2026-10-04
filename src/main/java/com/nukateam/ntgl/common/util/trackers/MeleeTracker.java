@@ -227,7 +227,7 @@ public class MeleeTracker {
             ).normalize().scale(knockback);
 
             target.push(knockbackVec.x, knockbackVec.y + 0.2, knockbackVec.z);
-            target.hurtMarked = true;
+            target.syncVelocity = true;
         }
 
         private Vec3 findClosestPointOnHitbox(Vec3 start, Vec3 direction, LivingEntity target) {

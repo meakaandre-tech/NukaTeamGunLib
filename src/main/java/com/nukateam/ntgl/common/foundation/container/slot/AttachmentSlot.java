@@ -103,7 +103,7 @@ public class AttachmentSlot extends Slot {
                 var dropStack = new ItemStack(ammoItem, diff);
 
                 if (entity instanceof Player player && !player.addItem(dropStack)) {
-                    player.drop(dropStack, false);
+                    player.drop(dropStack, false, net.minecraft.util.Prediction.SERVER_ONLY);
                 }
             }
         }

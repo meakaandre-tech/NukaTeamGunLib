@@ -2,6 +2,8 @@ package com.nukateam.ntgl.mixin.ntgl.common;
 
 import com.nukateam.ntgl.common.foundation.item.WeaponItem;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.component.SwingAnimation;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -43,13 +45,13 @@ public class LivingEntityMixin {
     /**
      * Stand-in for NeoForge's IItemExtension.onEntitySwing: weapons suppress the vanilla arm swing.
      */
-    @Inject(method = "swing(Lnet/minecraft/world/InteractionHand;Z)V", at = @At("HEAD"), cancellable = true)
-    private void ntgl$onEntitySwing(InteractionHand hand, boolean updateSelf, CallbackInfo ci) {
+    @Inject(method = "swing(Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/component/SwingAnimation;Z)Z", at = @At("HEAD"), cancellable = true)
+    private void ntgl$onEntitySwing(InteractionHand hand, SwingAnimation animation, boolean updateSelf, CallbackInfoReturnable<Boolean> cir) {
         var self = (LivingEntity) (Object) this;
         var stack = self.getItemInHand(hand);
 
         if (!stack.isEmpty() && stack.getItem() instanceof WeaponItem weapon && weapon.onEntitySwing(stack, self, hand)) {
-            ci.cancel();
+            cir.setReturnValue(false);
         }
     }
 }

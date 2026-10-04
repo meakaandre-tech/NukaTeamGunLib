@@ -64,8 +64,8 @@ public class ItemInHandLayerMixin {
             poseStack.pushPose();
             {
                 ((ArmedModel) layer.getParentModel()).translateToHand(state, arm, poseStack);
-                poseStack.mulPose(Axis.XP.rotationDegrees(-90F));
-                poseStack.mulPose(Axis.YP.rotationDegrees(180F));
+                poseStack.rotate(Axis.XP.rotationDegrees(-90F));
+                poseStack.rotate(Axis.YP.rotationDegrees(180F));
                 WeaponRenderingHandler.get().applyWeaponScale(heldStack, poseStack);
                 var gripType = WeaponModifierHelper.getGripType(new WeaponData(heldStack, entity));
                 var deltaTicks = Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaTicks();

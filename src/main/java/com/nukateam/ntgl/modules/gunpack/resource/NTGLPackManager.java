@@ -95,13 +95,13 @@ public class NTGLPackManager {
             // serves packs made for older versions in the layout 26.x expects (see LegacyGunPackResources)
             Pack.ResourcesSupplier supplier = new Pack.ResourcesSupplier() {
                 @Override
-                public net.minecraft.server.packs.PackResources openPrimary(PackLocationInfo location) {
-                    return new LegacyGunPackResources(files.openPrimary(location), type);
+                public net.minecraft.server.packs.PackMetadataResources openMetadata(PackLocationInfo location) {
+                    return new LegacyGunPackResources.Metadata(files.openMetadata(location), type);
                 }
 
                 @Override
-                public net.minecraft.server.packs.PackResources openFull(PackLocationInfo location, Pack.Metadata metadata) {
-                    return new LegacyGunPackResources(files.openFull(location, metadata), type);
+                public java.util.stream.Stream<net.minecraft.server.packs.PackResources> openResources(PackLocationInfo location, Pack.Metadata metadata) {
+                    return files.openResources(location, metadata).map(resources -> new LegacyGunPackResources(resources, type));
                 }
             };
 

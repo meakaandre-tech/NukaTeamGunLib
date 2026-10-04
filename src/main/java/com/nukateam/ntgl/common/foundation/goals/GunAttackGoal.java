@@ -343,7 +343,7 @@ public class GunAttackGoal extends Goal {
 
         performRangedAttack(yaw, pitch, yawOffset, pitchOffset);
 
-        this.mob.swing(InteractionHand.MAIN_HAND);
+        this.mob.swing(InteractionHand.MAIN_HAND, this.mob.getMainHandItem().getAttackAnimation());
     }
 
     private void performRangedAttack(float yaw, float pitch, float yawOffset, float pitchOffset) {

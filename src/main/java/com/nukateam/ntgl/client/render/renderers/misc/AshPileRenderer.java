@@ -43,7 +43,7 @@ public class AshPileRenderer extends LegacyEntityRenderer<AshPile> {
         var alpha = getAlpha(entity);
         if (alpha <= 0) return;
 
-        poseStack.mulPose(Axis.YP.rotationDegrees(180f - entityYaw));
+        poseStack.rotate(Axis.YP.rotationDegrees(180f - entityYaw));
         poseStack.scale(alpha, alpha, alpha);
         geoRenderer.performRenderPass(entity, null, poseStack, collector, cameraState, light, partialTicks);
     }

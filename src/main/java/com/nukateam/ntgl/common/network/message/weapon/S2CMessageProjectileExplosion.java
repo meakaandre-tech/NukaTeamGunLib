@@ -45,14 +45,13 @@ public class S2CMessageProjectileExplosion implements CustomPacketPayload {
         NbtUtils.writeVec3(buffer, message.position);
         NbtUtils.writeVec3(buffer, message.knockback);
         buffer.writeNbt(message.config.serializeNBT(null));
-        buffer.writeCollection(message.toBlow, (buf, blockPos) -> {
-            int x = blockPos.getX() - Mth.floor(message.position.x);
-            int y = blockPos.getY() - Mth.floor(message.position.y);
-            int z = blockPos.getZ() - Mth.floor(message.position.z);
-            buf.writeByte(x);
-            buf.writeByte(y);
-            buf.writeByte(z);
-        });
+        // 26.3: FriendlyByteBuf lost writeCollection/readList; same wire format (count, then offsets)
+        buffer.writeVarInt(message.toBlow.size());
+        for (var blockPos : message.toBlow) {
+            buffer.writeByte(blockPos.getX() - Mth.floor(message.position.x));
+            buffer.writeByte(blockPos.getY() - Mth.floor(message.position.y));
+            buffer.writeByte(blockPos.getZ() - Mth.floor(message.position.z));
+        }
     }
 
     public static S2CMessageProjectileExplosion decode(FriendlyByteBuf buffer) {
@@ -62,12 +61,14 @@ public class S2CMessageProjectileExplosion implements CustomPacketPayload {
         int x = Mth.floor(position.x);
         int y = Mth.floor(position.y);
         int z = Mth.floor(position.z);
-        var toBlow = buffer.readList((p_178850_) -> {
-            int l  = p_178850_.readByte() + x;
-            int i1 = p_178850_.readByte() + y;
-            int j1 = p_178850_.readByte() + z;
-            return new BlockPos(l, i1, j1);
-        });
+        int count = buffer.readVarInt();
+        var toBlow = new java.util.ArrayList<BlockPos>(Math.min(count, 4096));
+        for (int i = 0; i < count; i++) {
+            int l  = buffer.readByte() + x;
+            int i1 = buffer.readByte() + y;
+            int j1 = buffer.readByte() + z;
+            toBlow.add(new BlockPos(l, i1, j1));
+        }
 
         return new S2CMessageProjectileExplosion(position, knockback, config, toBlow);
     }

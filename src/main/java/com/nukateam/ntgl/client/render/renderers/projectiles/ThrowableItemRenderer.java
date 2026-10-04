@@ -29,13 +29,13 @@ public class ThrowableItemRenderer extends LegacyEntityRenderer<ThrowableItemEnt
         poseStack.pushPose();
         {
             /* Makes the grenade face in the direction of travel */
-            poseStack.mulPose(Axis.YP.rotationDegrees(180F));
-            poseStack.mulPose(Axis.YP.rotationDegrees(entityYaw));
+            poseStack.rotate(Axis.YP.rotationDegrees(180F));
+            poseStack.rotate(Axis.YP.rotationDegrees(entityYaw));
 
             /* Offsets to the center of the grenade before applying rotation */
             var rotation = entity.prevRotation + (entity.rotation - entity.prevRotation) * partialTicks;
             poseStack.translate(0, 0.15, 0);
-            poseStack.mulPose(Axis.XP.rotationDegrees(-rotation));
+            poseStack.rotate(Axis.XP.rotationDegrees(-rotation));
             poseStack.translate(0, -0.15, 0);
 
             var scale = 1f;

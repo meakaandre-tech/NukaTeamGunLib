@@ -39,7 +39,7 @@ public class TeslaProjectileRenderer extends LegacyEntityRenderer<TeslaProjectil
     }
 
     @Override
-    public boolean shouldRender(TeslaProjectile livingEntity, Frustum pCamera, double pCamX, double pCamY, double pCamZ) {
+    public boolean shouldRender(TeslaProjectile livingEntity, Frustum pCamera, double pCamX, double pCamY, double pCamZ, float partialTick) {
         return true;
     }
 
@@ -87,8 +87,8 @@ public class TeslaProjectileRenderer extends LegacyEntityRenderer<TeslaProjectil
             var xzPos = (float) Math.atan2(pos.z, pos.x);
             var side = projectile.isRightHand() ? -1 : 1;
 
-            poseStack.mulPose(Axis.YP.rotationDegrees((((float) Math.PI / 2F) - xzPos) * (180F / (float) Math.PI)));
-            poseStack.mulPose(Axis.XP.rotationDegrees(yPos * (180F / (float) Math.PI)));
+            poseStack.rotate(Axis.YP.rotationDegrees((((float) Math.PI / 2F) - xzPos) * (180F / (float) Math.PI)));
+            poseStack.rotate(Axis.XP.rotationDegrees(yPos * (180F / (float) Math.PI)));
             if (!hasMuzzle) {
                 poseStack.translate(side * 0.25, 0, 0);
             }
@@ -106,12 +106,12 @@ public class TeslaProjectileRenderer extends LegacyEntityRenderer<TeslaProjectil
                 var offsetY = length * Math.cos(Math.abs(radiansX));
 
                 if(isVertical) {
-                    poseStack.mulPose(Axis.XP.rotationDegrees(angleX * flag));
+                    poseStack.rotate(Axis.XP.rotationDegrees(angleX * flag));
                     if (angleX < 0) offsetZ = -offsetZ;
                     poseStack.translate(0, 0, offsetZ / 2);
                 }
                 else {
-                    poseStack.mulPose(Axis.ZP.rotationDegrees(angleX * flag));
+                    poseStack.rotate(Axis.ZP.rotationDegrees(angleX * flag));
                     if(angleX > 0) offsetZ = -offsetZ;
                     poseStack.translate(offsetZ / 2, 0,  0);
                 }

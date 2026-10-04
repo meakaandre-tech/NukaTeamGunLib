@@ -7,7 +7,7 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.ClientGameTestContext;
 import net.fabricmc.fabric.api.client.gametest.v1.context.TestServerContext;
 import net.minecraft.client.CameraType;
 import net.minecraft.world.MenuProvider;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 /**
  * CI smoke test (not shipped): opens a singleplayer world, holds the example weapons, shoots, aims,
@@ -186,7 +186,7 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 context.getInput().pressKey(options -> options.keyInventory);
                 context.waitTicks(10);
                 context.takeScreenshot("20_inventory");
-                context.getInput().pressKey(GLFW.GLFW_KEY_ESCAPE);
+                context.getInput().pressKey(InputConstants.KEY_ESCAPE);
                 context.waitTicks(5);
             });
 
@@ -194,7 +194,7 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 context.getInput().pressKey(NtglKeyBinds.KEY_ATTACHMENTS);
                 context.waitTicks(15);
                 context.takeScreenshot("21_attachments_screen");
-                context.getInput().pressKey(GLFW.GLFW_KEY_ESCAPE);
+                context.getInput().pressKey(InputConstants.KEY_ESCAPE);
                 context.waitTicks(5);
             });
 
@@ -218,7 +218,7 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 });
                 context.waitTicks(15);
                 context.takeScreenshot("22_workbench_screen");
-                context.getInput().pressKey(GLFW.GLFW_KEY_ESCAPE);
+                context.getInput().pressKey(InputConstants.KEY_ESCAPE);
                 context.waitTicks(5);
             });
 
@@ -252,7 +252,7 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 context.getInput().pressKey(NtglKeyBinds.KEY_ATTACHMENTS);
                 context.waitTicks(15);
                 context.takeScreenshot("41_dedicated_attachments_screen");
-                context.getInput().pressKey(GLFW.GLFW_KEY_ESCAPE);
+                context.getInput().pressKey(InputConstants.KEY_ESCAPE);
                 context.waitTicks(5);
             });
 
@@ -269,7 +269,7 @@ public class NtglSmokeTest implements FabricClientGameTest {
                 });
                 context.waitTicks(15);
                 context.takeScreenshot("42_dedicated_workbench_screen");
-                context.getInput().pressKey(GLFW.GLFW_KEY_ESCAPE);
+                context.getInput().pressKey(InputConstants.KEY_ESCAPE);
                 context.waitTicks(5);
             });
 
@@ -299,7 +299,7 @@ public class NtglSmokeTest implements FabricClientGameTest {
         var transform = com.nukateam.ntgl.client.util.helpers.render.ModelRenderUtil.getTransform(stack,
                 net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND, player);
         log.info("[smoke] first person transform: {}", transform);
-        log.info("[smoke] hand heights: main {} old {}", mc.gameRenderer.itemInHandRenderer.mainHandHeight, mc.gameRenderer.itemInHandRenderer.oMainHandHeight);
+        log.info("[smoke] hand heights: main {} old {}", mc.player.firstPersonHandsAndItems().mainHandHeight, mc.player.firstPersonHandsAndItems().oMainHandHeight);
 
         var renderer = com.nukateam.ntgl.client.registry.WeaponRegistry.getRenderer(stack.getItem());
         var animator = (com.nukateam.ntgl.client.animators.WeaponAnimator) renderer.getAnimator(player,

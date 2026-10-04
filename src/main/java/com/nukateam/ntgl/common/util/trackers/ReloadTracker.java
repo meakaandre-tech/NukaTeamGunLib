@@ -143,7 +143,7 @@ public class ReloadTracker {
 
     private static void addOrDropStack(Player player, ItemStack usedMagazine) {
         if(!player.addItem(usedMagazine)){
-            player.drop(usedMagazine, false);
+            player.drop(usedMagazine, false, net.minecraft.util.Prediction.SERVER_ONLY);
         }
     }
 

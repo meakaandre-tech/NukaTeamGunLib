@@ -17,7 +17,7 @@
     "ntgl.client.EntityRendererMixin",
     "ntgl.client.HumanoidModelMixin",
     "ntgl.client.ItemInHandLayerMixin",
-    "ntgl.client.ItemInHandRendererMixin",
+    "ntgl.client.FirstPersonHandsAndItemsRendererMixin",
     "ntgl.client.LivingEntityRendererMixin",
     "ntgl.client.MinecraftMixin",
     "ntgl.client.MouseHandlerMixin",

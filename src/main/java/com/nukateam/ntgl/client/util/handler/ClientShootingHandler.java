@@ -28,7 +28,7 @@ import com.nukateam.ntgl.platform.event.client.RenderLevelStageEvent;
 import com.nukateam.ntgl.Ntgl;
 import com.nukateam.ntgl.platform.EventPriority;
 import com.nukateam.ntgl.platform.SubscribeEvent;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,14 +96,14 @@ public class ClientShootingHandler {
 
         if (heldItem.getItem() instanceof IWeapon) {
             var data = new WeaponData(heldItem, player).setWeaponMode(WeaponMode.PRIMARY);
-            if (event.getAction() == GLFW.GLFW_PRESS) {
+            if (event.getAction() == InputConstants.PRESS) {
                 if (isRightHand) {
                     setupShootingData(data, InteractionHand.MAIN_HAND);
                 }
                 if (isLeftHand) {
                     setupShootingData(data, InteractionHand.OFF_HAND);
                 }
-            } else if(event.getAction() == GLFW.GLFW_RELEASE) {
+            } else if(event.getAction() == InputConstants.RELEASE) {
                 if (isRightHand) {
                     resetShootingData(data, InteractionHand.MAIN_HAND);
                 }

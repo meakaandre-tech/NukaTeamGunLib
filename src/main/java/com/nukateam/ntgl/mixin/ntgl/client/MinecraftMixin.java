@@ -8,10 +8,11 @@ import com.nukateam.ntgl.platform.event.client.InputEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.ItemInHandRenderer;
+import net.minecraft.network.protocol.game.ServerboundPunchPacket;
 import net.minecraft.world.InteractionHand;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,7 +38,7 @@ public class MinecraftMixin {
         var event = Ntgl.EVENT_BUS.post(new InputEvent.InteractionKeyMappingTriggered(0, this.options.keyAttack, InteractionHand.MAIN_HAND));
         if (event.isCanceled()) {
             if (event.shouldSwingHand()) {
-                this.player.swing(InteractionHand.MAIN_HAND);
+                ntgl$swingForAttack();
             }
             cir.setReturnValue(false);
         }
@@ -50,7 +51,7 @@ public class MinecraftMixin {
         var event = Ntgl.EVENT_BUS.post(new InputEvent.InteractionKeyMappingTriggered(0, this.options.keyAttack, InteractionHand.MAIN_HAND));
         if (event.isCanceled()) {
             if (event.shouldSwingHand()) {
-                this.player.swing(InteractionHand.MAIN_HAND);
+                ntgl$swingForAttack();
             }
             ci.cancel();
         }
@@ -63,7 +64,7 @@ public class MinecraftMixin {
         var event = Ntgl.EVENT_BUS.post(new InputEvent.InteractionKeyMappingTriggered(1, this.options.keyUse, hand));
         if (event.isCanceled()) {
             if (event.shouldSwingHand()) {
-                this.player.swing(hand);
+                this.player.swing(hand, this.player.getItemInHand(hand).getInteractAnimation(), false);
             }
             ci.cancel();
         }
@@ -71,8 +72,15 @@ public class MinecraftMixin {
 
     /** Using a block with a weapon in hand must not restart the weapon's equip animation. */
     @WrapWithCondition(method = "startUseItem()V",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/ItemInHandRenderer;itemUsed(Lnet/minecraft/world/InteractionHand;)V", ordinal = 0))
-    private boolean ntgl$beforeItemUsed(ItemInHandRenderer renderer, InteractionHand hand) {
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;itemUsed(Lnet/minecraft/world/InteractionHand;)V", ordinal = 0))
+    private boolean ntgl$beforeItemUsed(LocalPlayer localPlayer, InteractionHand hand) {
         return this.player == null || !(this.player.getItemInHand(hand).getItem() instanceof IWeapon);
+    }
+
+    /** What the vanilla attack key does after a hit or miss (26.3: swing locally, then tell the server). */
+    @Unique
+    private void ntgl$swingForAttack() {
+        this.player.swing(InteractionHand.MAIN_HAND, this.player.getItemInHand(InteractionHand.MAIN_HAND).getAttackAnimation(), false);
+        this.player.connection.send(ServerboundPunchPacket.INSTANCE);
     }
 }
