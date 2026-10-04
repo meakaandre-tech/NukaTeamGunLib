@@ -509,7 +509,11 @@ public class ProjectileEntity extends Entity implements GeoEntity, IProjectile {
         onContact(hitVec);
         handlePierce(HitTarget.ENTITY);
 
-        entity.setInvulnerableTime(0);
+        // lets the next projectile hurt right away. 26.3: the hurt cooldown of living entities is
+        // damageCooldownTime (Entity#invulnerableTime became a different, command-set timer)
+        if (entity instanceof LivingEntity living) {
+            living.damageCooldownTime = 0;
+        }
     }
 
     private BlockPos hitBlockpos = BlockPos.ZERO;
