@@ -1,4 +1,7 @@
 {
+  "textures": {
+    "particle": "ntgl:item/particle/gatling"
+  },
   "display": {
     "thirdperson_righthand": {
       "translation": [

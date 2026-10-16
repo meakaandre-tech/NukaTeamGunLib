@@ -1,4 +1,7 @@
 {
+  "textures": {
+    "particle": "ntgl:item/particle/flamer"
+  },
   "display": {
     "thirdperson_righthand": {
       "rotation": [
