@@ -6,11 +6,13 @@ Checks, for every namespace under src/main/resources/assets:
   * models/**/*.json  -> parents resolve, every texture variable resolves to a PNG,
                          every "#ref" used by an element face is defined, the model has a particle texture,
                          and every texture sits in an atlas (26.x item models only see atlas sprites)
+  * every item registered in src/main/java has an item definition (and so an item model)
 Vanilla (minecraft:) models and textures are assumed to exist.
 
 Usage: check_assets.py [resources_dir]
 """
 import json
+import re
 import pathlib
 import sys
 
@@ -155,6 +157,25 @@ for ns_dir in sorted(p for p in ASSETS.iterdir() if p.is_dir()):
     models = ns_dir / "models"
     for f in sorted(models.rglob("*.json")):
         check_model(ns, f.relative_to(models).with_suffix("").as_posix())
+
+
+# --- every item the mod registers in code needs an item definition (assets/ntgl/items/<name>.json);
+# the definition's model is checked above. Registrations are calls like registerItem("name", ...),
+# registerGun("name"), registerAmmo("name") and registerBlock("name", ...) (a block item) with a literal name.
+JAVA = RES.parent / "java"
+MOD_ID = "ntgl"
+REGISTER_CALL = re.compile(r'\b(?:registerItem|registerGun|registerAmmo|registerBlock)\s*\(\s*"([a-z0-9_./-]+)"')
+COMMENTS = re.compile(r"//[^\n]*|/\*.*?\*/", re.S)
+registered = {}
+for f in sorted(JAVA.rglob("*.java")) if JAVA.is_dir() else []:
+    source = COMMENTS.sub("", f.read_text(encoding="utf-8"))
+    for name in REGISTER_CALL.findall(source):
+        registered.setdefault(name, f.as_posix())
+for name, where in sorted(registered.items()):
+    definition = ASSETS / MOD_ID / "items" / f"{name}.json"
+    if not definition.is_file():
+        errors.append(f"item {MOD_ID}:{name} (registered in {where}) has no item model: "
+                      f"missing {definition.relative_to(RES)}")
 
 errors = list(dict.fromkeys(errors))
 if errors:
