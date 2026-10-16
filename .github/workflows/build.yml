@@ -2,7 +2,7 @@ name: Build
 
 on:
   push:
-    branches: ["fabric-26.3"]
+    branches: ["fabric-26.3", "fix/item-textures"]
   workflow_dispatch:
 
 permissions:
