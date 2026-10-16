@@ -1,4 +1,7 @@
 {
+  "textures": {
+    "particle": "ntgl:item/grenade"
+  },
   "display": {
     "thirdperson_righthand": {
       "translation": [

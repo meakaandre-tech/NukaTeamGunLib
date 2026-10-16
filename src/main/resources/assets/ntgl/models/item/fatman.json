@@ -1,5 +1,8 @@
 {
   "credit": "Made with Blockbench",
+  "textures": {
+    "particle": "ntgl:item/particle/fatman"
+  },
   "texture_size": [
     512,
     512

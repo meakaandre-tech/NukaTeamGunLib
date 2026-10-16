@@ -1,5 +1,8 @@
 {
   "credit": "Made with Blockbench",
+  "textures": {
+    "particle": "ntgl:item/particle/classic10mm"
+  },
   "texture_size": [
     512,
     512

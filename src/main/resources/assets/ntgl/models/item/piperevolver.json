@@ -1,4 +1,7 @@
 {
+  "textures": {
+    "particle": "ntgl:item/particle/piperevolver"
+  },
   "display": {
     "thirdperson_righthand": {
       "translation": [

@@ -1,5 +1,8 @@
 {
   "credit": "Made with Blockbench",
+  "textures": {
+    "particle": "ntgl:item/particle/powdergun"
+  },
   "texture_size": [
     64,
     64

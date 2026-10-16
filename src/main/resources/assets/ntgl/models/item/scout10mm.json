@@ -1,4 +1,7 @@
 {
+  "textures": {
+    "particle": "ntgl:item/particle/scout10mm"
+  },
   "display": {
     "thirdperson_righthand": {
       "translation": [

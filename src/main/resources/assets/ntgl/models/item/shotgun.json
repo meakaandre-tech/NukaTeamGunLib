@@ -1,5 +1,8 @@
 {
   "credit": "Made with Blockbench",
+  "textures": {
+    "particle": "ntgl:item/particle/shotgun"
+  },
   "texture_size": [
     512,
     512
