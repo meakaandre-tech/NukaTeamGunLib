@@ -14,6 +14,8 @@ jobs:
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
+      - name: Check item models and textures
+        run: python3 .github/scripts/check_assets.py
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -107,6 +109,15 @@ jobs:
           cp $d/screenshots/*.png /tmp/ci/smoke/screenshots/ 2>/dev/null || true
           (ls -lR $d 2>&1 | head -300) > /tmp/ci/smoke/client-run-dir.txt || true
           (vulkaninfo --summary 2>&1 | head -60; glxinfo -B 2>&1 | head -30) > /tmp/ci/smoke/gfx-info.txt || true
+      - name: Check the client log for missing models and textures
+        if: success() && hashFiles('.github/smoke-test') != ''
+        shell: bash
+        run: |
+          log=/tmp/ci/smoke/client-latest.log
+          if [ ! -s "$log" ]; then echo "::warning::no client log (the client smoke test did not start), skipping"; exit 0; fi
+          grep -A3 -E "Missing (textures|texture references) in model ntgl:|(Unable to (load|find) model|No model loaded).*ntgl:" "$log" > /tmp/ci/smoke/missing-assets.txt || true
+          if [ -s /tmp/ci/smoke/missing-assets.txt ]; then cat /tmp/ci/smoke/missing-assets.txt; echo "::error::the game reported missing NTGL models or textures"; exit 1; fi
+          echo "no missing NTGL models or textures in the client log"
       - name: Dump game signatures
         if: always()
         shell: bash
