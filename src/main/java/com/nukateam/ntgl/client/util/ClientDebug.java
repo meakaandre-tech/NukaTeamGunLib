@@ -218,6 +218,10 @@ public class ClientDebug {
     }
 
     public static TuningMode tuningMode = TuningMode.GENERIC;
-    public static boolean isHidden = false;
+    /**
+     * The debug/tuning HUD ("Mode: Generic / x y z", top right) starts hidden, even in a development run: it ran over
+     * other HUDs (a minimap) in every packed game started from a dev client. The debug show key brings it up.
+     */
+    public static boolean isHidden = true;
     public static Identifier currentlyTuningItem = null;
 }
