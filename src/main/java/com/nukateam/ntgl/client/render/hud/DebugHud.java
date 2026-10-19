@@ -8,6 +8,8 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 
 public class DebugHud {
     private static final int OFFSET_Y = 12;
+    /** The debug/tuning HUD is drawn only with the system property ntgl.debug set to true. */
+    private static final boolean SHOWN = Boolean.getBoolean("ntgl.debug");
 
     public static void render(GuiGraphicsExtractor graphics, DeltaTracker partialTick) {
         var minecraft = Minecraft.getInstance();
@@ -15,7 +17,8 @@ public class DebugHud {
         int width  = mainWindow.getGuiScaledWidth ();
         int height = mainWindow.getGuiScaledHeight();
 
-        if(ClientDebug.isHidden || !Ntgl.isDebugging() || minecraft.player == null) return;
+        // only when asked for (-Dntgl.debug=true): a development run alone (a modpack's test client) never shows it
+        if(!SHOWN || ClientDebug.isHidden || !Ntgl.isDebugging() || minecraft.player == null) return;
         var x = width - 70;
 
         renderString(graphics, "Mode: " + ClientDebug.tuningMode.getName(), x - 80, OFFSET_Y);
